@@ -59,7 +59,7 @@ sudo apt-get -y install -y vim git ctags clang libclang-dev
 rm -Rf ~/.vim ~/.vimrc
 git clone https://github.com/snaiffer/vim.git ~/.vim
 ln -s ~/.vim/vimrc ~/.vimrc
-vim -c "BundleInstall" -c "qa!"
+vim -c "BundleInstall" -c 'qa!'
 echo -n "done.\n"
 
 
