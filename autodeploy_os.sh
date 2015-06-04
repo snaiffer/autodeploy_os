@@ -22,6 +22,9 @@ sudo apt-get install -y vim openssh-server openssh-client git tree
 echo "git settings"
 git config --global user.email "snaiffer@gmail.com"
 git config --global user.name "snaiffer"
+echo "ssh settings"
+# edit /etc/ssh/ssh_config: comment all lines with GSS
+# setting for keeping connection ~/.ssh...
 echo "for WWW"
 sudo apt-get install -y transmission chromium-browser
 echo "Pepper Flash Player"
