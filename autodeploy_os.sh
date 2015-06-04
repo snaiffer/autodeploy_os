@@ -22,6 +22,8 @@ sudo apt-get install -y vim openssh-server openssh-client git tree
 echo "git settings"
 git config --global user.email "snaiffer@gmail.com"
 git config --global user.name "snaiffer"
+git config --global push.default matching   # push all branches
+# git config --global push.default simple   # push the current branch only
 echo "ssh settings"
 # edit /etc/ssh/ssh_config: comment all lines with GSS
 # setting for keeping connection ~/.ssh...
