@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<gconf>
+	<entry name="theme_file" mtime="1436568471" type="string">
+		<stringvalue>Magic_trans.tar.gz</stringvalue>
+	</entry>
+	<entry name="offset" mtime="1436572470" type="int" value="27"/>
+	<entry name="behavior" mtime="1436567753" type="string">
+		<stringvalue>panel</stringvalue>
+	</entry>
+	<entry name="size" mtime="1436566449" type="int" value="42"/>
+	<entry name="end_decorations" mtime="1436568389" type="bool" value="false"/>
+	<entry name="mode" mtime="1436567173" type="string">
+		<stringvalue>panel</stringvalue>
+	</entry>
+	<entry name="position" mtime="1439194610" type="string">
+		<stringvalue>left</stringvalue>
+	</entry>
+</gconf>
