@@ -89,12 +89,8 @@ ln -s ~/.vim/vimrc ~/.vimrc
 vim -c "BundleInstall" -c 'qa!'
 check_status
 
-echo "Setting the windows manager enviroment... "
-# Close/minimize/maximize button not appearing
- DISPLAY=:0.0 gsettings set org.gnome.desktop.wm.preferences button-layout ':minimize,maximize,close,' && \
- DISPLAY=:0.0 gsettings set org.gnome.desktop.wm.preferences titlebar-font 'Droid Sans Bold 10' && \
-# list of themes: /usr/share/themes/
- DISPLAY=:0.0 gsettings set org.gnome.desktop.wm.preferences theme 'Greybird'
+echo "Installing compiz (windows manager)... "
+sudo apt-get install -q -y compiz compiz-plugins compizconfig-settings-manager metacity dconf-tools > /dev/null
 check_status
 
 echo "Switch xfwm4 to compiz. Autostart compiz... "
@@ -103,11 +99,19 @@ cp /etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-session.xml ~/.config/xfce4/x
  sed -i "s/xfwm4/compiz/" ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-session.xml
 check_status
 
+echo "Setting the windows manager enviroment... "
+# Close/minimize/maximize button not appearing
+ DISPLAY=:0.0 gsettings set org.gnome.desktop.wm.preferences button-layout ':minimize,maximize,close,' && \
+ DISPLAY=:0.0 gsettings set org.gnome.desktop.wm.preferences titlebar-font 'Droid Sans Bold 10' && \
+# list of themes: /usr/share/themes/
+ DISPLAY=:0.0 gsettings set org.gnome.desktop.wm.preferences theme 'Greybird'
+check_status
+
 echo "Installing plugins for Desktop Enviroment... "
 sudo apt-get install -q -y xfce4-clipman-plugin xfce4-datetime-plugin xfce4-time-out-plugin > /dev/null
 check_status
 
-echo "Installing dockbar (side-panel) ... "
+echo "Installing DockbarX (side-panel) ... "
 # http://www.webupd8.org/2013/03/dockbarx-available-as-xfce-panel-plugin.html
 # if you want preview: install compiz and add KDE compability
 sudo add-apt-repository -y ppa:dockbar-main/ppa && \
@@ -115,7 +119,7 @@ sudo add-apt-repository -y ppa:dockbar-main/ppa && \
  sudo apt-get install -q -y --no-install-recommends xfce4-dockbarx-plugin > /dev/null
 check_status
 
-echo "Adding to autostart dockbar ... "
+echo "Adding to autostart DockbarX ... "
 sudo sh -c 'cat <<-EOF > /etc/xdg/autostart/dockx.desktop
 [Desktop Entry]
 Encoding=UTF-8
@@ -126,7 +130,7 @@ Type=Application
 EOF'
 check_status
 
-echo "Installing system load indicator for Desktop Enviroment... "
+echo "Installing System Load Indicator for Desktop Enviroment... "
 sudo add-apt-repository -y ppa:indicator-multiload/stable-daily && \
  sudo apt-get update > /dev/null && \
  sudo apt-get install -q -y indicator-multiload > /dev/null && \
@@ -134,7 +138,19 @@ echo 'Run "System load indicator" from x11 (graphic mode)'
 check_status
 
 echo "Export settings... "
-cp -Rf $dir_data/config/xfce4 ~/.config/
-cp -Rf $dir_data/gconf ~/.gconf
+exportlist="xfce4 compiz-1 autostart dconf Mousepad Thunar"
+# xfce4     --general settings of Desktop Enviroment. Thunar settings.
+# compiz-1  --settings of compiz
+# autostart --autostart of System Load Indicator
+# dconf     --settings of System Load Indicator plugin
+# Mousepad  --hotkeys
+# Thunar    --influence of DockbarX position and icons
+for cur in $exportlist; do
+  echo "export settings of $cur... "
+  rm -Rf ~/.config/$cur && cp -Rf $dir_data/config/$cur ~/.config/
+  check_status
+done
+# settings of DockbarX
+rm -Rf ~/.gconf && cp -Rf $dir_data/gconf ~/.gconf
 check_status
 

@@ -1,27 +1,7 @@
 [xfdesktop-version-4.10.3+-rcfile_format]
 4.10.3+=true
 
-[/home/snaiffer/Desktop/screenshot3.png]
-row=3
-col=0
-
-[/home/snaiffer/Desktop/screenshot1.png]
-row=5
-col=0
-
-[/home/snaiffer/Desktop/screenshot2.png]
-row=4
-col=0
-
-[Trash]
-row=0
-col=0
-
-[/]
-row=1
-col=0
-
 [/home/snaiffer]
-row=2
+row=0
 col=0
 
