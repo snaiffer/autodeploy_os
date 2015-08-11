@@ -38,7 +38,7 @@ check_status
 
 echo
 printf "Removing packages... "
-sudo apt-get remove -q -y abiword* gnumeric* xfburn parole gmusicbrowser xfce4-notes > /dev/null
+sudo apt-get remove -q -y abiword* gnumeric* xfburn parole gmusicbrowser xfce4-notes firefox xfce4-terminal > /dev/null
 check_status
 
 echo
@@ -69,9 +69,8 @@ sudo sh -c 'echo ". /usr/lib/pepflashplugin-installer/pepflashplayer.sh" >> /etc
 # to check if it has been success:
 ## open chromium and input "chrome://plugins" in the address line
 check_status
-
 printf "systems... "
-sudo apt-get install -q -y terminator mtp-tools mtpfs pavucontrol > /dev/null
+sudo apt-get install -q -y terminator mtp-tools mtpfs pavucontrol ubuntu-restricted-extras > /dev/null
 check_status
 #printf "others... "
 #sudo apt-get install -q -y basket meld libreoffice gimp pinta > /dev/null && \
