@@ -1,5 +1,5 @@
-favorites=exo-web-browser.desktop,exo-mail-reader.desktop,exo-file-manager.desktop,abiword.desktop,gnumeric.desktop,pidgin.desktop,gmusicbrowser.desktop,ubuntu-software-center.desktop,exo-terminal-emulator.desktop,xfhelp4.desktop
-recent=ccsm.desktop,ca.desrt.dconf-editor.desktop,abiword.desktop,indicator-multiload.desktop,DockX.desktop,exo-terminal-emulator.desktop,dbx_preference.desktop,gnumeric.desktop,firefox.desktop
+favorites=exo-web-browser.desktop,exo-mail-reader.desktop,exo-file-manager.desktop,pidgin.desktop,ubuntu-software-center.desktop,exo-terminal-emulator.desktop,xfhelp4.desktop
+recent=terminator.desktop,exo-terminal-emulator.desktop,mousepad.desktop,exo-web-browser.desktop,kde4-basket.desktop,xfce-settings-manager.desktop,chromium-browser.desktop,ccsm.desktop,ca.desrt.dconf-editor.desktop,indicator-multiload.desktop
 button-title=Applications Menu
 button-icon=xubuntu-logo-menu
 button-single-row=false

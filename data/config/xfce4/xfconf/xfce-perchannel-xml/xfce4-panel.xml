@@ -57,6 +57,7 @@
         <value type="string" value="networkmanager applet"/>
         <value type="string" value="indicator-multiload"/>
         <value type="string" value="task manager"/>
+        <value type="string" value="basket"/>
       </property>
     </property>
     <property name="plugin-5" type="string" value="power-manager-plugin"/>
