@@ -4,24 +4,22 @@
 # 	Debian family
 # 	LXDE, XFCE(???) desktop managers
 
-dir_script=`dirname $0`
-dir_data="$dir_script/data"
-bin="/usr/bin"
+export dir_script=`dirname $0`
+export dir_data="$dir_script/data"
+export bin="/usr/bin"
 
 # auth. for sudo
 sudo echo
 
 printf "Install & Set git... "
-sudo apt-get install -q -y git > /dev/null
-echo "done."
-printf "git settings... "
-git config --global user.email "snaiffer@gmail.com"
-git config --global user.name "Alexander Danilov"
+sudo apt-get install -q -y git > /dev/null && \
+git config --global user.email "snaiffer@gmail.com" && \
+git config --global user.name "Alexander Danilov" && \
 git config --global push.default matching   # push all branches
 # git config --global push.default simple   # push the current branch only
 echo "done."
 
-printf "Intalling libraries for bash..."
+printf "Intalling libraries for bash... "
 sudo git clone -q https://github.com/snaiffer/lib_bash_general.git /usr/lib/lib_bash_general && \
 source /usr/lib/lib_bash_general/lib_bash_general.sh
 check_status
@@ -48,7 +46,7 @@ sudo apt-get update > /dev/null
 printf "for console... "
 sudo apt-get install -q -y vim openssh-server openssh-client tree nmap iotop > /dev/null
 check_status
-echo -e "\t ssh settings"
+echo -e "\t ssh settings:"
 printf "\t turn off GSS for fast connection... "
 sudo sh -c 'echo "GSSAPIAuthentication no" >> /etc/ssh/ssh_config'
 check_status
@@ -66,10 +64,11 @@ check_status
 printf "Pepper Flash Player... "
 sudo add-apt-repository -y ppa:skunk/pepper-flash &> /dev/null && \
 sudo apt-get update > /dev/null && sudo apt-get install -q -y pepflashplugin-installer > /dev/null && \
-sudo sh -c 'echo ". /usr/lib/pepflashplugin-installer/pepflashplayer.sh" >> /etc/chromium-browser/default'
+sudo sh -c 'echo ". /usr/lib/pepflashplugin-installer/pepflashplayer.sh" >> /etc/chromium-browser/default' > /dev/null
 # to check if it has been success:
 ## open chromium and input "chrome://plugins" in the address line
 check_status
+echo "systems... "
 printf "systems... "
 echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | sudo debconf-set-selections && \
   sudo apt-get install -q -y terminator mtp-tools mtpfs pavucontrol ubuntu-restricted-extras > /dev/null
@@ -88,7 +87,7 @@ sudo sed -i "s/XKBOPTIONS=\"/XKBOPTIONS=\"grp:caps_toggle\,/" /etc/default/keybo
 check_status
 
 printf "Set sync-scripts... "
-sudo mkdir -p $dir && \
+sudo mkdir -p $bin && \
  sudo cp -Rf $dir_data/sync $bin/ && \
  sudo chmod +x -R $bin/sync/*
 check_status
@@ -164,12 +163,12 @@ exportlist="xfce4 compiz-1 autostart dconf Mousepad Thunar"
 # Mousepad  --hotkeys
 # Thunar    --influence of DockbarX position and icons
 for cur in $exportlist; do
-  printf "export settings of $cur... "
+  printf "\t of $cur... "
   rm -Rf ~/.config/$cur && cp -Rf $dir_data/config/$cur ~/.config/
   check_status
 done
 # settings of DockbarX
-printf "export settings of DockbarX... "
+printf "\t of DockbarX... "
 rm -Rf ~/.gconf && cp -Rf $dir_data/gconf ~/.gconf
 check_status
 
