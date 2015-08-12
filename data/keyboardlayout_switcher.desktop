@@ -1,0 +1,6 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=keyboardlayout_switcher
+Comment=keyboardlayout_switcher
+Exec=sh -c 'setxkbmap -option grp:switch,grp:caps_toggle,grp_led:caps us,ru'
+Type=Application

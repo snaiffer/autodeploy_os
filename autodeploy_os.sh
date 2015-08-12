@@ -6,6 +6,7 @@
 
 dir_script=`dirname $0`
 dir_data="$dir_script/data"
+bin="/usr/bin"
 
 # auth. for sudo
 sudo echo
@@ -15,7 +16,7 @@ sudo apt-get install -q -y git > /dev/null
 echo "done."
 printf "git settings... "
 git config --global user.email "snaiffer@gmail.com"
-git config --global user.name "snaiffer"
+git config --global user.name "Alexander Danilov"
 git config --global push.default matching   # push all branches
 # git config --global push.default simple   # push the current branch only
 echo "done."
@@ -70,24 +71,27 @@ sudo sh -c 'echo ". /usr/lib/pepflashplugin-installer/pepflashplayer.sh" >> /etc
 ## open chromium and input "chrome://plugins" in the address line
 check_status
 printf "systems... "
-sudo apt-get install -q -y terminator mtp-tools mtpfs pavucontrol ubuntu-restricted-extras > /dev/null
+echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | sudo debconf-set-selections && \
+  sudo apt-get install -q -y terminator mtp-tools mtpfs pavucontrol ubuntu-restricted-extras > /dev/null
 check_status
-#printf "others... "
-#sudo apt-get install -q -y basket meld libreoffice gimp pinta > /dev/null && \
-## https://github.com/cas--/PasteImg
-#sudo mv data/pasteimg /usr/bin/
-#check_status
+printf "others... "
+sudo apt-get install -q -y basket meld libreoffice gimp pinta > /dev/null && \
+# https://github.com/cas--/PasteImg
+sudo cp -f $dir_data/pasteimg $bin && sudo chmod +x $bin/pasteimg
+check_status
 
-#echo
-#printf "Set keyboardlayout switcher by Caps key... "
-#sudo cp data/keyboardlayout_switcher.desktop /etc/xdg/autostart/
-#check_status
+echo
+printf "Set keyboardlayout switcher by Caps key... "
+sudo sed -i "s/XKBOPTIONS=\"/XKBOPTIONS=\"grp:caps_toggle\,/" /etc/default/keyboard
+## work on HP Pavilion laptop with Lubuntu
+#sudo cp -f $dir_data/keyboardlayout_switcher.desktop /etc/xdg/autostart/
+check_status
 
-#printf "Set sync-scripts... "
-#sudo mkdir -p /usr/bin/added/ && \
-# sudo cp -f data/sync_fromExHardToSnaifLaptop.sh /usr/bin/added/ && \
-# sudo cp -f data/sync_fromSnaifLaptopToExHard.sh /usr/bin/added/
-#check_status
+printf "Set sync-scripts... "
+sudo mkdir -p $dir && \
+ sudo cp -Rf $dir_data/sync $bin/ && \
+ sudo chmod +x -R $bin/sync/*
+check_status
 
 printf "Setting bash enviroment... "
 git clone -q https://github.com/snaiffer/bash_env.git ~/.bash_env && \
@@ -170,7 +174,7 @@ rm -Rf ~/.gconf && cp -Rf $dir_data/gconf ~/.gconf
 check_status
 
 echo
-printf "Relogin... "
-sudo service lightdm restart
-check_status
+reboot_request
+#printf "Relogin... "
+#sudo service lightdm restart
 
