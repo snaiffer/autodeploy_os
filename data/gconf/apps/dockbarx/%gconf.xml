@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <gconf>
-	<entry name="launchers" mtime="1439222226" type="list" ltype="string">
+	<entry name="launchers" mtime="1439203574" type="list" ltype="string">
 		<li type="string">
 			<stringvalue>terminator;/usr/share/applications/terminator.desktop</stringvalue>
 		</li>
@@ -12,6 +12,9 @@
 		</li>
 		<li type="string">
 			<stringvalue>mousepad;/usr/share/applications/mousepad.desktop</stringvalue>
+		</li>
+		<li type="string">
+			<stringvalue>virtualbox;/usr/share/applications/virtualbox.desktop</stringvalue>
 		</li>
 		<li type="string">
 			<stringvalue>xfce4-settings-manager;/usr/share/applications/xfce-settings-manager.desktop</stringvalue>

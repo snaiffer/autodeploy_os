@@ -7,6 +7,7 @@
 export dir_script=`dirname $0`
 export dir_data="$dir_script/data"
 export bin="/usr/bin"
+export virtualbox_version='5.0'
 
 # auth. for sudo
 sudo echo
@@ -71,7 +72,11 @@ check_status
 echo "systems... "
 printf "systems... "
 echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | sudo debconf-set-selections && \
-  sudo apt-get install -q -y terminator mtp-tools mtpfs pavucontrol ubuntu-restricted-extras > /dev/null
+  sudo apt-get install -q -y terminator mtp-tools mtpfs pavucontrol ubuntu-restricted-extras &> /dev/null
+check_status
+printf "VirtualBox... "
+wget -q https://www.virtualbox.org/download/oracle_vbox.asc -O- | sudo apt-key add - && \
+sudo apt-get update > /dev/null && sudo apt-get install -q -y virtualbox-$virtualbox_version > /dev/null
 check_status
 printf "others... "
 sudo apt-get install -q -y basket meld libreoffice gimp pinta k3b skanlite simple-scan gnome-mplayer vlc wine unetbootin > /dev/null && \
@@ -177,7 +182,7 @@ rm -Rf ~/.gconf && cp -Rf $dir_data/gconf ~/.gconf
 check_status
 
 echo
-echo "Installing sysbench... "
+printf "Installing sysbench... "
 sudo apt-get install -q -y sysbench > /dev/null
 check_status
 echo "Start 'sysbench --test=cpu run':"
