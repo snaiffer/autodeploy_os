@@ -44,7 +44,7 @@ echo
 echo "Installing packages:"
 sudo apt-get update > /dev/null
 printf "for console... "
-sudo apt-get install -q -y vim openssh-server openssh-client tree nmap iotop > /dev/null
+sudo apt-get install -q -y vim openssh-server openssh-client tree nmap iotop htop foremost > /dev/null
 check_status
 echo -e "\t ssh settings:"
 printf "\t turn off GSS for fast connection... "
@@ -74,7 +74,7 @@ echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select tr
   sudo apt-get install -q -y terminator mtp-tools mtpfs pavucontrol ubuntu-restricted-extras > /dev/null
 check_status
 printf "others... "
-sudo apt-get install -q -y basket meld libreoffice gimp pinta > /dev/null && \
+sudo apt-get install -q -y basket meld libreoffice gimp pinta k3b skanlite simple-scan gnome-mplayer vlc wine unetbootin > /dev/null && \
 # https://github.com/cas--/PasteImg
 sudo cp -f $dir_data/pasteimg $bin && sudo chmod +x $bin/pasteimg
 check_status
@@ -165,7 +165,7 @@ exportlist="xfce4 compiz-1 autostart dconf Mousepad Thunar"
 # autostart --autostart of System Load Indicator
 # dconf     --settings of System Load Indicator plugin
 # Mousepad  --hotkeys
-# Thunar    --influence of DockbarX position and icons
+# Thunar    --
 for cur in $exportlist; do
   printf "\t of $cur... "
   rm -Rf ~/.config/$cur && cp -Rf $dir_data/config/$cur ~/.config/
@@ -175,6 +175,15 @@ done
 printf "\t of DockbarX... "
 rm -Rf ~/.gconf && cp -Rf $dir_data/gconf ~/.gconf
 check_status
+
+echo
+echo "Installing sysbench... "
+sudo apt-get install -q -y sysbench > /dev/null
+check_status
+echo "Start 'sysbench --test=cpu run':"
+echo "================================================"
+sysbench --test=cpu run
+echo "================================================"
 
 echo
 reboot_request
