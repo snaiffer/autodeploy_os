@@ -154,6 +154,10 @@ sudo add-apt-repository -y ppa:indicator-multiload/stable-daily &> /dev/null && 
  sudo apt-get install -q -y indicator-multiload > /dev/null && \
 check_status
 
+printf "Allow hibirnate... "
+sudo awk -i inplace '{if ($0 == "[Disable hibernate by default in upower]" || $0 == "[Disable hibernate by default in logind]") { found=1 }; if (found == 1 && $0 ~ /^ResultActive=.*/) {print "ResultActive=yes"; found=0} else {print $0};}' /var/lib/polkit-1/localauthority/10-vendor.d/com.ubuntu.desktop.pkla
+check_status
+
 echo "Export settings"
 exportlist="xfce4 compiz-1 autostart dconf Mousepad Thunar"
 # xfce4     --general settings of Desktop Enviroment. Thunar settings.
