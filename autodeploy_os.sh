@@ -83,6 +83,19 @@ sudo apt-get install -q -y basket meld libreoffice gimp pinta k3b skanlite simpl
 # https://github.com/cas--/PasteImg
 sudo cp -f $dir_data/pasteimg $bin && sudo chmod +x $bin/pasteimg
 check_status
+# libreoffice doesn't support muilti-spellcheching
+#printf "plugins for LibreOffice... "
+#export libreoffice_languagetools='https://www.languagetool.org/download/LanguageTool-3.0.oxt'
+#dir_download=/tmp/libreoffice_plugins && \
+#  mkdir $dir_download && \
+#  wget -q $libreoffice_languagetools http://extensions.libreoffice.org/extension-center/russian-spellcheck-dictionary.-based-on-works-of-aot-group/pscreleasefolder.2011-09-06.6209385965/0.4.0/dict_ru_ru-aot-0-4-0.oxt -P $dir_download && \
+#  rm -Rf $dir_download
+#check_status
+
+echo
+printf "Installing drivers... "
+sudo ubuntu-drivers autoinstall > /dev/null
+check_status
 
 echo
 printf "Set keyboardlayout switcher by Caps key... "
