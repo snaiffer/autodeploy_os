@@ -176,9 +176,12 @@ for cur in $exportlist; do
   rm -Rf ~/.config/$cur && cp -Rf $dir_data/config/$cur ~/.config/
   check_status
 done
-# settings of DockbarX
 printf "\t of DockbarX... "
 rm -Rf ~/.gconf && cp -Rf $dir_data/gconf ~/.gconf
+check_status
+printf "\t of Preferred Applications... "
+mkdir -p ~/.local/share/xfce4 && \
+cp -Rf $dir_data/helpers ~/.local/share/xfce4/
 check_status
 
 echo
