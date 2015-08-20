@@ -79,7 +79,7 @@ wget -q https://www.virtualbox.org/download/oracle_vbox.asc -O- | sudo apt-key a
 sudo apt-get update > /dev/null && sudo apt-get install -q -y virtualbox-$virtualbox_version > /dev/null
 check_status
 printf "others... "
-sudo apt-get install -q -y basket meld libreoffice gimp pinta k3b skanlite simple-scan gnome-mplayer vlc wine unetbootin > /dev/null && \
+sudo apt-get install -q -y basket meld libreoffice gimp pinta k3b skanlite simple-scan gnome-mplayer vlc wine playonlinux unetbootin > /dev/null && \
 # https://github.com/cas--/PasteImg
 sudo cp -f $dir_data/pasteimg $bin && sudo chmod +x $bin/pasteimg
 check_status
