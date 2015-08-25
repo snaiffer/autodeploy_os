@@ -196,6 +196,12 @@ printf "\t of Preferred Applications... "
 mkdir -p ~/.local/share/xfce4 && \
 cp -Rf $dir_data/helpers ~/.local/share/xfce4/
 check_status
+printf "\t of Terminator... "
+cp -Rf $dir_data/terminator ~/.config/ && \
+if [[ `terminator -v  | sed "s/terminator //"` < 0.97 ]]; then
+  sudo patch /usr/share/terminator/terminatorlib/container.py < $dir_data/terminator_close_multiterminals_withoutconfirm.patch > /dev/null
+fi
+check_status
 
 echo
 printf "Installing sysbench... "

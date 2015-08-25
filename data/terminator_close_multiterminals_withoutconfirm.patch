@@ -1,0 +1,14 @@
+--- container.py.bac	2015-08-25 11:09:07.259887196 +0400
++++ container.py	2015-08-25 11:11:05.607883828 +0400
+@@ -180,7 +180,10 @@
+         box.pack_start(labels, False, False, 6)
+         dialog.vbox.pack_start(box, False, False, 12)
+     
+-        dialog.show_all()
++        # close multiple terminals without confirmation
++        # dialog.show_all()
++        dialog.response(gtk.STOCK_CLOSE)
++
+         return(dialog)
+ 
+     def propagate_title_change(self, widget, title):
