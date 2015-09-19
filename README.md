@@ -12,4 +12,4 @@
 - Save sysbench (benchmark) info to file or server
 - There may be some interesting info: http://howtoubuntu.org/things-to-do-after-installing-ubuntu-14-04-trusty-tahr
 - Command for updating enviroment settings in autodeploy_os according to the current env. settings
-
+- Desktop Backgroud doesn't set at autodeploying
