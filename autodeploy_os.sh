@@ -7,7 +7,7 @@
 export dir_script=`dirname $0`
 export dir_data="$dir_script/data"
 export bin="/usr/bin"
-#export virtualbox_version='5.0'
+export virtualbox_version='5.0'
 
 # auth. for sudo
 sudo echo
@@ -75,9 +75,9 @@ echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select tr
   sudo apt-get install -q -y terminator mtp-tools mtpfs pavucontrol ubuntu-restricted-extras &> /dev/null
 check_status
 printf "VirtualBox... "
+sudo sh -c "echo 'deb http://download.virtualbox.org/virtualbox/debian `lsb_release -cs` contrib' >> /etc/apt/sources.list" && \
 wget -q https://www.virtualbox.org/download/oracle_vbox.asc -O- | sudo apt-key add - > /dev/null && \
-#sudo apt-get update > /dev/null && sudo apt-get install -q -y virtualbox-$virtualbox_version > /dev/null
-sudo apt-get update > /dev/null && sudo apt-get install -q -y virtualbox > /dev/null
+sudo apt-get update > /dev/null && sudo apt-get install -q -y virtualbox-$virtualbox_version > /dev/null
 check_status
 printf "others... "
 sudo apt-get install -q -y basket meld libreoffice gimp pinta k3b skanlite simple-scan gnome-mplayer vlc wine playonlinux unetbootin > /dev/null && \
