@@ -8,4 +8,5 @@
 -- Ctrl+w Ctrl+o are used in vim
 -- Exchange Terminator?
 - Check list for modules installation of autodeploy
+- Battery indicator Plugin doesn't show the percentage. Check out Power Settings
 
