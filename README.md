@@ -6,6 +6,7 @@
 - Terminator:
 -- Ctrl+w Ctrl+o are used in vim
 -- Exchange Terminator?
+-- Ask question if you want to close several tabs. Remove it.
 - Check list for modules installation of autodeploy
 - Battery indicator Plugin doesn't show the percentage. Check out Power Settings
 - Save sysbench (benchmark) info to file or server
