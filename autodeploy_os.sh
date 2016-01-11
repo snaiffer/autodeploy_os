@@ -1,9 +1,5 @@
 #!/bin/bash
 
-# Requements:
-# 	Debian family
-# 	LXDE, XFCE(???) desktop managers
-
 export dir_script=`dirname $0`
 export dir_data="$dir_script/data"
 export bin="/usr/bin"

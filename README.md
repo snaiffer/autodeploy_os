@@ -1,5 +1,12 @@
 # autodeploy_os
 
+## Requements:
+- Debian family
+- LXDE, XFCE(???) desktop managers
+
+## It has been tested on:
+- Xubuntu 15.10
+
 ## Plans:
 - shortcut for launch terminal: Super(Win) + T
 - Indicator Plugin doesn't catch settings
