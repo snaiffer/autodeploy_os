@@ -41,6 +41,7 @@ echo
 echo "Installing packages:"
 sudo apt-get update > /dev/null
 printf "for console... "
+sudo add-apt-repository -y ppa:ppa:schot/gawk &> /dev/null && sudo apt-get update > /dev/null && sudo apt-get install -q -y gawk > /dev/null && \
 sudo apt-get install -q -y vim openssh-server openssh-client tree nmap iotop htop foremost > /dev/null
 check_status
 echo -e "\t ssh settings:"
