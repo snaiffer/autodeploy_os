@@ -59,25 +59,24 @@ check_status
 printf "for WWW... "
 sudo apt-get install -q -y transmission chromium-browser > /dev/null
 check_status
-printf "Pepper Flash Player... "
+printf "\tPepper Flash Player... "
 sudo add-apt-repository -y ppa:skunk/pepper-flash &> /dev/null && \
 sudo apt-get update > /dev/null && sudo apt-get install -q -y pepflashplugin-installer > /dev/null && \
 sudo sh -c 'echo ". /usr/lib/pepflashplugin-installer/pepflashplayer.sh" >> /etc/chromium-browser/default' > /dev/null
 # to check if it has been success:
 ## open chromium and input "chrome://plugins" in the address line
 check_status
-echo "systems... "
-printf "systems... "
+printf "for systems... "
 echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | sudo debconf-set-selections && \
   sudo apt-get install -q -y terminator mtp-tools mtpfs pavucontrol ubuntu-restricted-extras &> /dev/null
 check_status
-printf "VirtualBox... "
+printf "for VirtualBox... "
 sudo sh -c "echo 'deb http://download.virtualbox.org/virtualbox/debian `lsb_release -cs` contrib' >> /etc/apt/sources.list" && \
 wget -q https://www.virtualbox.org/download/oracle_vbox.asc -O- | sudo apt-key add - > /dev/null && \
 sudo apt-get update > /dev/null && sudo apt-get install -q -y virtualbox-$virtualbox_version > /dev/null
 check_status
-printf "others... "
-sudo apt-get install -q -y basket meld libreoffice gimp pinta k3b skanlite simple-scan gnome-mplayer vlc wine playonlinux unetbootin > /dev/null && \
+printf "for others... "
+sudo apt-get install -q -y basket meld libreoffice gimp pinta k3b gnome-mplayer vlc wine playonlinux unetbootin > /dev/null && \
 # https://github.com/cas--/PasteImg
 sudo cp -f $dir_data/pasteimg $bin && sudo chmod +x $bin/pasteimg
 check_status
@@ -118,6 +117,10 @@ rm -Rf ~/.vim ~/.vimrc && \
 git clone -q https://github.com/snaiffer/vim.git ~/.vim && \
 ln -s ~/.vim/vimrc ~/.vimrc && \
 vim -c "BundleInstall" -c 'qa!'
+check_status
+
+printf "Turn off apport... "
+sudo sed -i "s/enabled=1/enabled=0/" /etc/default/apport
 check_status
 
 echo
