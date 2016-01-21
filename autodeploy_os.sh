@@ -108,7 +108,7 @@ check_status
 
 printf "Setting bash enviroment... "
 git clone -q https://github.com/snaiffer/bash_env.git ~/.bash_env && \
- ~/.bash_env/install.sh > /dev/null
+sudo ~/.bash_env/install.sh > /dev/null
 check_status
 
 printf "Setting vim... "
