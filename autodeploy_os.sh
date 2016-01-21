@@ -48,7 +48,7 @@ printf "\t turn off GSS for fast connection... "
 sudo sh -c 'echo "GSSAPIAuthentication no" >> /etc/ssh/ssh_config'
 check_status
 printf "\t setting for keeping connection ~/.ssh... "
-mkdir ~/.ssh && \
+mkdir ~/.ssh
 cat <<-EOF > ~/.ssh/config
 Host *
 ControlMaster auto
@@ -101,10 +101,9 @@ sudo sed -i "s/XKBOPTIONS=\"/XKBOPTIONS=\"grp:caps_toggle\,/" /etc/default/keybo
 #sudo cp -f $dir_data/keyboardlayout_switcher.desktop /etc/xdg/autostart/
 check_status
 
-printf "Set sync-scripts... "
-sudo mkdir -p $bin && \
- sudo cp -Rf $dir_data/sync $bin/ && \
- sudo chmod +x -R $bin/sync/*
+printf "Clone syncfrom... "
+mkdir -p ~/git/ && \
+git clone -q https://github.com/snaiffer/syncfrom.git ~/git/syncfrom/
 check_status
 
 printf "Setting bash enviroment... "
