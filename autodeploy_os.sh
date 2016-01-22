@@ -9,6 +9,8 @@ export virtualbox_version='5.0'
 export virtualbox_extenpack_link='http://download.virtualbox.org/virtualbox/5.0.14/Oracle_VM_VirtualBox_Extension_Pack-5.0.14-105127.vbox-extpack'
 export virtualbox_extenpack_file='Oracle_VM_VirtualBox_Extension_Pack'
 
+export wine_version='1.8-amd64'
+
 # auth. for sudo
 sudo echo
 
@@ -46,7 +48,7 @@ echo "Installing packages:"
 sudo apt-get update > /dev/null
 printf "for console... "
 sudo add-apt-repository -y ppa:schot/gawk &> /dev/null && sudo apt-get update > /dev/null && sudo apt-get install -q -y gawk > /dev/null && \
-sudo apt-get install -q -y vim openssh-server openssh-client tree nmap iotop htop foremost sshfs > /dev/null
+sudo apt-get install -q -y vim openssh-server openssh-client tree nmap iotop htop foremost sshfs &> /dev/null
 check_status
 echo -e "ssh settings:"
 printf "\t turn off GSS for fast connection... "
@@ -82,14 +84,15 @@ sudo apt-get update > /dev/null && sudo apt-get install -q -y virtualbox-$virtua
 check_status
 printf "\tVirtualBox Extension Pack... "
 wget -q $virtualbox_extenpack_link && \
-sudo VBoxManage extpack install ${virtualbox_extenpack_file}* > /dev/null && \
+sudo VBoxManage extpack install ${virtualbox_extenpack_file}* &> /dev/null && \
 rm -f ${virtualbox_extenpack_file}*
 check_status
 printf "for libreoffice... "
-sudo apt-get install -q -y libreoffice > /dev/null && \
+sudo apt-get install -q -y libreoffice &> /dev/null && \
 check_status
-printf "for wine, playonlinux... "
-sudo apt-get install -q -y wine playonlinux > /dev/null && \
+printf "for wine likes programs... "
+sudo add-apt-repository -y ppa:ubuntu-wine/ppa &> /dev/null && sudo apt-get update > /dev/null && \
+sudo apt-get install -q -y wine$wine_version playonlinux > /dev/null && \
 check_status
 printf "for images... "
 sudo apt-get install -q -y gimp pinta &> /dev/null && \
