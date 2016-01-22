@@ -4,6 +4,8 @@ export dir_script=`dirname $0`
 export dir_data="$dir_script/data"
 export bin="/usr/bin"
 export virtualbox_version='5.0'
+# find out links for a newer version https://www.virtualbox.org/wiki/Downloads
+export virtualbox_extenpack='http://download.virtualbox.org/virtualbox/5.0.14/Oracle_VM_VirtualBox_Extension_Pack-5.0.14-105127.vbox-extpack'
 
 # auth. for sudo
 sudo echo
@@ -70,10 +72,16 @@ printf "for systems... "
 echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | sudo debconf-set-selections && \
   sudo apt-get install -q -y terminator mtp-tools mtpfs pavucontrol ubuntu-restricted-extras &> /dev/null
 check_status
-printf "for VirtualBox... "
+echo "for VirtualBox:"
+printf "\tVirtualBox... "
 sudo sh -c "echo 'deb http://download.virtualbox.org/virtualbox/debian `lsb_release -cs` contrib' >> /etc/apt/sources.list" && \
 wget -q https://www.virtualbox.org/download/oracle_vbox.asc -O- | sudo apt-key add - > /dev/null && \
 sudo apt-get update > /dev/null && sudo apt-get install -q -y virtualbox-$virtualbox_version > /dev/null
+check_status
+printf "\tVirtualBox Extension Pack... "
+wget -q $virtualbox_extenpack && \
+sudo VBoxManage extpack install Oracle_VM_VirtualBox_Extension_Pack* > /dev/null && \
+rm -f $virtualbox_extenpack
 check_status
 printf "for others... "
 sudo apt-get install -q -y basket meld libreoffice gimp pinta k3b gnome-mplayer vlc wine playonlinux unetbootin > /dev/null && \
