@@ -92,15 +92,15 @@ printf "for wine, playonlinux... "
 sudo apt-get install -q -y wine playonlinux > /dev/null && \
 check_status
 printf "for images... "
-sudo apt-get install -q -y gimp pinta > /dev/null && \
+sudo apt-get install -q -y gimp pinta &> /dev/null && \
 # https://github.com/cas--/PasteImg
 sudo cp -f $dir_data/pasteimg $bin && sudo chmod +x $bin/pasteimg
 check_status
 printf "for media... "
-sudo apt-get install -q -y gnome-mplayer vlc > /dev/null && \
+sudo apt-get install -q -y gnome-mplayer vlc &> /dev/null && \
 check_status
 printf "for others... "
-sudo apt-get install -q -y basket meld k3b unetbootin > /dev/null && \
+sudo apt-get install -q -y basket meld k3b unetbootin &> /dev/null && \
 check_status
 # libreoffice doesn't support muilti-spellcheching
 #printf "plugins for LibreOffice... "
