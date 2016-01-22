@@ -199,6 +199,11 @@ sudo awk -i inplace '{if ($0 == "[Disable hibernate by default in upower]" || $0
 check_status
 
 echo "Export settings"
+printf "\t of background... "
+p="/usr/share/xfce4/backdrops"
+sudo mkdir -p $p &> /dev/null && \
+sudo cp -f $dir_data/solitude.jpg $p
+check_status
 exportlist="xfce4 compiz-1 autostart dconf Mousepad Thunar terminator"
 # xfce4     --general settings of Desktop Enviroment. Thunar settings.
 # compiz-1  --settings of compiz
