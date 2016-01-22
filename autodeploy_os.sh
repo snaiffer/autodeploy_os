@@ -46,7 +46,7 @@ echo "Installing packages:"
 sudo apt-get update > /dev/null
 printf "for console... "
 sudo add-apt-repository -y ppa:schot/gawk &> /dev/null && sudo apt-get update > /dev/null && sudo apt-get install -q -y gawk > /dev/null && \
-sudo apt-get install -q -y vim openssh-server openssh-client tree nmap iotop htop foremost > /dev/null
+sudo apt-get install -q -y vim openssh-server openssh-client tree nmap iotop htop foremost sshfs > /dev/null
 check_status
 echo -e "ssh settings:"
 printf "\t turn off GSS for fast connection... "
@@ -238,6 +238,12 @@ echo "Start 'sysbench --test=cpu run':"
 echo "================================================"
 sysbench --test=cpu run
 echo "================================================"
+
+echo
+echo "Foxit Reader PDF (very fast and pretty)"
+echo "You can download and install it manually. Go to:"
+echo "https://www.foxitsoftware.com/downloads/"
+echo "<Enter>" && read
 
 echo
 reboot_request
