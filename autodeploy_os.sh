@@ -185,13 +185,14 @@ sudo awk -i inplace '{if ($0 == "[Disable hibernate by default in upower]" || $0
 check_status
 
 echo "Export settings"
-exportlist="xfce4 compiz-1 autostart dconf Mousepad Thunar"
+exportlist="xfce4 compiz-1 autostart dconf Mousepad Thunar terminator"
 # xfce4     --general settings of Desktop Enviroment. Thunar settings.
 # compiz-1  --settings of compiz
 # autostart --autostart of System Load Indicator
 # dconf     --settings of System Load Indicator plugin
 # Mousepad  --hotkeys
 # Thunar    --
+# terminator -- settings of Terminator
 for cur in $exportlist; do
   printf "\t of $cur... "
   rm -Rf ~/.config/$cur && cp -Rf $dir_data/config/$cur ~/.config/
@@ -204,13 +205,11 @@ printf "\t of Preferred Applications... "
 mkdir -p ~/.local/share/xfce4 && \
 cp -Rf $dir_data/helpers ~/.local/share/xfce4/
 check_status
-printf "\t of Terminator... "
-# there is bug with keybind in Ubuntu!
-cp -Rf $dir_data/terminator ~/.config/ && \
 if [[ `terminator -v  | sed "s/terminator //"` < 0.97 ]]; then
+  printf "\t bug fix for Terminator with keybind... "
   sudo patch /usr/share/terminator/terminatorlib/container.py < $dir_data/terminator_close_multiterminals_withoutconfirm.patch > /dev/null
+  check_status
 fi
-check_status
 
 echo
 printf "Installing sysbench... "
