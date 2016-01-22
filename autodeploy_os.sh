@@ -3,9 +3,11 @@
 export dir_script=`dirname $0`
 export dir_data="$dir_script/data"
 export bin="/usr/bin"
-export virtualbox_version='5.0'
+
 # find out links for a newer version https://www.virtualbox.org/wiki/Downloads
-export virtualbox_extenpack='http://download.virtualbox.org/virtualbox/5.0.14/Oracle_VM_VirtualBox_Extension_Pack-5.0.14-105127.vbox-extpack'
+export virtualbox_version='5.0'
+export virtualbox_extenpack_link='http://download.virtualbox.org/virtualbox/5.0.14/Oracle_VM_VirtualBox_Extension_Pack-5.0.14-105127.vbox-extpack'
+export virtualbox_extenpack_file='Oracle_VM_VirtualBox_Extension_Pack'
 
 # auth. for sudo
 sudo echo
@@ -43,10 +45,10 @@ echo
 echo "Installing packages:"
 sudo apt-get update > /dev/null
 printf "for console... "
-sudo add-apt-repository -y ppa:ppa:schot/gawk &> /dev/null && sudo apt-get update > /dev/null && sudo apt-get install -q -y gawk > /dev/null && \
+sudo add-apt-repository -y ppa:schot/gawk &> /dev/null && sudo apt-get update > /dev/null && sudo apt-get install -q -y gawk > /dev/null && \
 sudo apt-get install -q -y vim openssh-server openssh-client tree nmap iotop htop foremost > /dev/null
 check_status
-echo -e "\t ssh settings:"
+echo -e "ssh settings:"
 printf "\t turn off GSS for fast connection... "
 sudo sh -c 'echo "GSSAPIAuthentication no" >> /etc/ssh/ssh_config'
 check_status
@@ -58,12 +60,13 @@ ControlMaster auto
 ControlPath ~/.ssh/cm_%r@%h:%p
 EOF
 check_status
-printf "for WWW... "
+echo "for WWW:"
+printf "\tBrowser, torrent-client... "
 sudo apt-get install -q -y transmission chromium-browser > /dev/null
 check_status
 printf "\tPepper Flash Player... "
 sudo add-apt-repository -y ppa:skunk/pepper-flash &> /dev/null && \
-sudo apt-get update > /dev/null && sudo apt-get install -q -y pepflashplugin-installer > /dev/null && \
+sudo apt-get update > /dev/null && sudo apt-get install -q -y pepflashplugin-installer &> /dev/null && \
 sudo sh -c 'echo ". /usr/lib/pepflashplugin-installer/pepflashplayer.sh" >> /etc/chromium-browser/default' > /dev/null
 # to check if it has been success:
 ## open chromium and input "chrome://plugins" in the address line
@@ -73,20 +76,31 @@ echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select tr
   sudo apt-get install -q -y terminator mtp-tools mtpfs pavucontrol ubuntu-restricted-extras &> /dev/null
 check_status
 echo "for VirtualBox:"
-printf "\tVirtualBox... "
 sudo sh -c "echo 'deb http://download.virtualbox.org/virtualbox/debian `lsb_release -cs` contrib' >> /etc/apt/sources.list" && \
 wget -q https://www.virtualbox.org/download/oracle_vbox.asc -O- | sudo apt-key add - > /dev/null && \
 sudo apt-get update > /dev/null && sudo apt-get install -q -y virtualbox-$virtualbox_version > /dev/null
 check_status
 printf "\tVirtualBox Extension Pack... "
-wget -q $virtualbox_extenpack && \
-sudo VBoxManage extpack install Oracle_VM_VirtualBox_Extension_Pack* > /dev/null && \
-rm -f $virtualbox_extenpack
+wget -q $virtualbox_extenpack_link && \
+sudo VBoxManage extpack install ${virtualbox_extenpack_file}* > /dev/null && \
+rm -f ${virtualbox_extenpack_file}*
 check_status
-printf "for others... "
-sudo apt-get install -q -y basket meld libreoffice gimp pinta k3b gnome-mplayer vlc wine playonlinux unetbootin > /dev/null && \
+printf "for libreoffice... "
+sudo apt-get install -q -y libreoffice > /dev/null && \
+check_status
+printf "for wine, playonlinux... "
+sudo apt-get install -q -y wine playonlinux > /dev/null && \
+check_status
+printf "for images... "
+sudo apt-get install -q -y gimp pinta > /dev/null && \
 # https://github.com/cas--/PasteImg
 sudo cp -f $dir_data/pasteimg $bin && sudo chmod +x $bin/pasteimg
+check_status
+printf "for media... "
+sudo apt-get install -q -y gnome-mplayer vlc > /dev/null && \
+check_status
+printf "for others... "
+sudo apt-get install -q -y basket meld k3b unetbootin > /dev/null && \
 check_status
 # libreoffice doesn't support muilti-spellcheching
 #printf "plugins for LibreOffice... "
