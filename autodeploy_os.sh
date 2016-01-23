@@ -249,6 +249,25 @@ echo "https://www.foxitsoftware.com/downloads/"
 echo "<Enter>" && read
 
 echo
+echo -e "MS Office
+- Mount the disk with MS_Office
+    $ sudo mount -o loop ./<MS_Office>.iso /mnt/
+- Install MS_Office throught PlayOnLinux
+- Associate formats: doc... xls... with PlayOnLinux
+    Go to PlayOnLinux options -> Settings/File associations (.docx -> Microsoft Word 2010) 
+    You need to enter separately each file type (xls,xlsx,dox,docx) and to associate it with the corresponding office program.
+  .doc
+  .docx
+  .xls
+  .xlsx
+  .ppt
+  .pptx
+- Change associative commands
+    $ sudo cp $dir_data/ms_office_associations/* /usr/share/applications/
+"
+echo "<Enter>" && read
+
+echo
 reboot_request
 #printf "Relogin... "
 #sudo service lightdm restart
