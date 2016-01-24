@@ -27,6 +27,12 @@ sudo git clone -q https://github.com/snaiffer/lib_bash_general.git /usr/lib/lib_
 source /usr/lib/lib_bash_general/lib_bash_general.sh
 check_status
 
+printf "Creating dirs... "
+mkdir -p ~/git && \
+mkdir -p ~/temp && \
+mkdir -p ~/VM_share
+check_status
+
 #printf "Set Desktop count... "
 #echo "Run obconf and go to Desktop"
 #obconf
@@ -254,7 +260,7 @@ echo -e "MS Office
     $ sudo mount -o loop ./<MS_Office>.iso /mnt/
 - Install MS_Office throught PlayOnLinux
 - Associate formats: doc... xls... with PlayOnLinux
-    Go to PlayOnLinux options -> Settings/File associations (.docx -> Microsoft Word 2010) 
+    Go to PlayOnLinux options -> Settings/File associations (.docx -> Microsoft Word 2010)
     You need to enter separately each file type (xls,xlsx,dox,docx) and to associate it with the corresponding office program.
   .doc
   .docx
