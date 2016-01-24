@@ -96,7 +96,7 @@ sudo apt-get install -q -y libreoffice &> /dev/null && \
 check_status
 printf "for wine likes programs... "
 sudo add-apt-repository -y ppa:ubuntu-wine/ppa &> /dev/null && sudo apt-get update > /dev/null && \
-sudo apt-get install -q -y wine$wine_version playonlinux > /dev/null && \
+sudo apt-get install -q -y wine$wine_version playonlinux &> /dev/null && \
 check_status
 printf "for images... "
 sudo apt-get install -q -y gimp pinta &> /dev/null && \
