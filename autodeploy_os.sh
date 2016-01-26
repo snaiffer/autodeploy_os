@@ -238,6 +238,13 @@ if [[ `terminator -v  | sed "s/terminator //"` < 0.97 ]]; then
 fi
 
 echo
+printf "Fixing bug with Lenovo IdeaPad Yoga 13... "
+# /var/log/syslog: atkbd serio0: Unknown key released (translated set 2, code 0xbe on isa0060/serio0)
+# kernel: [57478.570447] atkbd serio0: Use 'setkeycodes e03e <keycode>' to make it known
+sudo dmidecode |grep 'Lenovo IdeaPad Yoga 13' && sudo setkeycodes e03e 255
+check_status
+
+echo
 printf "Installing sysbench... "
 sudo apt-get install -q -y sysbench > /dev/null
 check_status
