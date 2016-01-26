@@ -53,7 +53,6 @@
       <property name="&lt;Super&gt;1" type="string" value="gmusicbrowser"/>
       <property name="&lt;Super&gt;2" type="string" value="pidgin"/>
       <property name="&lt;Super&gt;p" type="string" value="xfce4-display-settings --minimal"/>
-      <property name="&lt;Super&gt;3" type="string" value="abiword"/>
       <property name="&lt;Primary&gt;&lt;Alt&gt;t" type="string" value="exo-open --launch TerminalEmulator"/>
       <property name="&lt;Super&gt;r" type="string" value="xfce4-appfinder"/>
       <property name="&lt;Super&gt;4" type="string" value="gnumeric"/>
@@ -61,7 +60,6 @@
       <property name="XF86Display" type="string" value="xfce4-display-settings --minimal"/>
       <property name="&lt;Alt&gt;F1" type="string" value="xfce4-popup-applicationsmenu"/>
       <property name="XF86WWW" type="string" value="exo-open --launch WebBrowser"/>
-      <property name="XF86Mail" type="string" value="exo-open --launch MailReader"/>
       <property name="&lt;Primary&gt;&lt;Alt&gt;Escape" type="string" value="xkill"/>
       <property name="XF86Messenger" type="string" value="pidgin"/>
       <property name="XF86Calculator" type="string" value="gnome-calculator"/>
@@ -69,8 +67,7 @@
       <property name="XF86HomePage" type="string" value="exo-open --launch WebBrowser"/>
       <property name="override" type="bool" value="true"/>
       <property name="&lt;Primary&gt;&lt;Alt&gt;f" type="string" value="exo-open --launch FileManager"/>
-      <property name="&lt;Primary&gt;&lt;Alt&gt;m" type="string" value="exo-open --launch MailReader"/>
-      <property name="&lt;Primary&gt;&lt;Alt&gt;w" type="string" value="exo-open --launch WebBrowser"/>
+      <property name="&lt;Primary&gt;&lt;Alt&gt;w" type="string" value="/usr/bin/chromium-browser"/>
     </property>
   </property>
   <property name="xfwm4" type="empty">
