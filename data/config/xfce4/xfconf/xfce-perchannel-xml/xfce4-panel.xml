@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <channel name="xfce4-panel" version="1.0">
-  <property name="panels" type="uint" value="1">
+  <property name="panels" type="array">
+    <value type="int" value="0"/>
     <property name="panel-0" type="empty">
-      <property name="position" type="string" value="p=6;x=0;y=0"/>
+      <property name="position" type="string" value="p=6;x=800;y=14"/>
       <property name="length" type="uint" value="100"/>
       <property name="position-locked" type="bool" value="true"/>
       <property name="plugin-ids" type="array">
@@ -15,7 +16,6 @@
         <value type="int" value="29"/>
         <value type="int" value="4"/>
         <value type="int" value="6"/>
-        <value type="int" value="5"/>
         <value type="int" value="3"/>
         <value type="int" value="8"/>
         <value type="int" value="7"/>
@@ -42,6 +42,8 @@
         <value type="uint" value="65535"/>
       </property>
       <property name="disable-struts" type="bool" value="false"/>
+      <property name="output-name" type="string" value=""/>
+      <property name="autohide" type="bool" value="false"/>
     </property>
   </property>
   <property name="plugins" type="empty">
@@ -55,12 +57,15 @@
       <property name="size-max" type="uint" value="22"/>
       <property name="names-visible" type="array">
         <value type="string" value="networkmanager applet"/>
-        <value type="string" value="indicator-multiload"/>
         <value type="string" value="task manager"/>
+        <value type="string" value="indicator-multiload"/>
         <value type="string" value="basket"/>
+        <value type="string" value="chromium-browser"/>
+        <value type="string" value="blueman-applet"/>
+        <value type="string" value="xfce4-power-manager"/>
+        <value type="string" value="scp-dbus-service.py"/>
       </property>
     </property>
-    <property name="plugin-5" type="string" value="power-manager-plugin"/>
     <property name="plugin-6" type="string" value="indicator">
       <property name="blacklist" type="array">
         <value type="string" value="libappmenu.so"/>
@@ -69,6 +74,7 @@
         <value type="string" value="libapplication.so"/>
         <value type="string" value="com.canonical.indicator.sound"/>
         <value type="string" value="com.canonical.indicator.messages"/>
+        <value type="string" value="com.canonical.indicator.power"/>
       </property>
       <property name="single-row" type="bool" value="false"/>
       <property name="mode-whitelist" type="bool" value="false"/>
@@ -107,7 +113,7 @@
     <property name="plugin-9" type="string" value="xfce4-clipman-plugin"/>
     <property name="clipman" type="empty">
       <property name="settings" type="empty">
-        <property name="add-primary-clipboard" type="bool" value="true"/>
+        <property name="add-primary-clipboard" type="bool" value="false"/>
       </property>
     </property>
     <property name="plugin-11" type="string" value="datetime"/>
@@ -120,6 +126,27 @@
     <property name="plugin-8" type="string" value="separator">
       <property name="style" type="uint" value="3"/>
     </property>
+    <property name="plugin-13" type="string" value="directorymenu">
+      <property name="base-directory" type="string" value="/home/snaiffer"/>
+    </property>
+    <property name="plugin-5" type="string" value="whiskermenu"/>
+    <property name="plugin-15" type="string" value="xfce4-dict-plugin"/>
+    <property name="plugin-18" type="string" value="separator"/>
+    <property name="plugin-19" type="string" value="pager"/>
+    <property name="plugin-22" type="string" value="indicator">
+      <property name="known-indicators" type="array">
+        <value type="string" value="libapplication.so"/>
+        <value type="string" value="com.canonical.indicator.power"/>
+        <value type="string" value="com.canonical.indicator.messages"/>
+        <value type="string" value="com.canonical.indicator.sound"/>
+      </property>
+    </property>
+    <property name="plugin-23" type="string" value="separator"/>
+    <property name="plugin-24" type="string" value="separator"/>
+    <property name="plugin-26" type="string" value="separator"/>
+    <property name="plugin-28" type="string" value="weather"/>
+    <property name="plugin-30" type="string" value="datetime"/>
+    <property name="plugin-31" type="string" value="actions"/>
   </property>
   <property name="configver" type="int" value="2"/>
 </channel>
