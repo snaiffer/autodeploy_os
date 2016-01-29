@@ -238,7 +238,14 @@ printf "\t of Preferred Applications... "
 mkdir -p ~/.local/share/xfce4 && \
 cp -Rf $dir_data/helpers ~/.local/share/xfce4/
 check_status
+
+echo
+printf "Settings for Background... "
+rm -f ~/.config/xfce4/desktop/* > /dev/null
+check_status
+
 if [[ `terminator -v  | sed "s/terminator //"` < 0.97 ]]; then
+  echo
   printf "\t bug fix for Terminator with keybind... "
   sudo patch /usr/share/terminator/terminatorlib/container.py < $dir_data/terminator_close_multiterminals_withoutconfirm.patch > /dev/null
   check_status
@@ -291,6 +298,14 @@ echo -e "MS Office
     $ sudo cp $dir_data/ms_office_associations/* /usr/share/applications/
 "
 echo "<Enter>" && read
+
+echo
+echo -e "Background settings
+Execute after reboot:"
+echo '  sed -i "/last-image/,/$/ s/value=\".*\"/value=\"\/usr\/share\/xfce4\/backdrops\/solitude\.jpg\"/" ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml'
+echo '  sudo reboot'
+echo "<Enter>" && read
+
 
 echo
 reboot_request
