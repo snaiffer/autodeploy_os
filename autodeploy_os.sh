@@ -198,7 +198,7 @@ check_status
 printf "Installing System Load Indicator for Desktop Enviroment... "
 sudo add-apt-repository -y ppa:indicator-multiload/stable-daily &> /dev/null && \
  sudo apt-get update > /dev/null && \
- sudo apt-get install -q -y indicator-multiload > /dev/null && \
+ sudo apt-get install -q -y indicator-multiload > /dev/null
 check_status
 
 printf "Installing Windowck Plugin for moving titlebar to panel... "
@@ -206,6 +206,10 @@ sudo add-apt-repository -y ppa:eugenesan/ppa &> /dev/null && \
  sudo apt-get update > /dev/null && \
  sudo apt-get install -q -y xfce4-windowck-plugin maximus > /dev/null && \
  gconftool-2 --set /apps/maximus/no_maximize --type=bool true
+check_status
+
+printf "Installing local dictionary for xfce plugin... "
+sudo apt-get install -q -y dictd xfce4-dict mueller7accent-dict > /dev/null
 check_status
 
 printf "Allow hibirnate... "
@@ -218,7 +222,7 @@ p="/usr/share/xfce4/backdrops"
 sudo mkdir -p $p &> /dev/null && \
 sudo cp -f $dir_data/solitude.jpg $p
 check_status
-exportlist="xfce4 compiz-1 autostart dconf Mousepad Thunar terminator"
+exportlist="xfce4 compiz-1 autostart dconf Mousepad Thunar terminator xfce4-dict"
 # xfce4     --general settings of Desktop Enviroment. Thunar settings.
 # compiz-1  --settings of compiz
 # autostart --autostart of System Load Indicator
@@ -226,6 +230,7 @@ exportlist="xfce4 compiz-1 autostart dconf Mousepad Thunar terminator"
 # Mousepad  --hotkeys
 # Thunar    --
 # terminator -- settings of Terminator
+# xfce4-dict -- settings for dictionary
 for cur in $exportlist; do
   printf "\t of $cur... "
   rm -Rf ~/.config/$cur && cp -Rf $dir_data/config/$cur ~/.config/
