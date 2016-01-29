@@ -201,6 +201,13 @@ sudo add-apt-repository -y ppa:indicator-multiload/stable-daily &> /dev/null && 
  sudo apt-get install -q -y indicator-multiload > /dev/null && \
 check_status
 
+printf "Installing Windowck Plugin for moving titlebar to panel... "
+sudo add-apt-repository -y ppa:eugenesan/ppa &> /dev/null && \
+ sudo apt-get update > /dev/null && \
+ sudo apt-get install -q -y xfce4-windowck-plugin maximus > /dev/null && \
+ gconftool-2 --set /apps/maximus/no_maximize --type=bool true
+check_status
+
 printf "Allow hibirnate... "
 sudo awk -i inplace '{if ($0 == "[Disable hibernate by default in upower]" || $0 == "[Disable hibernate by default in logind]") { found=1 }; if (found == 1 && $0 ~ /^ResultActive=.*/) {print "ResultActive=yes"; found=0} else {print $0};}' /var/lib/polkit-1/localauthority/10-vendor.d/com.ubuntu.desktop.pkla
 check_status
