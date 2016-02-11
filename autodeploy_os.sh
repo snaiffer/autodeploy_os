@@ -92,11 +92,11 @@ sudo VBoxManage extpack install ${virtualbox_extenpack_file}* &> /dev/null && \
 rm -f ${virtualbox_extenpack_file}*
 check_status
 printf "for libreoffice... "
-sudo apt-get install -q -y libreoffice &> /dev/null && \
+sudo apt-get install -q -y libreoffice &> /dev/null
 check_status
 printf "for wine likes programs... "
 sudo add-apt-repository -y ppa:ubuntu-wine/ppa &> /dev/null && sudo apt-get update > /dev/null && \
-sudo apt-get install -q -y wine$wine_version playonlinux &> /dev/null && \
+sudo apt-get install -q -y wine$wine_version playonlinux &> /dev/null
 check_status
 printf "for images... "
 sudo apt-get install -q -y gimp pinta &> /dev/null && \
@@ -104,10 +104,10 @@ sudo apt-get install -q -y gimp pinta &> /dev/null && \
 sudo cp -f $dir_data/pasteimg $bin && sudo chmod +x $bin/pasteimg
 check_status
 printf "for media... "
-sudo apt-get install -q -y gnome-mplayer vlc &> /dev/null && \
+sudo apt-get install -q -y gnome-mplayer vlc &> /dev/null
 check_status
 printf "for others... "
-sudo apt-get install -q -y basket meld k3b unetbootin &> /dev/null && \
+sudo apt-get install -q -y basket meld k3b unetbootin &> /dev/null
 check_status
 # libreoffice doesn't support muilti-spellcheching
 #printf "plugins for LibreOffice... "
@@ -121,6 +121,11 @@ check_status
 echo
 printf "Installing drivers... "
 sudo ubuntu-drivers autoinstall > /dev/null
+check_status
+
+echo
+printf "Installing utils for C++ programming... "
+sudo apt-get install -q -y g++ valgrind &> /dev/null
 check_status
 
 echo
