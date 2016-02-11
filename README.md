@@ -22,3 +22,6 @@ vim ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml
 rm ~/.cache/sessions/
 sudo service lightdm restart
 ```
+
+## Others:
+- To turn on microphone: PulseAudio Configuration/Analog Stereo Duplex
