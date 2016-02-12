@@ -125,7 +125,7 @@ check_status
 
 echo
 printf "Installing utils for C++ programming... "
-sudo apt-get install -q -y g++ valgrind &> /dev/null
+sudo apt-get install -q -y g++ valgrind doxygen &> /dev/null
 check_status
 
 echo
