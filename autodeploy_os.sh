@@ -28,7 +28,7 @@ source /usr/lib/lib_bash_general/lib_bash_general.sh
 check_status
 
 printf "Creating dirs... "
-mkdir -p ~/git ~/temp ~/vm_share &> /dev/null
+mkdir -p ~/git ~/temp ~/VM_share &> /dev/null
 check_status
 
 #printf "Set Desktop count... "
