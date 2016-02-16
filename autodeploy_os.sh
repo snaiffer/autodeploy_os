@@ -106,6 +106,10 @@ check_status
 printf "for media... "
 sudo apt-get install -q -y gnome-mplayer vlc &> /dev/null
 check_status
+printf "for tlp (power saving utils)..."
+sudo add-apt-repository -y ppa:linrunner/tlp &> /dev/null && sudo apt-get update > /dev/null && \
+sudo apt-get install -q -y tlp tlp-rdw smartmontools ethtool linux-tools-`uname -r` &> /dev/null
+check_status
 printf "for others... "
 sudo apt-get install -q -y basket meld k3b unetbootin &> /dev/null
 check_status
