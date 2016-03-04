@@ -4,6 +4,9 @@ export dir_script=`dirname $0`
 export dir_data="$dir_script/data"
 export bin="/usr/bin"
 
+export git_email="snaiffer@gmail.com"
+export git_name="Alexander Danilov"
+
 # find out links for a newer version https://www.virtualbox.org/wiki/Downloads
 export virtualbox_version='5.0'
 export virtualbox_extenpack_link='http://download.virtualbox.org/virtualbox/5.0.14/Oracle_VM_VirtualBox_Extension_Pack-5.0.14-105127.vbox-extpack'
@@ -16,10 +19,18 @@ sudo echo
 
 printf "Install & Set git... "
 sudo apt-get install -q -y git > /dev/null && \
-git config --global user.email "snaiffer@gmail.com" && \
-git config --global user.name "Alexander Danilov" && \
+git config --global user.email $git_email && \
+git config --global user.name $git_name && \
 git config --global push.default matching   # push all branches
 # git config --global push.default simple   # push the current branch only
+if [[ "$?" != "0" ]]; then
+  printf "There are some errors. Do you want to continue? ( y/n )... " && read answer
+  if [[ "y" != "$answer" && "yes" != "$answer" ]]; then
+    echo "exit"
+    exit 1
+  fi
+  echo "continue"
+fi
 echo "done."
 
 printf "Intalling libraries for bash... "
@@ -53,6 +64,7 @@ sudo apt-get update > /dev/null
 printf "for console... "
 sudo add-apt-repository -y ppa:schot/gawk &> /dev/null && sudo apt-get update > /dev/null && sudo apt-get install -q -y gawk > /dev/null && \
 sudo apt-get install -q -y traceroute nethogs > /dev/null && \
+sudo apt-get install -q -y expect > /dev/null && \
 sudo apt-get install -q -y vim openssh-server openssh-client tree nmap iotop htop foremost sshfs powertop &> /dev/null
 check_status
 echo -e "ssh settings:"
@@ -243,15 +255,18 @@ exportlist="xfce4 compiz-1 autostart dconf Mousepad Thunar terminator xfce4-dict
 # xfce4-dict -- settings for dictionary
 for cur in $exportlist; do
   printf "\t of $cur... "
-  rm -Rf ~/.config/$cur && cp -Rf $dir_data/config/$cur ~/.config/
+  rm -Rf ~/.config/$cur && cp -Rf $dir_data/config/$cur ~/.config/ && \
+    find ~/.config/$cur -type f -print0 | xargs -0 sed "s/snaiffer/$SUDO_USER/g"
   check_status
 done
 printf "\t of DockbarX... "
-rm -Rf ~/.gconf && cp -Rf $dir_data/gconf ~/.gconf
+rm -Rf ~/.gconf && cp -Rf $dir_data/gconf ~/.gconf && \
+  find ~/.gconf -type f -print0 | xargs -0 sed "s/snaiffer/$SUDO_USER/g"
 check_status
 printf "\t of Preferred Applications... "
 mkdir -p ~/.local/share/xfce4 && \
-cp -Rf $dir_data/helpers ~/.local/share/xfce4/
+cp -Rf $dir_data/helpers ~/.local/share/xfce4/ && \
+  find ~/.local/share/xfce4/helpers -type f -print0 | xargs -0 sed "s/snaiffer/$SUDO_USER/g"
 check_status
 
 echo

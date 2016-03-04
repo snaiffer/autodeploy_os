@@ -3,6 +3,7 @@
 ## Requements:
 - Debian family
 - LXDE, XFCE(???) desktop managers
+- home dir has to be "/home/<user_name>"
 
 ## It has been tested on:
 - Xubuntu 14.04.3 amd64
