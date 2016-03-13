@@ -249,11 +249,15 @@ p="/usr/share/xfce4/backdrops"
 sudo mkdir -p $p &> /dev/null && \
 sudo cp -f $dir_data/solitude.jpg $p
 check_status
-exportlist="xfce4 compiz-1 autostart dconf Mousepad Thunar terminator xfce4-dict"
+#exportlist="xfce4 compiz-1 autostart dconf Mousepad Thunar terminator xfce4-dict"
+exportlist="xfce4 compiz-1 autostart Mousepad Thunar terminator xfce4-dict"
 # xfce4     --general settings of Desktop Enviroment. Thunar settings.
 # compiz-1  --settings of compiz
 # autostart --autostart of System Load Indicator
-# dconf     --settings of System Load Indicator plugin
+
+## dconf     --settings of System Load Indicator plugin <= it is loaded from dump now (test mode)
+## remove dconf dir from data_dir, when it will be tested
+
 # Mousepad  --hotkeys
 # Thunar    --
 # terminator -- settings of Terminator
@@ -272,6 +276,12 @@ printf "\t of Preferred Applications... "
 mkdir -p ~/.local/share/xfce4 && \
 cp -Rf $dir_data/helpers ~/.local/share/xfce4/ && \
   find ~/.local/share/xfce4/helpers -type f -print0 | xargs -0 sed "s/snaiffer/$SUDO_USER/g"
+check_status
+printf "\t of System load indicator... "
+sudo cp $dir_data/indicator-multiload-settings /usr/bin/ && \
+  sudo chmod +x /usr/bin/indicator-multiload-settings
+# by hand:
+## cat $dir_data/system_load_indicator.dconf.dump | dconf load /de/mh21/indicator-multiload/
 check_status
 
 echo

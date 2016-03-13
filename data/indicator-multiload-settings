@@ -1,0 +1,3 @@
+#!/bin/bash
+
+cat /usr/bin/system_load_indicator.dconf.dump | dconf load /de/mh21/indicator-multiload/
