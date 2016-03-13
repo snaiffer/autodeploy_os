@@ -1,15 +1,4 @@
 #!/bin/sh
-# http://www.smallbulb.net/2014/640-xubuntu-upgrade-to-13-10-with-troubles
-# This script gets NetworkManager out of suspend.
-case $1 in
-    suspend|suspend_hybrid|hibernate)
-        # No need to do anything here.
-        ;;
-    resume|thaw)
-        #nmcli nm sleep false
-        if [ "`nmcli -f state -t nm`" = "asleep" ]; then
-          service network-manager restart
-        fi
-        ;;
-esac
 
+sleep 3
+service network-manager restart

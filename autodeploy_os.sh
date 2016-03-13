@@ -238,10 +238,6 @@ check_status
 printf "Allow hibirnate... "
 sudo awk -i inplace '{if ($0 == "[Disable hibernate by default in upower]" || $0 == "[Disable hibernate by default in logind]") { found=1 }; if (found == 1 && $0 ~ /^ResultActive=.*/) {print "ResultActive=yes"; found=0} else {print $0};}' /var/lib/polkit-1/localauthority/10-vendor.d/com.ubuntu.desktop.pkla
 check_status
-printf "Fixing bug with network after hibirnate... "
-sudo cp -f $dir_data/55_local_networkmanager /etc/pm/sleep.d/55_local_networkmanager && \
-  chmod +x /etc/pm/sleep.d/55_local_networkmanager
-check_status
 
 echo "Export settings"
 printf "\t of background... "
@@ -301,6 +297,14 @@ printf "Fixing bug with xfce-sessions... "
 # Even if sessions are turn off xfce make them and it follow to bugs of Desktop after reboot
 rm -f ~/.cache/sessions/* > /dev/null && \
 chmod -w ~/.cache/sessions
+check_status
+
+echo
+printf "Fixing bug with network... "
+sudo cp -f $dir_data/55_local_networkmanager /etc/pm/sleep.d/55_local_networkmanager && \
+  chmod +x /etc/pm/sleep.d/55_local_networkmanager && \
+sudo cp -f $dir_data/55_local_networkmanager /etc/pm/power.d/55_local_networkmanager && \
+  chmod +x /etc/pm/power.d/55_local_networkmanager
 check_status
 
 echo
