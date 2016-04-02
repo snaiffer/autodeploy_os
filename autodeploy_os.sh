@@ -143,6 +143,8 @@ check_status
 
 echo
 printf "Installing utils for C++ programming... "
+sudo add-apt-repository -y ppa:george-edison55/cmake-3.x &> /dev/null && \
+ sudo apt-get update > /dev/null && \
 sudo apt-get install -q -y g++ valgrind doxygen cmake gdb clang &> /dev/null
 check_status
 
