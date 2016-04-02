@@ -303,8 +303,6 @@ echo
 printf "Fixing bug with network... "
 sudo cp -f $dir_data/55_local_networkmanager /etc/pm/sleep.d/55_local_networkmanager && \
   chmod +x /etc/pm/sleep.d/55_local_networkmanager && \
-sudo cp -f $dir_data/55_local_networkmanager /etc/pm/power.d/55_local_networkmanager && \
-  chmod +x /etc/pm/power.d/55_local_networkmanager
 check_status
 
 echo
