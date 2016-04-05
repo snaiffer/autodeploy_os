@@ -125,7 +125,7 @@ sudo add-apt-repository -y ppa:linrunner/tlp &> /dev/null && sudo apt-get update
 sudo apt-get install -q -y tlp tlp-rdw smartmontools ethtool linux-tools-`uname -r` &> /dev/null
 check_status
 printf "for others... "
-sudo apt-get install -q -y basket meld k3b unetbootin &> /dev/null
+sudo apt-get install -q -y basket k3b unetbootin &> /dev/null
 check_status
 # libreoffice doesn't support muilti-spellcheching
 #printf "plugins for LibreOffice... "
@@ -171,6 +171,14 @@ rm -Rf ~/.vim ~/.vimrc && \
 git clone -q https://github.com/snaiffer/vim.git ~/.vim && \
 ln -s ~/.vim/vimrc ~/.vimrc && \
 vim -c "BundleInstall" -c 'qa!'
+check_status
+
+printf "Installing git-meld... "
+sudo apt-get install -q -y meld &> /dev/null && \
+# https://github.com/wmanley/git-meld
+sudo cp -f $dir_data/git-meld.pl $bin && sudo chmod +x $bin/git-meld.pl && \
+echo "[alias]
+  meld = !$bin/git-meld.pl" >> ~/.gitconfig
 check_status
 
 printf "Turn off apport... "
