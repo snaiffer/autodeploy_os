@@ -19,8 +19,10 @@ In case of problems with desktop or background image:
 
 ```sh
 rm ~/.config/xfce4/desktop/*
+# Change to
+# <property name="last-image" type="string" value="/usr/share/xfce4/backdrops/solitude.jpg"/>
 vim ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml
-rm ~/.cache/sessions/
+rm ~/.cache/sessions/*
 sudo service lightdm restart
 ```
 

@@ -1,11 +1,19 @@
 #!/bin/bash
 
+echo "To leave settings as in example - just press <Enter>"
+echo
+
 export dir_script=`dirname $0`
 export dir_data="$dir_script/data"
 export bin="/usr/bin"
 
 export git_email="snaiffer@gmail.com"
 export git_name="Alexander Danilov"
+echo "Git settings:"
+printf "\temail ($git_email):"
+read temp; if [[ "$temp" != "" ]]; then export git_email=$temp; fi
+printf "\tname ($git_name):"
+read temp; if [[ "$temp" != "" ]]; then export git_name=$temp; fi
 
 # find out links for a newer version https://www.virtualbox.org/wiki/Downloads
 export virtualbox_version='5.0'
@@ -67,6 +75,11 @@ sudo apt-get install -q -y traceroute nethogs > /dev/null && \
 sudo apt-get install -q -y expect > /dev/null && \
 sudo apt-get install -q -y alien > /dev/null && \
 sudo apt-get install -q -y vim openssh-server openssh-client tree nmap iotop htop foremost sshfs powertop &> /dev/null
+check_status
+printf "markdown terminal viewer... "
+sudo apt install -q -y python2.7 python-pip > /dev/null && \
+sudo pip install markdown pygments pyyaml > /dev/null && \
+sudo git clone -q https://github.com/axiros/terminal_markdown_viewer $bin/terminal_markdown_viewer
 check_status
 echo -e "ssh settings:"
 printf "\t turn off GSS for fast connection... "
