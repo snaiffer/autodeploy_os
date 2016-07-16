@@ -311,8 +311,10 @@ check_status
 
 echo
 printf "Fixing bug with network... "
+sudo cp -f $dir_data/wifi_unfreeze /bin/ && \
+  chmod +x /bin/wifi_unfreeze && \
 sudo cp -f $dir_data/55_local_networkmanager /etc/pm/sleep.d/55_local_networkmanager && \
-  chmod +x /etc/pm/sleep.d/55_local_networkmanager && \
+  chmod +x /etc/pm/sleep.d/55_local_networkmanager
 check_status
 
 echo
