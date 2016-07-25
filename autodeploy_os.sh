@@ -329,6 +329,15 @@ sudo cp -f $dir_data/55_local_networkmanager /etc/pm/sleep.d/55_local_networkman
 check_status
 
 echo
+printf "Fixing 'Open with other application...' saving chose... "
+if [ -d ~/.local/share/applications ]; then
+  # back up file application. For what is its file?
+  mv ~/.local/share/applications ~/.local/share/applications.bac &> /dev/null && \
+  mkdir -p ~/.local/share/applications &> /dev/null
+fi
+check_status
+
+echo
 printf "Fixing bug with Lenovo IdeaPad Yoga 13... "
 # /var/log/syslog: atkbd serio0: Unknown key released (translated set 2, code 0xbe on isa0060/serio0)
 # kernel: [57478.570447] atkbd serio0: Use 'setkeycodes e03e <keycode>' to make it known
