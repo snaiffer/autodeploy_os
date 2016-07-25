@@ -2,17 +2,9 @@
 
 case "$1" in
   hibernate|suspend)
-    #nmcli nm sleep true
-    #sleep 1
-    #modprobe -rf ath9k
   ;;
   thaw|resume)
-    sleep 1
-    #nmcli nm sleep true
-    #modprobe -rf ath9k
-    nmcli nm sleep false --timeout 10
-    #modprobe ath9k
-    #killall wpa_supplicant
+    /bin/wifi_unfreeze &
   ;;
   *) exit $NA
   ;;

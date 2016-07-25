@@ -1,0 +1,21 @@
+#!/bin/bash
+
+while true; do
+  sleep 8
+
+  nmcli nm status | grep " connected" &> /dev/null
+  if [[ "$?" == "0" ]]; then break; fi
+
+  ping www.google.com -c 1 &> /dev/null
+  if [[ "$?" == "0" ]]; then break; fi
+  echo "Trying to unfreez wifi"
+
+  nmcli nm wifi off
+  nmcli nm wifi on
+
+  sudo nmcli nm sleep true
+  sleep 1
+  sudo nmcli nm sleep false
+done
+
+exit 0;
