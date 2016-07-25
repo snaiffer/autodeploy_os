@@ -94,8 +94,11 @@ ControlPath ~/.ssh/cm_%r@%h:%p
 EOF
 check_status
 echo "for WWW:"
-printf "\tBrowser, torrent-client... "
+printf "\tchromium-browser, torrent-client... "
 sudo apt-get install -q -y transmission chromium-browser > /dev/null
+check_status
+printf "\tset chromium-browser by default... "
+sudo sed -i "s/firefox.desktop/chromium-browser.desktop/g" /usr/share/applications/defaults.list
 check_status
 printf "\tPepper Flash Player... "
 sudo add-apt-repository -y ppa:skunk/pepper-flash &> /dev/null && \
