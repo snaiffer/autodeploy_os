@@ -74,7 +74,7 @@ sudo add-apt-repository -y ppa:schot/gawk &> /dev/null && sudo apt-get update > 
 sudo apt-get install -q -y traceroute nethogs > /dev/null && \
 sudo apt-get install -q -y expect > /dev/null && \
 sudo apt-get install -q -y alien > /dev/null && \
-sudo apt-get install -q -y vim openssh-server openssh-client tree nmap iotop htop foremost sshfs powertop &> /dev/null
+sudo apt-get install -q -y vim openssh-server openssh-client tree nmap iotop htop foremost sshfs powertop bless &> /dev/null
 check_status
 printf "markdown terminal viewer... "
 sudo apt install -q -y python2.7 python-pip > /dev/null && \
