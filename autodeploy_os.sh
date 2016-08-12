@@ -22,6 +22,8 @@ export virtualbox_extenpack_file='Oracle_VM_VirtualBox_Extension_Pack'
 
 export wine_version='1.8-amd64'
 
+export hamachi_link='https://www.vpn.net/installers/logmein-hamachi_2.1.0.165-1_amd64.deb'
+
 # auth. for sudo
 sudo echo
 
@@ -169,6 +171,17 @@ printf "Set keyboardlayout switcher by Caps key... "
 sudo sed -i "s/XKBOPTIONS=\"/XKBOPTIONS=\"grp:caps_toggle\,/" /etc/default/keyboard
 ## work on HP Pavilion laptop with Lubuntu
 #sudo cp -f $dir_data/keyboardlayout_switcher.desktop /etc/xdg/autostart/
+check_status
+
+echo
+printf "Installing and setting Hamachi VPN network... "
+sudo wget -q $hamachi_link -P /tmp/ && \
+  sudo dpkg -i /tmp/logmein-hamachi_*.deb &> /dev/null && \
+  sudo hamachi login && \
+  sudo hamachi set-nick `uname -n` && \
+  echo "Join to snaifvpn..." && \
+  sudo hamachi join snaifvpn && \
+  sudo hamachi list
 check_status
 
 printf "Clone syncfrom... "
