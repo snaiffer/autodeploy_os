@@ -76,7 +76,9 @@ sudo add-apt-repository -y ppa:schot/gawk &> /dev/null && sudo apt-get update > 
 sudo apt-get install -q -y traceroute nethogs > /dev/null && \
 sudo apt-get install -q -y expect > /dev/null && \
 sudo apt-get install -q -y alien > /dev/null && \
-sudo apt-get install -q -y vim openssh-server openssh-client tree nmap iotop htop foremost sshfs powertop bless &> /dev/null
+sudo apt-get install -q -y vim > /dev/null && \
+sudo apt-get install -q -y vim-gui-common > /dev/null && \  # GUI features. Don't install it on a server
+sudo apt-get install -q -y openssh-server openssh-client tree nmap iotop htop foremost sshfs powertop bless &> /dev/null
 check_status
 printf "markdown terminal viewer... "
 sudo apt install -q -y python2.7 python-pip > /dev/null && \
