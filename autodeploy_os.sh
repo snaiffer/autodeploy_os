@@ -24,6 +24,8 @@ export wine_version='1.8-amd64'
 
 export hamachi_link='https://www.vpn.net/installers/logmein-hamachi_2.1.0.165-1_amd64.deb'
 
+export java_version='java8'
+
 # auth. for sudo
 sudo echo
 
@@ -109,6 +111,9 @@ sudo sh -c 'echo ". /usr/lib/pepflashplugin-installer/pepflashplayer.sh" >> /etc
 # to check if it has been success:
 ## open chromium and input "chrome://plugins" in the address line
 check_status
+printf "\tJava... "
+sudo add-apt-repository -y ppa:webupd8team/java &> /dev/null && \
+sudo apt-get update > /dev/null && sudo apt-get install -q -y oracle-$java_version-installer &> /dev/null && \
 printf "for systems... "
 echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | sudo debconf-set-selections && \
   sudo apt-get install -q -y terminator mtp-tools mtpfs pavucontrol ubuntu-restricted-extras &> /dev/null
