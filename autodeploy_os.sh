@@ -122,7 +122,8 @@ echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select tr
 check_status
 echo "for VirtualBox:"
 sudo sh -c "echo 'deb http://download.virtualbox.org/virtualbox/debian `lsb_release -cs` contrib' >> /etc/apt/sources.list" && \
-wget -q https://www.virtualbox.org/download/oracle_vbox.asc -O- | sudo apt-key add - > /dev/null && \
+#wget -q https://www.virtualbox.org/download/oracle_vbox.asc -O- | sudo apt-key add - > /dev/null && \
+wget -q https://www.virtualbox.org/download/oracle_vbox_2016.asc -O- | sudo apt-key add - > /dev/null && \
 sudo apt-get update > /dev/null && sudo apt-get install -q -y virtualbox-$virtualbox_version > /dev/null
 check_status
 printf "\tVirtualBox Extension Pack... "
@@ -135,7 +136,10 @@ sudo apt-get install -q -y libreoffice &> /dev/null
 check_status
 printf "for wine likes programs... "
 sudo add-apt-repository -y ppa:ubuntu-wine/ppa &> /dev/null && sudo apt-get update > /dev/null && \
-sudo apt-get install -q -y wine$wine_version playonlinux &> /dev/null
+sudo apt-get install -q -y wine$wine_version playonlinux &> /dev/null && \
+sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E0F72778C4676186 && \
+sudo wget http://deb.playonlinux.com/playonlinux_trusty.list -O /etc/apt/sources.list.d/playonlinux.list && \
+sudo apt-get update > /dev/null && sudo apt-get install -q -y playonlinux > /dev/null
 check_status
 printf "for images... "
 sudo apt-get install -q -y gimp pinta &> /dev/null && \
