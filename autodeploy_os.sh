@@ -36,6 +36,8 @@ git config --global user.name $git_name && \
 git config --global push.default matching   # push all branches
 # git config --global push.default simple   # push the current branch only
 git config --global diff.submodule log  # get info about changes in submodules with help of "git diff"
+git config --global diff.tool meld
+git config --global merge.tool meld
 if [[ "$?" != "0" ]]; then
   printf "There are some errors. Do you want to continue? ( y/n )... " && read answer
   if [[ "y" != "$answer" && "yes" != "$answer" ]]; then
