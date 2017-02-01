@@ -161,7 +161,7 @@ sudo add-apt-repository -y ppa:linrunner/tlp &> /dev/null && sudo apt-get update
 sudo apt-get install -q -y tlp tlp-rdw smartmontools ethtool linux-tools-`uname -r` &> /dev/null
 check_status
 printf "for others... "
-sudo apt-get install -q -y basket k3b unetbootin meld &> /dev/null
+sudo apt-get install -q -y basket baobab k3b unetbootin meld &> /dev/null
 check_status
 # libreoffice doesn't support muilti-spellcheching
 #printf "plugins for LibreOffice... "
