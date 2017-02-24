@@ -103,9 +103,6 @@ ControlPath ~/.ssh/cm_%r@%h:%p
 EOF
 check_status
 echo "for WWW:"
-printf "\tchromium-browser, torrent-client... "
-sudo apt-get install -q -y transmission chromium-browser > /dev/null
-check_status
 printf "\tset chromium-browser by default... "
 sudo sed -i "s/firefox.desktop/chromium-browser.desktop/g" /usr/share/applications/defaults.list
 check_status
@@ -115,6 +112,12 @@ sudo apt-get update > /dev/null && sudo apt-get install -q -y pepflashplugin-ins
 sudo sh -c 'echo ". /usr/lib/pepflashplugin-installer/pepflashplayer.sh" >> /etc/chromium-browser/default' > /dev/null
 # to check if it has been success:
 ## open chromium and input "chrome://plugins" in the address line
+check_status
+printf "\tchrome-browser... "
+wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add - > /dev/null && \
+sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list' && \
+sudo apt-get update > /dev/null && \
+sudo apt install -q -y google-chrome-stable &> /dev/null
 check_status
 printf "\tJava... "
 sudo add-apt-repository -y ppa:webupd8team/java &> /dev/null && \
