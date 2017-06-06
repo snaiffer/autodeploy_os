@@ -30,7 +30,7 @@ export java_version='java8'
 sudo echo
 
 printf "Install & Set git... "
-sudo apt-get install -q -y git > /dev/null && \
+sudo apt install -q -y git > /dev/null && \
 git config --global user.email $git_email && \
 git config --global user.name $git_name && \
 git config --global push.default matching   # push all branches
@@ -70,20 +70,20 @@ check_status
 
 echo
 printf "Removing packages... "
-sudo apt-get remove -q -y abiword* gnumeric* xfburn parole gmusicbrowser xfce4-notes firefox xfce4-terminal > /dev/null
+sudo apt remove -q -y abiword* gnumeric* xfburn parole gmusicbrowser xfce4-notes firefox xfce4-terminal > /dev/null
 check_status
 
 echo
 echo "Installing packages:"
-sudo apt-get update > /dev/null
+sudo apt update > /dev/null
 printf "for console... "
-sudo add-apt-repository -y ppa:schot/gawk &> /dev/null && sudo apt-get update > /dev/null && sudo apt-get install -q -y gawk > /dev/null && \
-sudo apt-get install -q -y traceroute nethogs > /dev/null && \
-sudo apt-get install -q -y expect > /dev/null && \
-sudo apt-get install -q -y alien > /dev/null && \
-sudo apt-get install -q -y vim > /dev/null && \
-sudo apt-get install -q -y vim-gui-common > /dev/null && \  # GUI features. Don't install it on a server
-sudo apt-get install -q -y openssh-server openssh-client tree nmap iotop htop foremost sshfs powertop bless &> /dev/null
+sudo add-apt-repository -y ppa:schot/gawk &> /dev/null && sudo apt update > /dev/null && sudo apt-get install -q -y gawk > /dev/null && \
+sudo apt install -q -y traceroute nethogs > /dev/null && \
+sudo apt install -q -y expect > /dev/null && \
+sudo apt install -q -y alien > /dev/null && \
+sudo apt install -q -y vim > /dev/null && \
+sudo apt install -q -y vim-gui-common > /dev/null && \  # GUI features. Don't install it on a server
+sudo apt install -q -y openssh-server openssh-client tree nmap iotop htop foremost sshfs powertop bless &> /dev/null
 check_status
 printf "markdown terminal viewer... "
 sudo apt install -q -y python2.7 python-pip > /dev/null && \
@@ -108,7 +108,7 @@ sudo sed -i "s/firefox.desktop/chromium-browser.desktop/g" /usr/share/applicatio
 check_status
 printf "\tPepper Flash Player... "
 sudo add-apt-repository -y ppa:skunk/pepper-flash &> /dev/null && \
-sudo apt-get update > /dev/null && sudo apt-get install -q -y pepflashplugin-installer &> /dev/null && \
+sudo apt update > /dev/null && sudo apt-get install -q -y pepflashplugin-installer &> /dev/null && \
 sudo sh -c 'echo ". /usr/lib/pepflashplugin-installer/pepflashplayer.sh" >> /etc/chromium-browser/default' > /dev/null
 # to check if it has been success:
 ## open chromium and input "chrome://plugins" in the address line
@@ -116,21 +116,21 @@ check_status
 printf "\tchrome-browser... "
 wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add - > /dev/null && \
 sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list' && \
-sudo apt-get update > /dev/null && \
+sudo apt update > /dev/null && \
 sudo apt install -q -y google-chrome-stable &> /dev/null
 check_status
 printf "\tJava... "
 sudo add-apt-repository -y ppa:webupd8team/java &> /dev/null && \
-sudo apt-get update > /dev/null && sudo apt-get install -q -y oracle-$java_version-installer &> /dev/null && \
+sudo apt update > /dev/null && sudo apt-get install -q -y oracle-$java_version-installer &> /dev/null && \
 printf "for systems... "
 echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | sudo debconf-set-selections && \
-  sudo apt-get install -q -y terminator mtp-tools mtpfs pavucontrol ubuntu-restricted-extras &> /dev/null
+  sudo apt install -q -y terminator mtp-tools mtpfs pavucontrol ubuntu-restricted-extras &> /dev/null
 check_status
 echo "for VirtualBox:"
 sudo sh -c "echo 'deb http://download.virtualbox.org/virtualbox/debian `lsb_release -cs` contrib' >> /etc/apt/sources.list" && \
 #wget -q https://www.virtualbox.org/download/oracle_vbox.asc -O- | sudo apt-key add - > /dev/null && \
 wget -q https://www.virtualbox.org/download/oracle_vbox_2016.asc -O- | sudo apt-key add - > /dev/null && \
-sudo apt-get update > /dev/null && sudo apt-get install -q -y virtualbox-$virtualbox_version > /dev/null
+sudo apt update > /dev/null && sudo apt-get install -q -y virtualbox-$virtualbox_version > /dev/null
 check_status
 printf "\tVirtualBox Extension Pack... "
 wget -q $virtualbox_extenpack_link && \
@@ -138,33 +138,33 @@ sudo VBoxManage extpack install ${virtualbox_extenpack_file}* &> /dev/null && \
 rm -f ${virtualbox_extenpack_file}*
 check_status
 printf "for libreoffice... "
-sudo apt-get install -q -y libreoffice &> /dev/null
+sudo apt install -q -y libreoffice &> /dev/null
 check_status
 printf "for wireshark... "
-sudo add-apt-repository -y ppa:wireshark-dev/stable &> /dev/null && sudo apt-get update > /dev/null && \
-sudo apt-get install -q -y wireshark &> /dev/null
+sudo add-apt-repository -y ppa:wireshark-dev/stable &> /dev/null && sudo apt update > /dev/null && \
+sudo apt install -q -y wireshark &> /dev/null
 check_status
 printf "for wine likes programs... "
-sudo add-apt-repository -y ppa:ubuntu-wine/ppa &> /dev/null && sudo apt-get update > /dev/null && \
-sudo apt-get install -q -y wine$wine_version playonlinux &> /dev/null && \
+sudo add-apt-repository -y ppa:ubuntu-wine/ppa &> /dev/null && sudo apt update > /dev/null && \
+sudo apt install -q -y wine$wine_version playonlinux &> /dev/null && \
 sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E0F72778C4676186 && \
 sudo wget http://deb.playonlinux.com/playonlinux_trusty.list -O /etc/apt/sources.list.d/playonlinux.list && \
-sudo apt-get update > /dev/null && sudo apt-get install -q -y playonlinux > /dev/null
+sudo apt update > /dev/null && sudo apt-get install -q -y playonlinux > /dev/null
 check_status
 printf "for images... "
-sudo apt-get install -q -y gimp pinta &> /dev/null && \
+sudo apt install -q -y gimp pinta gthumb &> /dev/null && \
 # https://github.com/cas--/PasteImg
 sudo cp -f $dir_data/pasteimg $bin && sudo chmod +x $bin/pasteimg
 check_status
 printf "for media... "
-sudo apt-get install -q -y gnome-mplayer vlc &> /dev/null
+sudo apt install -q -y gnome-mplayer vlc &> /dev/null
 check_status
 printf "for tlp (power saving utils)..."
-sudo add-apt-repository -y ppa:linrunner/tlp &> /dev/null && sudo apt-get update > /dev/null && \
-sudo apt-get install -q -y tlp tlp-rdw smartmontools ethtool linux-tools-`uname -r` &> /dev/null
+sudo add-apt-repository -y ppa:linrunner/tlp &> /dev/null && sudo apt update > /dev/null && \
+sudo apt install -q -y tlp tlp-rdw smartmontools ethtool linux-tools-`uname -r` &> /dev/null
 check_status
 printf "for others... "
-sudo apt-get install -q -y basket baobab k3b unetbootin meld &> /dev/null
+sudo apt install -q -y basket baobab k3b unetbootin meld &> /dev/null
 check_status
 # libreoffice doesn't support muilti-spellcheching
 #printf "plugins for LibreOffice... "
@@ -183,8 +183,8 @@ check_status
 echo
 printf "Installing utils for C++ programming... "
 sudo add-apt-repository -y ppa:george-edison55/cmake-3.x &> /dev/null && \
- sudo apt-get update > /dev/null && \
-sudo apt-get install -q -y g++ valgrind doxygen cmake gdb clang &> /dev/null
+ sudo apt update > /dev/null && \
+sudo apt install -q -y g++ valgrind doxygen cmake gdb clang &> /dev/null
 check_status
 
 echo
@@ -216,7 +216,7 @@ sudo ~/.bash_env/install.sh > /dev/null
 check_status
 
 printf "Setting vim... "
-sudo apt-get install -q -y vim git ctags clang libclang-dev > /dev/null && \
+sudo apt install -q -y vim git ctags clang libclang-dev > /dev/null && \
 rm -Rf ~/.vim ~/.vimrc && \
 git clone -q https://github.com/snaiffer/vim.git ~/.vim && \
 ln -s ~/.vim/vimrc ~/.vimrc && \
@@ -230,7 +230,7 @@ check_status
 echo
 echo "Setting Desktop Enviroment"
 printf "Installing compiz (windows manager)... "
-sudo apt-get install -q -y compiz compiz-plugins compizconfig-settings-manager metacity dconf-tools > /dev/null
+sudo apt install -q -y compiz compiz-plugins compizconfig-settings-manager metacity dconf-tools > /dev/null
 check_status
 
 printf "Switch xfwm4 to compiz. Autostart compiz... "
@@ -248,15 +248,15 @@ printf "Setting the windows manager enviroment... "
 check_status
 
 printf "Installing plugins for Desktop Enviroment... "
-sudo apt-get install -q -y xfce4-clipman-plugin xfce4-datetime-plugin xfce4-time-out-plugin > /dev/null
+sudo apt install -q -y xfce4-clipman-plugin xfce4-datetime-plugin xfce4-time-out-plugin > /dev/null
 check_status
 
 printf "Installing DockbarX (side-panel) ... "
 # http://www.webupd8.org/2013/03/dockbarx-available-as-xfce-panel-plugin.html
 # if you want preview: install compiz and add KDE compability
 sudo add-apt-repository -y ppa:dockbar-main/ppa &> /dev/null && \
- sudo apt-get update > /dev/null && \
- sudo apt-get install -q -y --no-install-recommends xfce4-dockbarx-plugin > /dev/null
+ sudo apt update > /dev/null && \
+ sudo apt install -q -y --no-install-recommends xfce4-dockbarx-plugin > /dev/null
 check_status
 
 printf "Adding to autostart DockbarX ... "
@@ -272,19 +272,19 @@ check_status
 
 printf "Installing System Load Indicator for Desktop Enviroment... "
 sudo add-apt-repository -y ppa:indicator-multiload/stable-daily &> /dev/null && \
- sudo apt-get update > /dev/null && \
- sudo apt-get install -q -y indicator-multiload > /dev/null
+ sudo apt update > /dev/null && \
+ sudo apt install -q -y indicator-multiload > /dev/null
 check_status
 
 printf "Installing Windowck Plugin for moving titlebar to panel... "
 sudo add-apt-repository -y ppa:eugenesan/ppa &> /dev/null && \
- sudo apt-get update > /dev/null && \
- sudo apt-get install -q -y xfce4-windowck-plugin maximus > /dev/null && \
+ sudo apt update > /dev/null && \
+ sudo apt install -q -y xfce4-windowck-plugin maximus > /dev/null && \
  gconftool-2 --set /apps/maximus/no_maximize --type=bool true
 check_status
 
 printf "Installing local dictionary for xfce plugin... "
-sudo apt-get install -q -y dictd xfce4-dict mueller7accent-dict > /dev/null
+sudo apt install -q -y dictd xfce4-dict mueller7accent-dict > /dev/null
 check_status
 
 printf "Allow hibirnate... "
@@ -378,7 +378,7 @@ check_status
 
 echo
 printf "Installing sysbench... "
-sudo apt-get install -q -y sysbench > /dev/null
+sudo apt install -q -y sysbench > /dev/null
 check_status
 echo "Start 'sysbench --test=cpu run':"
 echo "================================================"
