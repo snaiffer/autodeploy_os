@@ -1,8 +1,5 @@
 #!/bin/bash
 
-b=$(tput bold)	# bold text
-n=$(tput sgr0)	# normal text
-
 echo "To leave settings as in example - just press <Enter>"
 echo
 
@@ -12,10 +9,10 @@ export bin="/usr/bin"
 
 export git_email="a.danilov@runabank.ru"
 export git_name="Alexander Danilov"
-echo "${b}Git settings:${n}"
-printf "${b}\temail ($git_email):${n}"
+echo "Git settings:"
+printf "\temail ($git_email):"
 read temp; if [[ "$temp" != "" ]]; then export git_email=$temp; fi
-printf "${b}\tname ($git_name):${n}"
+printf "\tname ($git_name):"
 read temp; if [[ "$temp" != "" ]]; then export git_name=$temp; fi
 
 # find out links for a newer version https://www.virtualbox.org/wiki/Downloads
@@ -31,7 +28,7 @@ export java_version='java8'
 # auth. for sudo
 sudo echo
 
-printf "${b}Install & Set git... ${n}"
+printf "Install & Set git... "
 sudo apt-get install -q -y git && \
 git config --global user.email $git_email && \
 git config --global user.name $git_name && \
@@ -50,9 +47,9 @@ if [[ "$?" != "0" ]]; then
 fi
 echo "done."
 
-printf "${b}Intalling libraries for bash... ${n}"
-sudo git clone -q https://github.com/snaiffer/lib_bash_general.git /usr/lib/lib_bash_general && \
-source /usr/lib/lib_bash_general/lib_bash_general.sh
+printf "Intalling libraries for bash... "
+sudo git clone -q https://github.com/snaiffer/libbash.git /usr/lib/bash && \
+source /usr/lib/bash/general.sh
 check_status
 
 printf "${b}Creating dirs... ${n}"
@@ -187,6 +184,12 @@ check_status
 #  wget -q $libreoffice_languagetools http://extensions.libreoffice.org/extension-center/russian-spellcheck-dictionary.-based-on-works-of-aot-group/pscreleasefolder.2011-09-06.6209385965/0.4.0/dict_ru_ru-aot-0-4-0.oxt -P $dir_download && \
 #  rm -Rf $dir_download
 #check_status
+
+echo
+printf "${b}Forward copy/paste-buffer via ssh... ${n}"
+sudo apt-get install -q -y xclip && \
+  echo "ForwardX11 yes" >> ~/.ssh/config
+check_status
 
 echo
 printf "${b}Installing drivers... ${n}"
