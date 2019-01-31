@@ -19,8 +19,6 @@ read temp; if [[ "$temp" != "" ]]; then export git_name=$temp; fi
 #export virtualbox_extenpack_link='https://download.virtualbox.org/virtualbox/5.2.12/Oracle_VM_VirtualBox_Extension_Pack-5.2.12.vbox-extpack'
 #export virtualbox_extenpack_file='Oracle_VM_VirtualBox_Extension_Pack'
 
-export wine_version='1.8-amd64'
-
 export hamachi_link='https://www.vpn.net/installers/logmein-hamachi_2.1.0.165-1_amd64.deb'
 
 export java_version='java8'
@@ -151,8 +149,7 @@ sudo add-apt-repository -y ppa:wireshark-dev/stable > /dev/null && sudo apt-get 
 sudo apt-get install -q -y wireshark
 check_status
 #printf "${b}for wine likes programs... ${n}"
-#sudo add-apt-repository -y ppa:ubuntu-wine/ppa > /dev/null && sudo apt-get update > /dev/null && \
-#sudo apt-get install -q -y wine$wine_version playonlinux && \
+# install wine: https://wiki.winehq.org/Ubuntu
 #sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E0F72778C4676186 && \
 #sudo wget http://deb.playonlinux.com/playonlinux_trusty.list -O /etc/apt/sources.list.d/playonlinux.list && \
 #sudo apt-get update > /dev/null && sudo apt-get install -q -y playonlinux 
