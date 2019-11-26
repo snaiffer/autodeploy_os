@@ -75,7 +75,7 @@ echo "${b}Installing packages:${n}"
 sudo apt-get update > /dev/null
 printf "${b}for console... ${n}"
 sudo apt-get install -q -y gawk && \
-sudo apt-get install -q -y traceroute nethogs && \
+sudo apt-get install -q -y traceroute nethogs whois && \
 sudo apt-get install -q -y expect && \
 sudo apt-get install -q -y alien && \
 #sudo apt-get install -q -y jq && \  # pretty json output # TODO: add repo for it
