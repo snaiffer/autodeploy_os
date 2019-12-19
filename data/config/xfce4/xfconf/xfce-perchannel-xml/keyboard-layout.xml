@@ -6,5 +6,7 @@
     <property name="XkbOptions" type="empty">
       <property name="Group" type="string" value="grp:caps_toggle"/>
     </property>
+    <property name="XkbLayout" type="string" value="us,ru"/>
+    <property name="XkbVariant" type="string" value=","/>
   </property>
 </channel>

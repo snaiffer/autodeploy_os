@@ -11,6 +11,7 @@
         <property name="startup-notify" type="empty"/>
       </property>
       <property name="&lt;Primary&gt;&lt;Alt&gt;Delete" type="empty"/>
+      <property name="&lt;Primary&gt;&lt;Alt&gt;l" type="empty"/>
       <property name="XF86Display" type="empty"/>
       <property name="&lt;Super&gt;p" type="empty"/>
       <property name="&lt;Primary&gt;Escape" type="empty"/>
@@ -20,10 +21,11 @@
       <property name="Print" type="empty"/>
       <property name="&lt;Alt&gt;Print" type="empty"/>
       <property name="XF86HomePage" type="empty"/>
-      <property name="&lt;Super&gt;w" type="empty"/>
+      <property name="&lt;Super&gt;w" type="string" value="exo-open --launch WebBrowser"/>
       <property name="&lt;Super&gt;m" type="empty"/>
       <property name="XF86Explorer" type="empty"/>
       <property name="&lt;Super&gt;f" type="empty"/>
+      <property name="&lt;Super&gt;F1" type="empty"/>
       <property name="&lt;Primary&gt;&lt;Alt&gt;t" type="empty"/>
       <property name="&lt;Super&gt;t" type="empty"/>
       <property name="&lt;Super&gt;r" type="empty"/>
@@ -35,14 +37,10 @@
       <property name="&lt;Super&gt;2" type="empty"/>
       <property name="&lt;Super&gt;3" type="empty"/>
       <property name="&lt;Super&gt;4" type="empty"/>
-      <property name="&lt;Primary&gt;&lt;Alt&gt;l" type="empty"/>
     </property>
     <property name="custom" type="empty">
       <property name="Print" type="string" value="xfce4-screenshooter -f"/>
-      <property name="&lt;Alt&gt;Print" type="string" value="xfce4-screenshooter -w"/>
-      <property name="&lt;Primary&gt;&lt;Alt&gt;Delete" type="string" value="xflock4"/>
       <property name="XF86Explorer" type="string" value="exo-open --launch FileManager"/>
-      <property name="&lt;Super&gt;e" type="string" value="mousepad"/>
       <property name="&lt;Alt&gt;F3" type="string" value="xfce4-appfinder">
         <property name="startup-notify" type="bool" value="true"/>
       </property>
@@ -50,24 +48,26 @@
         <property name="startup-notify" type="bool" value="true"/>
       </property>
       <property name="&lt;Primary&gt;&lt;Alt&gt;l" type="string" value="xflock4"/>
-      <property name="&lt;Super&gt;1" type="string" value="gmusicbrowser"/>
-      <property name="&lt;Super&gt;2" type="string" value="pidgin"/>
       <property name="&lt;Super&gt;p" type="string" value="xfce4-display-settings --minimal"/>
       <property name="&lt;Primary&gt;&lt;Alt&gt;t" type="string" value="exo-open --launch TerminalEmulator"/>
-      <property name="&lt;Super&gt;r" type="string" value="xfce4-appfinder"/>
-      <property name="&lt;Super&gt;4" type="string" value="gnumeric"/>
-      <property name="&lt;Primary&gt;Escape" type="string" value="xfce4-popup-whiskermenu"/>
       <property name="XF86Display" type="string" value="xfce4-display-settings --minimal"/>
-      <property name="&lt;Alt&gt;F1" type="string" value="xfce4-popup-applicationsmenu"/>
       <property name="XF86WWW" type="string" value="exo-open --launch WebBrowser"/>
       <property name="&lt;Primary&gt;&lt;Alt&gt;Escape" type="string" value="xkill"/>
       <property name="XF86Messenger" type="string" value="pidgin"/>
-      <property name="XF86Calculator" type="string" value="gnome-calculator"/>
       <property name="XF86Music" type="string" value="gmusicbrowser"/>
       <property name="XF86HomePage" type="string" value="exo-open --launch WebBrowser"/>
       <property name="override" type="bool" value="true"/>
       <property name="&lt;Primary&gt;&lt;Alt&gt;f" type="string" value="exo-open --launch FileManager"/>
-      <property name="&lt;Primary&gt;&lt;Alt&gt;w" type="string" value="/usr/bin/chromium-browser"/>
+      <property name="&lt;Primary&gt;&lt;Alt&gt;w" type="string" value="exo-open --launch WebBrowser"/>
+      <property name="&lt;Primary&gt;&lt;Alt&gt;n" type="string" value="mousepad"/>
+      <property name="&lt;Primary&gt;Print" type="string" value="xfce4-screenshooter -w"/>
+      <property name="&lt;Shift&gt;Print" type="string" value="xfce4-screenshooter -r"/>
+      <property name="&lt;Primary&gt;&lt;Alt&gt;c" type="string" value="mate-calc"/>
+      <property name="Super_L" type="string" value="xfce4-popup-whiskermenu"/>
+      <property name="&lt;Primary&gt;&lt;Alt&gt;k" type="string" value="kate"/>
+      <property name="&lt;Primary&gt;&lt;Alt&gt;v" type="string" value="/opt/VStudio/vstudio"/>
+      <property name="&lt;Primary&gt;&lt;Alt&gt;p" type="string" value="pgadmin3"/>
+      <property name="&lt;Primary&gt;&lt;Alt&gt;m" type="string" value="meld"/>
     </property>
   </property>
   <property name="xfwm4" type="empty">
@@ -124,9 +124,17 @@
       <property name="&lt;Primary&gt;F10" type="empty"/>
       <property name="&lt;Primary&gt;F11" type="empty"/>
       <property name="&lt;Primary&gt;F12" type="empty"/>
+      <property name="&lt;Alt&gt;F5" type="empty"/>
+      <property name="&lt;Super&gt;KP_1" type="empty"/>
+      <property name="&lt;Super&gt;Down" type="empty"/>
+      <property name="&lt;Super&gt;KP_3" type="empty"/>
+      <property name="&lt;Super&gt;Left" type="empty"/>
+      <property name="&lt;Super&gt;Right" type="empty"/>
+      <property name="&lt;Super&gt;KP_7" type="empty"/>
+      <property name="&lt;Super&gt;Up" type="empty"/>
+      <property name="&lt;Super&gt;KP_9" type="empty"/>
       <property name="&lt;Control&gt;&lt;Alt&gt;Down" type="empty"/>
       <property name="&lt;Control&gt;&lt;Alt&gt;Left" type="empty"/>
-      <property name="&lt;Alt&gt;F5" type="empty"/>
       <property name="&lt;Control&gt;&lt;Shift&gt;&lt;Alt&gt;Left" type="empty"/>
       <property name="&lt;Alt&gt;&lt;Control&gt;End" type="empty"/>
       <property name="&lt;Alt&gt;&lt;Control&gt;Home" type="empty"/>
