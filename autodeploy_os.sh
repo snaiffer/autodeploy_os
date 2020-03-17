@@ -131,7 +131,7 @@ sudo add-apt-repository -y ppa:webupd8team/java > /dev/null && \
 sudo apt-get update > /dev/null && sudo apt-get install -q -y oracle-$java_version-installer && \
 check_status
 echo "${b}for VirtualBox:${n}"
-sudo sh -c "echo 'deb http://download.virtualbox.org/virtualbox/debian `lsb_release -cs` contrib' >> /etc/apt/sources.list.d/virtaulbox.list" && \
+sudo sh -c "echo 'deb http://download.virtualbox.org/virtualbox/debian `lsb_release -cs` contrib' >> /etc/apt/sources.list.d/virtualbox.list" && \
 wget -q https://www.virtualbox.org/download/oracle_vbox.asc -O- | sudo apt-key add - && \
 wget -q https://www.virtualbox.org/download/oracle_vbox_2016.asc -O- | sudo apt-key add - && \
 sudo apt-get update > /dev/null && sudo apt-get install -q -y virtualbox
