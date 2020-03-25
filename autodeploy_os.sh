@@ -1,33 +1,43 @@
 #!/bin/bash
 
+# Usefull:
+# lsb_release -sc	# get codename (Ex.: bionic, xenial)
 echo "To leave settings as in example - just press <Enter>"
 echo
 
 export dir_script=`dirname $0`
 export dir_data="$dir_script/data"
 export bin="/usr/bin"
+export logd="$dir_script/progress_details.log"
+echo "" > $logd
+echo -e "\nDetailed progress log you can get in: $logd\n"
 
 export git_email="a.danilov@runabank.ru"
 export git_name="Alexander Danilov"
 echo "Git settings:"
-printf "\temail ($git_email):"
+printf "\temail ($git_email): "
 read temp; if [[ "$temp" != "" ]]; then export git_email=$temp; fi
-printf "\tname ($git_name):"
+printf "\tname ($git_name): "
 read temp; if [[ "$temp" != "" ]]; then export git_name=$temp; fi
+
+function log()
+{
+  msg=$1
+  echo "$(date "+%F %T"): $msg"
+}
+# usage: log "started"
 
 # find out links for a newer version https://www.virtualbox.org/wiki/Downloads
 #export virtualbox_extenpack_link='https://download.virtualbox.org/virtualbox/5.2.12/Oracle_VM_VirtualBox_Extension_Pack-5.2.12.vbox-extpack'
 #export virtualbox_extenpack_file='Oracle_VM_VirtualBox_Extension_Pack'
 
-export hamachi_link='https://www.vpn.net/installers/logmein-hamachi_2.1.0.165-1_amd64.deb'
-
-export java_version='java8'
+#export hamachi_link='https://www.vpn.net/installers/logmein-hamachi_2.1.0.165-1_amd64.deb'
 
 # auth. for sudo
 sudo echo
 
 printf "Install & Set git... "
-sudo apt-get install -q -y git && \
+sudo apt-get install -q -y git >> $logd && \
 git config --global user.email $git_email && \
 git config --global user.name $git_name && \
 git config --global push.default matching   # push all branches
@@ -50,6 +60,7 @@ sudo git clone -q https://github.com/snaiffer/libbash.git /usr/lib/bash && \
 source /usr/lib/bash/general.sh
 check_status
 
+echo
 printf "${b}Creating dirs... ${n}"
 mkdir -p ~/git ~/temp ~/VM_share > /dev/null
 check_status
@@ -73,105 +84,149 @@ check_status
 echo
 echo "${b}Installing packages:${n}"
 sudo apt-get update > /dev/null
+#############################################
 printf "${b}for console... ${n}"
-sudo apt-get install -q -y gawk && \
-sudo apt-get install -q -y traceroute nethogs whois && \
-sudo apt-get install -q -y expect && \
-sudo apt-get install -q -y alien && \
-#sudo apt-get install -q -y jq && \  # pretty json output # TODO: add repo for it
-sudo apt-get install -q -y vim && \
-sudo apt-get install -q -y vim-gui-common && \  # GUI features. Don't install it on a server
-sudo apt-get install -q -y openssh-server openssh-client tree nmap iotop htop foremost sshfs powertop bless apt-file
+#sudo apt-get install -q -y jq >> $logd && \  # pretty json output # TODO: add repo for it
+sudo apt-get install -q -y gawk >> $logd && \
+sudo apt-get install -q -y traceroute nethogs whois >> $logd && \
+sudo apt-get install -q -y expect >> $logd && \
+sudo apt-get install -q -y alien >> $logd && \
+sudo apt-get install -q -y vim >> $logd && \
+sudo apt-get install -q -y vim-gui-common >> $logd && \  # GUI features. Don't install it on a server
+sudo apt-get install -q -y openssh-server openssh-client tree nmap iotop htop foremost sshfs powertop bless apt-file >> $logd
 check_status
+#############################################
 printf "${b}markdown terminal viewer... ${n}"
-sudo apt-get install -q -y python2.7 python-pip && \
-pip install markdown pygments pyyaml && \
-sudo git clone -q https://github.com/axiros/terminal_markdown_viewer $bin/terminal_markdown_viewer && \
-sudo ln -s $bin/terminal_markdown_viewer/mdv/markdownviewer.py $bin/mdv
+sudo apt-get install -q -y python2.7 python-pip >> $logd && \
+pip install -q markdown pygments pyyaml >> $logd
 check_status
+#sudo git clone -q https://github.com/axiros/terminal_markdown_viewer $bin/terminal_markdown_viewer && \
+#sudo ln -s $bin/terminal_markdown_viewer/mdv/markdownviewer.py $bin/mdv
+#############################################
 echo -e "${b}ssh settings:${n}"
 printf "${b}\t turn off GSS for fast connection... ${n}"
 sudo sh -c 'echo "GSSAPIAuthentication no" >> /etc/ssh/ssh_config'
 check_status
 printf "${b}\t setting for keeping connection ~/.ssh... ${n}"
-mkdir ~/.ssh
+mkdir -p ~/.ssh
 cat <<-EOF > ~/.ssh/config
 Host *
 ControlMaster auto
 ControlPath ~/.ssh/cm_%r@%h:%p
 EOF
 check_status
+#############################################
 printf "${b}for systems... ${n}"
 echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | sudo debconf-set-selections && \
-  sudo apt-get install -q -y terminator mtp-tools mtpfs pavucontrol ubuntu-restricted-extrasl
+  sudo apt-get install -q -y terminator mtp-tools go-mtpfs pavucontrol xubuntu-restricted-extras >> $logd
 check_status
+#############################################
 echo "${b}for WWW:${n}"
-printf "${b}\tset chromium-browser by default... ${n}"
-sudo sed -i "s/firefox.desktop/chromium-browser.desktop/g" /usr/share/applications/defaults.list
-check_status
+#printf "${b}\tset chromium-browser by default... ${n}"
+#sudo sed -i "s/firefox.desktop/chromium-browser.desktop/g" /usr/share/applications/defaults.list
+#check_status
 # for 14.04
 #printf "${b}\tPepper Flash Player... ${n}"
 #sudo add-apt-repository -y ppa:skunk/pepper-flash > /dev/null && \
-#sudo apt-get update > /dev/null && sudo apt-get install -q -y pepflashplugin-installerl && \
+#sudo apt-get update > /dev/null && sudo apt-get install -q -y pepflashplugin-installer >> $logd && \
 #sudo sh -c 'echo ". /usr/lib/pepflashplugin-installer/pepflashplayer.sh" >> /etc/chromium-browser/default' > /dev/null
 ## to check if it has been success:
 ### open chromium and input "chrome://plugins" in the address line
-printf "${b}\tFlash Player... ${n}"
-sudo add-apt-repository "deb http://archive.canonical.com/ $(lsb_release -sc) partner" > /dev/null && \
-sudo apt-get update > /dev/null && sudo apt-get install -q -y adobe-flashplugin browser-plugin-freshplayer-pepperflashl
-check_status
+#printf "${b}\tFlash Player... ${n}"
+#sudo add-apt-repository "deb http://archive.canonical.com/ $(lsb_release -sc) partner" > /dev/null && \
+#sudo apt-get update > /dev/null && sudo apt-get install -q -y adobe-flashplugin browser-plugin-freshplayer-pepperflash >> $logd
+#check_status
+#############################################
 printf "${b}\tchrome-browser... ${n}"
 wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add - && \
 sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list' && \
 sudo apt-get update > /dev/null && \
-sudo apt-get install -q -y google-chrome-stablel
+sudo apt-get install -q -y google-chrome-stable >> $logd
 check_status
-printf "${b}\tJava... ${n}"
-sudo add-apt-repository -y ppa:webupd8team/java > /dev/null && \
-sudo apt-get update > /dev/null && sudo apt-get install -q -y oracle-$java_version-installer && \
+printf "${b}\tset google-chrome by default... ${n}"
+sudo sed -i "s/firefox.desktop/google-chrome.desktop/g" /usr/share/applications/defaults.list
 check_status
+#############################################
+#printf "${b}\tJava... ${n}"
+#sudo add-apt-repository -y ppa:webupd8team/java > /dev/null && \
+#sudo apt-get update > /dev/null && sudo apt-get install -q -y oracle-java8-installer >> $logd
+#check_status
+#############################################
 echo "${b}for VirtualBox:${n}"
 sudo sh -c "echo 'deb http://download.virtualbox.org/virtualbox/debian `lsb_release -cs` contrib' >> /etc/apt/sources.list.d/virtualbox.list" && \
 wget -q https://www.virtualbox.org/download/oracle_vbox.asc -O- | sudo apt-key add - && \
 wget -q https://www.virtualbox.org/download/oracle_vbox_2016.asc -O- | sudo apt-key add - && \
-sudo apt-get update > /dev/null && sudo apt-get install -q -y virtualbox
+sudo apt-get update > /dev/null && sudo apt-get install -q -y virtualbox >> $logd
 check_status
 #printf "${b}\tVirtualBox Extension Pack... ${n}"
 #wget -q $virtualbox_extenpack_link && \
 #sudo VBoxManage extpack install ${virtualbox_extenpack_file}* && \
 #rm -f ${virtualbox_extenpack_file}*
 #check_status
+#############################################
 printf "${b}for libreoffice... ${n}"
-sudo apt-get install -q -y libreoffice
+sudo apt-get install -q -y libreoffice >> $logd
 check_status
+#############################################
 printf "${b}for wireshark... ${n}"
 sudo add-apt-repository -y ppa:wireshark-dev/stable > /dev/null && sudo apt-get update > /dev/null && \
-sudo apt-get install -q -y wireshark
+sudo apt-get install -q -y wireshark >> $logd
 check_status
-#printf "${b}for wine likes programs... ${n}"
+printf "${b}for wine likes programs... ${n}"
 # install wine: https://wiki.winehq.org/Ubuntu
-#sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E0F72778C4676186 && \
-#sudo wget http://deb.playonlinux.com/playonlinux_trusty.list -O /etc/apt/sources.list.d/playonlinux.list && \
-#sudo apt-get update > /dev/null && sudo apt-get install -q -y playonlinux 
-#check_status
+# Error:
+#The following packages have unmet dependencies:
+# winehq-stable : Depends: wine-stable (= 5.0.0~bionic)
+#E: Unable to correct problems, you have held broken packages.
+#wget -q -O - https://dl.winehq.org/wine-builds/winehq.key | sudo apt-key add - && \
+#sudo sh -c 'echo "deb https://dl.winehq.org/wine-builds/ubuntu/ `lsb_release -sc` main" >> /etc/apt/sources.list.d/wine.list' && \
+#sudo apt-get update > /dev/null && \
+#sudo apt-get install -q -y winehq-stable playonlinux >> $logd
+#
+# playonlinux
+wget -q -O - "http://deb.playonlinux.com/public.gpg" | sudo apt-key add - && \
+sudo wget -q http://deb.playonlinux.com/playonlinux_`lsb_release -sc`.list -O /etc/apt/sources.list.d/playonlinux.list && \
+sudo apt-get update > /dev/null && \
+sudo apt-get install -q -y playonlinux winetricks >> $logd 
+check_status
+#############################################
 printf "${b}for images... ${n}"
-sudo apt-get install -q -y gimp pinta gthumb && \
+sudo apt-get install -q -y gimp pinta gthumb >> $logd && \
 # https://github.com/cas--/PasteImg
 sudo cp -f $dir_data/pasteimg $bin && sudo chmod +x $bin/pasteimg
 check_status
+#############################################
 printf "${b}for media... ${n}"
-sudo apt-get install -q -y vlc
+sudo apt-get install -q -y vlc >> $logd
 # for 14.04
-#sudo apt-get install -q -y gnome-mplayer
+#sudo apt-get install -q -y gnome-mplayer >> $logd
 check_status
+#############################################
 printf "${b}for tlp (power saving utils)...${n}"
 sudo add-apt-repository -y ppa:linrunner/tlp > /dev/null && sudo apt-get update > /dev/null && \
-sudo apt-get install -q -y tlp tlp-rdw smartmontools ethtool linux-tools-`uname -r`
+sudo apt-get install -q -y tlp tlp-rdw smartmontools ethtool linux-tools-`uname -r` >> $logd
 check_status
+#############################################
+printf "${b}VNC (Remote Desktop)...${n}"
+# if you need VNC server (x11vnc) see manual in the Basket
+sudo add-apt-repository -y ppa:remmina-ppa-team/remmina-next > /dev/null && sudo apt-get update > /dev/null && \
+sudo apt-get install -q -y remmina remmina-plugin-rdp remmina-plugin-secret >> $logd
+check_status
+# light-locker switch from DISPLAY=:0 to :1, what case problem with VNC logging
+printf "${b}  Replacing light-locker for gnome-screensaver...${n}"
+sudo apt-get purge -q -y light-locker >> $logd && \
+sudo apt-get install -q -y gnome-screensaver >> $logd && \
+sudo killall light-locker
+check_status
+#############################################
+printf "${b}OpenVPN...${n}"
+sudo apt-get install -q -y openvpn network-manager-openvpn network-manager-openvpn-gnome >> $logd
+check_status
+#############################################
 printf "${b}for others... ${n}"
 #for 14.04
-#sudo apt-get install -q -y unetbootin
-sudo apt-get install -q -y basket baobab k3b meld
+#sudo apt-get install -q -y unetbootin k3b >> $logd
+sudo apt-get install -q -y basket baobab remmina >> $logd
 check_status
 # libreoffice doesn't support muilti-spellcheching
 #printf "${b}plugins for LibreOffice... ${n}"
@@ -184,7 +239,7 @@ check_status
 
 echo
 printf "${b}Forward copy/paste-buffer via ssh... ${n}"
-sudo apt-get install -q -y xclip && \
+sudo apt-get install -q -y xclip >> $logd && \
   echo "ForwardX11 yes" >> ~/.ssh/config
 check_status
 
@@ -194,12 +249,29 @@ sudo ubuntu-drivers autoinstall > /dev/null
 check_status
 
 echo
+printf "${b}Installing utils for programming... ${n}"
+sudo apt-get install -q -y meld kate >> $logd
+check_status
+# atom-editor: download & install deb: https://atom.io/
 printf "${b}Installing utils for C++ programming... ${n}"
 # for 14.04
 #sudo add-apt-repository -y ppa:george-edison55/cmake-3.x > /dev/null && \
 # sudo apt-get update > /dev/null && \
-sudo apt-get install -q -y g++ valgrind doxygen cmake gdb clang
+sudo apt-get install -q -y g++ valgrind doxygen cmake gdb clang >> $logd
 check_status
+printf "${b}\tInstalling utils for RDBMS programming... ${n}"
+wget -q -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add - && \
+sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -sc`-pgdg main" >> /etc/apt/sources.list.d/pgdg.list' && \
+sudo apt-get update > /dev/null && \
+sudo apt-get install -q -y postgresql-9.6 postgresql-server-dev-9.6 pgadmin3 >> $logd
+check_status
+# Valentina-DB (VStudio)
+# http://valentina-db.com/download/
+# Serial code:
+#   Alexander
+#   Danilov
+#   a.danilov@runabank.ru
+#   VS-L-DWF2NA2H61XL9EA8-61UMWAT575Q3YEKT-R3W9F4ECM74A82EC-LYG9D2NMKU7T29J4
 
 echo
 printf "${b}Set keyboardlayout switcher by Caps key... ${n}"
@@ -230,12 +302,12 @@ sudo ~/.bash_env/install.sh > /dev/null
 check_status
 
 printf "${b}Setting vim... ${n}"
-sudo apt-get install -q -y vim git ctags clang libclang-dev && \
+sudo apt-get install -q -y vim git ctags clang libclang-dev >> $logd && \
 rm -Rf ~/.vim ~/.vimrc && \
 git clone -q https://github.com/snaiffer/vim.git ~/.vim && \
 ln -s ~/.vim/vimrc ~/.vimrc && \
-vim -c "BundleInstall" -c 'qa!' && \
-~/.vim/bundle/youcompleteme
+vim -c "BundleInstall" -c 'qa!'
+#~/.vim/bundle/youcompleteme
 check_status
 
 printf "${b}Turn off apport... ${n}"
@@ -245,7 +317,9 @@ check_status
 echo
 echo "${b}Setting Desktop Enviroment${n}"
 printf "${b}Installing compiz (windows manager)... ${n}"
-sudo apt-get install -q -y compiz compiz-plugins compizconfig-settings-manager metacity dconf-tools
+# Change the number of Workspaces:
+#   compiz: General/General Options/Desktop Size
+sudo apt-get install -q -y compiz compiz-plugins compizconfig-settings-manager metacity dconf-tools >> $logd
 check_status
 
 printf "${b}Switch xfwm4 to compiz. Autostart compiz... ${n}"
@@ -263,7 +337,7 @@ printf "${b}Setting the windows manager enviroment... ${n}"
 check_status
 
 printf "${b}Installing plugins for Desktop Enviroment... ${n}"
-sudo apt-get install -q -y xfce4-clipman-plugin xfce4-datetime-plugin xfce4-time-out-plugin
+sudo apt-get install -q -y xfce4-clipman-plugin xfce4-datetime-plugin xfce4-time-out-plugin >> $logd
 check_status
 
 # there isn't version for 18.04
@@ -272,7 +346,7 @@ check_status
 ## if you want preview: install compiz and add KDE compability
 #sudo add-apt-repository -y ppa:dockbar-main/ppa > /dev/null && \
 # sudo apt-get update > /dev/null && \
-# sudo apt-get install -q -y --no-install-recommends xfce4-dockbarx-plugin
+# sudo apt-get install -q -y --no-install-recommends xfce4-dockbarx-plugin >> $logd
 #check_status
 #
 #printf "${b}Adding to autostart DockbarX ... ${n}"
@@ -289,18 +363,18 @@ check_status
 #printf "${b}Installing System Load Indicator for Desktop Enviroment... ${n}"
 #sudo add-apt-repository -y ppa:indicator-multiload/stable-daily > /dev/null && \
 # sudo apt-get update > /dev/null && \
-# sudo apt-get install -q -y indicator-multiload
+# sudo apt-get install -q -y indicator-multiload >> $logd
 #check_status
 #
 #printf "${b}Installing Windowck Plugin for moving titlebar to panel... ${n}"
 #sudo add-apt-repository -y ppa:eugenesan/ppa > /dev/null && \
 # sudo apt-get update > /dev/null && \
-# sudo apt-get install -q -y xfce4-windowck-plugin maximus && \
+# sudo apt-get install -q -y xfce4-windowck-plugin maximus >> $logd && \
 # gconftool-2 --set /apps/maximus/no_maximize --type=bool true
 #check_status
 
 #printf "${b}Installing local dictionary for xfce plugin... ${n}"
-#sudo apt-get install -q -y dictd xfce4-dict mueller7accent-dict
+#sudo apt-get install -q -y dictd xfce4-dict mueller7accent-dict >> $logd
 #check_status
 
 #printf "${b}Allow hibirnate... ${n}"
@@ -395,7 +469,7 @@ check_status
 
 echo
 printf "${b}Installing sysbench... ${n}"
-sudo apt-get install -q -y sysbench
+sudo apt-get install -q -y sysbench >> $logd
 check_status
 echo "${b}Start 'sysbench --test=cpu run':${n}"
 echo "${b}================================================${n}"
@@ -409,6 +483,7 @@ echo "https://www.foxitsoftware.com/downloads/"
 echo "<Enter>" && read
 
 echo
+#sudo apt-get install -q -y winbind >> $logd 
 echo -e "MS Office
 - Mount the disk with MS_Office
     $ sudo mount -o loop ./<MS_Office>.iso /mnt/
@@ -434,6 +509,10 @@ echo '  sed -i "/last-image/,/$/ s/value=\".*\"/value=\"\/usr\/share\/xfce4\/bac
 echo '  sudo reboot'
 echo "<Enter>" && read
 
+echo
+printf "${b}Removing no longer required packages... ${n}"
+sudo apt-get autoremove -q -y >> $logd
+check_status
 
 echo
 reboot_request

@@ -2,11 +2,12 @@
 
 ## Requements:
 - Debian family
-- LXDE, XFCE(???) desktop managers
+- LXDE, XFCE desktop managers
 - home dir has to be "/home/<user_name>"
 
 ## It has been tested on:
-- Xubuntu 14.04.3 amd64
+- Xubuntu 14.04.3
+- Xubuntu 18.04.4
 
 ## Update config. files of autodeploy_os
 export dir_data="$dir_script/data"
@@ -22,11 +23,7 @@ done
 Check changes with difftool:
 git difftool -d
 
-## Plans:
-- Check list for modules installation of autodeploy
-- Save sysbench (benchmark) info to file or server
-- There may be some interesting info: http://howtoubuntu.org/things-to-do-after-installing-ubuntu-14-04-trusty-tahr
-- Command for updating enviroment settings in autodeploy_os according to the current env. settings
+There may be some interesting info: http://howtoubuntu.org/things-to-do-after-installing-ubuntu-14-04-trusty-tahr
 
 ## Bugs:
 In case of problems with desktop or background image:
