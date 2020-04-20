@@ -86,7 +86,7 @@ echo "${b}Installing packages:${n}"
 sudo apt-get update > /dev/null
 #############################################
 printf "${b}for console... ${n}"
-#sudo apt-get install -q -y jq >> $logd && \  # pretty json output # TODO: add repo for it
+sudo apt-get install -q -y jq >> $logd && \  # pretty json output
 sudo apt-get install -q -y gawk >> $logd && \
 sudo apt-get install -q -y traceroute nethogs whois >> $logd && \
 sudo apt-get install -q -y expect >> $logd && \
@@ -236,6 +236,11 @@ check_status
 #  wget -q $libreoffice_languagetools http://extensions.libreoffice.org/extension-center/russian-spellcheck-dictionary.-based-on-works-of-aot-group/pscreleasefolder.2011-09-06.6209385965/0.4.0/dict_ru_ru-aot-0-4-0.oxt -P $dir_download && \
 #  rm -Rf $dir_download
 #check_status
+#
+#Youtube Downloader
+# https://github.com/ytdl-org/youtube-dl
+# sudo -H pip install --upgrade youtube-dl
+#
 
 echo
 printf "${b}Forward copy/paste-buffer via ssh... ${n}"
@@ -253,7 +258,7 @@ printf "${b}Installing utils for programming... ${n}"
 sudo apt-get install -q -y meld kate >> $logd
 check_status
 # atom-editor: download & install deb: https://atom.io/
-printf "${b}Installing utils for C++ programming... ${n}"
+printf "${b}\tInstalling utils for C++ programming... ${n}"
 # for 14.04
 #sudo add-apt-repository -y ppa:george-edison55/cmake-3.x > /dev/null && \
 # sudo apt-get update > /dev/null && \
@@ -272,6 +277,23 @@ check_status
 #   Danilov
 #   a.danilov@runabank.ru
 #   VS-L-DWF2NA2H61XL9EA8-61UMWAT575Q3YEKT-R3W9F4ECM74A82EC-LYG9D2NMKU7T29J4
+printf "${b}\tInstalling utils for Python programming... ${n}"
+sudo apt-get install -q -y python3 ipython3  >> $logd
+check_status
+<<-EOF
+printf "${b}\t\tselenium... ${n}"
+sudo apt install python3-pip && \
+pip3 install selenium && \
+pip3 install pyvirtualdisplay && \
+sudo apt-get install xvfb
+
+Download ChromeDriver:
+https://sites.google.com/a/chromium.org/chromedriver/home
+
+sudo mv chromedriver /usr/bin/chromedriver && \
+sudo chown root:root /usr/bin/chromedriver && \
+sudo chmod +x /usr/bin/chromedriver
+EOF
 
 echo
 printf "${b}Set keyboardlayout switcher by Caps key... ${n}"
