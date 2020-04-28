@@ -294,6 +294,10 @@ sudo mv chromedriver /usr/bin/chromedriver && \
 sudo chown root:root /usr/bin/chromedriver && \
 sudo chmod +x /usr/bin/chromedriver
 EOF
+printf "${b}\tInstalling apt-file... ${n}"
+sudo apt-get install -q -y apt-file >> $logd && \
+  sudo apt-file update > /dev/null
+check_status
 
 echo
 printf "${b}Set keyboardlayout switcher by Caps key... ${n}"
