@@ -494,6 +494,15 @@ sudo dmidecode |grep 'Lenovo IdeaPad Yoga 13' && sudo setkeycodes e03e 255
 check_status
 
 echo
+printf "${b}Fix for Xiaomi MIIIW Bluetooth Dual Mode Keyboard... ${n}"
+cat <<-EOF >> ~/.Xmodmap
+keycode 87 = End
+keycode 79 = Home
+EOF
+xmodmap ~/.Xmodmap
+check_status
+
+echo
 printf "${b}Installing sysbench... ${n}"
 sudo apt-get install -q -y sysbench >> $logd
 check_status
