@@ -496,8 +496,8 @@ check_status
 echo
 printf "${b}Fix for Xiaomi MIIIW Bluetooth Dual Mode Keyboard... ${n}"
 cat <<-EOF >> ~/.Xmodmap
-keycode 87 = End
-keycode 79 = Home
+keycode 87 = End End KP_1 KP_1 KP_1 KP_1
+keycode 79 = Home Home KP_7 KP_7 KP_7 KP_7 KP_7
 EOF
 xmodmap ~/.Xmodmap
 check_status
