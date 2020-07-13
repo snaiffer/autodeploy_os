@@ -493,14 +493,14 @@ printf "${b}Fixing bug with Lenovo IdeaPad Yoga 13... ${n}"
 sudo dmidecode |grep 'Lenovo IdeaPad Yoga 13' && sudo setkeycodes e03e 255
 check_status
 
-echo
-printf "${b}Fix for Xiaomi MIIIW Bluetooth Dual Mode Keyboard... ${n}"
-cat <<-EOF >> ~/.Xmodmap
-keycode 87 = End End KP_1 KP_1 KP_1 KP_1
-keycode 79 = Home Home KP_7 KP_7 KP_7 KP_7 KP_7
-EOF
-xmodmap ~/.Xmodmap
-check_status
+#echo
+#printf "${b}Fix for Xiaomi MIIIW Bluetooth Dual Mode Keyboard... ${n}"
+#cat <<-EOF >> ~/.Xmodmap
+#keycode 87 = End End KP_1 KP_1 KP_1 KP_1
+#keycode 79 = Home Home KP_7 KP_7 KP_7 KP_7 KP_7
+#EOF
+#xmodmap ~/.Xmodmap
+#check_status
 
 echo
 printf "${b}Installing sysbench... ${n}"
