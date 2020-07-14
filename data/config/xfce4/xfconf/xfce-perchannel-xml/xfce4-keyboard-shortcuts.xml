@@ -63,11 +63,13 @@
       <property name="&lt;Primary&gt;Print" type="string" value="xfce4-screenshooter -w"/>
       <property name="&lt;Shift&gt;Print" type="string" value="xfce4-screenshooter -r"/>
       <property name="&lt;Primary&gt;&lt;Alt&gt;c" type="string" value="mate-calc"/>
-      <property name="Super_L" type="string" value="xfce4-popup-whiskermenu"/>
       <property name="&lt;Primary&gt;&lt;Alt&gt;k" type="string" value="kate"/>
       <property name="&lt;Primary&gt;&lt;Alt&gt;v" type="string" value="/opt/VStudio/vstudio"/>
       <property name="&lt;Primary&gt;&lt;Alt&gt;p" type="string" value="pgadmin3"/>
       <property name="&lt;Primary&gt;&lt;Alt&gt;m" type="string" value="meld"/>
+      <property name="&lt;Super&gt;Alt_L" type="string" value="xfce4-popup-whiskermenu"/>
+      <property name="XF86MonBrightnessUp" type="string" value="xbacklight +10"/>
+      <property name="XF86MonBrightnessDown" type="string" value="xbacklight -10"/>
     </property>
   </property>
   <property name="xfwm4" type="empty">

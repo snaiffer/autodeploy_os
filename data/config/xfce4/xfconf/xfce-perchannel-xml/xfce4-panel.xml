@@ -28,6 +28,7 @@
         <value type="int" value="16"/>
         <value type="int" value="11"/>
         <value type="int" value="10"/>
+        <value type="int" value="22"/>
         <value type="int" value="20"/>
         <value type="int" value="17"/>
       </property>
@@ -142,14 +143,6 @@
     <property name="plugin-8" type="string" value="separator">
       <property name="style" type="uint" value="3"/>
     </property>
-    <property name="plugin-22" type="string" value="indicator">
-      <property name="known-indicators" type="array">
-        <value type="string" value="libapplication.so"/>
-        <value type="string" value="com.canonical.indicator.power"/>
-        <value type="string" value="com.canonical.indicator.messages"/>
-        <value type="string" value="com.canonical.indicator.sound"/>
-      </property>
-    </property>
     <property name="plugin-23" type="string" value="separator"/>
     <property name="plugin-24" type="string" value="separator"/>
     <property name="plugin-26" type="string" value="separator"/>
@@ -190,8 +183,9 @@
     </property>
     <property name="plugin-16" type="string" value="pulseaudio">
       <property name="enable-keyboard-shortcuts" type="bool" value="true"/>
-      <property name="mpris-players" type="string" value="vlc"/>
+      <property name="mpris-players" type="string" value="chrome.instance1970;chrome.instance1972;chrome.instance2116;chrome.instance2160;chrome.instance2162;chrome.instance2185;chrome.instance2219;chrome.instance2242;chrome.instance2269;chrome.instance2272;chrome.instance2280;chrome.instance2281;chrome.instance2292;chrome.instance2339;chrome.instance2355;chrome.instance2368;chrome.instance2401;chrome.instance2503;chrome.instance2724;chrome.instance2729;chrome.instance2847;chrome.instance29025;chrome.instance2967;chrome.instance3051;chrome.instance3106;chrome.instance31771;chrome.instance3206;chrome.instance3235;chrome.instance3249;chrome.instance3254;chrome.instance3300;chrome.instance3399;chrome.instance3592;chrome.instance3682;chrome.instance4140;chrome.instance4262;chrome.instance4894;chrome.instance4915;chrome.instance5369;chrome.instance6200;chrome.instance7556;vlc"/>
     </property>
+    <property name="plugin-22" type="string" value="xfce4-timer"/>
   </property>
   <property name="configver" type="int" value="2"/>
 </channel>

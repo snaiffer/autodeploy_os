@@ -3,6 +3,7 @@ lat=55.920490
 lon=37.832629
 msl=160
 timezone=Europe/Moscow
+offset=+03:00
 cache_file_max_age=172800
 power_saving=true
 units_temperature=0

@@ -8,15 +8,17 @@
   <property name="applications" type="empty">
     <property name="known_applications" type="array">
       <value type="string" value="google-chrome"/>
-      <value type="string" value="Guake"/>
       <value type="string" value="nm-applet"/>
+      <value type="string" value="notify-send"/>
       <value type="string" value="org.gnome.Software"/>
-      <value type="string" value="Pidgin"/>
+      <value type="string" value="org.remmina.Remmina"/>
       <value type="string" value="System Config Printer Notification"/>
       <value type="string" value="Thunar"/>
       <value type="string" value="thunar-volman"/>
       <value type="string" value="Transmission"/>
+      <value type="string" value="update-notifier"/>
       <value type="string" value="Xfce volume control"/>
+      <value type="string" value="xfce4-power-manager"/>
       <value type="string" value="xfce4-settings-helper"/>
     </property>
   </property>

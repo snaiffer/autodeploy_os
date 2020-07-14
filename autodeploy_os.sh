@@ -82,6 +82,11 @@ sudo apt-get remove -q -y abiword* gnumeric* xfburn parole gmusicbrowser xfce4-n
 check_status
 
 echo
+printf "${b}Installing drivers... ${n}"
+sudo ubuntu-drivers autoinstall > /dev/null
+check_status
+
+echo
 echo "${b}Installing packages:${n}"
 sudo apt-get update > /dev/null
 #############################################
@@ -93,12 +98,14 @@ sudo apt-get install -q -y expect >> $logd && \
 sudo apt-get install -q -y alien >> $logd && \
 sudo apt-get install -q -y vim >> $logd && \
 sudo apt-get install -q -y vim-gui-common >> $logd && \  # GUI features. Don't install it on a server
-sudo apt-get install -q -y openssh-server openssh-client tree nmap iotop htop foremost sshfs powertop bless apt-file >> $logd
+sudo apt-get install -q -y openssh-server openssh-client tree nmap iotop htop foremost sshfs powertop bless apt-file >> $logd && \
+sudo apt-get install -q -y apt-file >> $logd && \
+  sudo apt-file update > /dev/null
 check_status
 #############################################
 printf "${b}markdown terminal viewer... ${n}"
-sudo apt-get install -q -y python2.7 python-pip >> $logd && \
-pip install -q markdown pygments pyyaml >> $logd
+sudo apt-get install -q -y python2.7 python3-pip >> $logd && \
+pip3 install -q markdown pygments pyyaml >> $logd
 check_status
 #sudo git clone -q https://github.com/axiros/terminal_markdown_viewer $bin/terminal_markdown_viewer && \
 #sudo ln -s $bin/terminal_markdown_viewer/mdv/markdownviewer.py $bin/mdv
@@ -118,7 +125,8 @@ check_status
 #############################################
 printf "${b}for systems... ${n}"
 echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | sudo debconf-set-selections && \
-  sudo apt-get install -q -y terminator mtp-tools go-mtpfs pavucontrol xubuntu-restricted-extras >> $logd
+  sudo apt-get install -q -y terminator mtp-tools go-mtpfs pavucontrol >> $logd
+  # Can't find in 20.04: sudo apt-get install -q -y xubuntu-restricted-extras >> $logd
 check_status
 #############################################
 echo "${b}for WWW:${n}"
@@ -168,27 +176,32 @@ printf "${b}for libreoffice... ${n}"
 sudo apt-get install -q -y libreoffice >> $logd
 check_status
 #############################################
-printf "${b}for wireshark... ${n}"
-sudo add-apt-repository -y ppa:wireshark-dev/stable > /dev/null && sudo apt-get update > /dev/null && \
-sudo apt-get install -q -y wireshark >> $logd
-check_status
+#printf "${b}for wireshark... ${n}"
+#sudo add-apt-repository -y ppa:wireshark-dev/stable > /dev/null && sudo apt-get update > /dev/null && \
+#sudo apt-get install -q -y wireshark >> $logd
+#check_status
 printf "${b}for wine likes programs... ${n}"
-# install wine: https://wiki.winehq.org/Ubuntu
-# Error:
-#The following packages have unmet dependencies:
-# winehq-stable : Depends: wine-stable (= 5.0.0~bionic)
-#E: Unable to correct problems, you have held broken packages.
-#wget -q -O - https://dl.winehq.org/wine-builds/winehq.key | sudo apt-key add - && \
-#sudo sh -c 'echo "deb https://dl.winehq.org/wine-builds/ubuntu/ `lsb_release -sc` main" >> /etc/apt/sources.list.d/wine.list' && \
-#sudo apt-get update > /dev/null && \
+# For Ubuntu 18.04:
+  # install wine: https://wiki.winehq.org/Ubuntu
+  # Error:
+  #The following packages have unmet dependencies:
+  # winehq-stable : Depends: wine-stable (= 5.0.0~bionic)
+  #E: Unable to correct problems, you have held broken packages.
+wget -q -O - https://dl.winehq.org/wine-builds/winehq.key | sudo apt-key add - && \
+sudo sh -c 'echo "deb https://dl.winehq.org/wine-builds/ubuntu/ `lsb_release -sc` main" >> /etc/apt/sources.list.d/wine.list' && \
+sudo apt-get update > /dev/null && \
+# Ubuntu 20.04 Error: Could not configure 'libc6:i386'
 #sudo apt-get install -q -y winehq-stable playonlinux >> $logd
-#
+
+:<<-EOF
 # playonlinux
+# 2020-07-14: There isn't playonlinux ppa for Ubuntu 20.04
 wget -q -O - "http://deb.playonlinux.com/public.gpg" | sudo apt-key add - && \
 sudo wget -q http://deb.playonlinux.com/playonlinux_`lsb_release -sc`.list -O /etc/apt/sources.list.d/playonlinux.list && \
 sudo apt-get update > /dev/null && \
 sudo apt-get install -q -y playonlinux winetricks >> $logd 
 check_status
+EOF
 #############################################
 printf "${b}for images... ${n}"
 sudo apt-get install -q -y gimp pinta gthumb >> $logd && \
@@ -216,7 +229,7 @@ check_status
 printf "${b}  Replacing light-locker for gnome-screensaver...${n}"
 sudo apt-get purge -q -y light-locker >> $logd && \
 sudo apt-get install -q -y gnome-screensaver >> $logd && \
-sudo killall light-locker
+#sudo killall light-locker
 check_status
 #############################################
 printf "${b}OpenVPN...${n}"
@@ -226,7 +239,7 @@ check_status
 printf "${b}for others... ${n}"
 #for 14.04
 #sudo apt-get install -q -y unetbootin k3b >> $logd
-sudo apt-get install -q -y basket baobab remmina >> $logd
+sudo apt-get install -q -y basket baobab >> $logd
 check_status
 # libreoffice doesn't support muilti-spellcheching
 #printf "${b}plugins for LibreOffice... ${n}"
@@ -249,11 +262,6 @@ sudo apt-get install -q -y xclip >> $logd && \
 check_status
 
 echo
-printf "${b}Installing drivers... ${n}"
-sudo ubuntu-drivers autoinstall > /dev/null
-check_status
-
-echo
 printf "${b}Installing utils for programming... ${n}"
 sudo apt-get install -q -y meld kate >> $logd
 check_status
@@ -269,6 +277,10 @@ wget -q -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key a
 sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -sc`-pgdg main" >> /etc/apt/sources.list.d/pgdg.list' && \
 sudo apt-get update > /dev/null && \
 sudo apt-get install -q -y postgresql-9.6 postgresql-server-dev-9.6 pgadmin3 >> $logd
+check_status
+printf "${b}\t\tInstalling & setting pgadmin3... ${n}"
+sudo apt-get install -q -y pgadmin3 >> $logd && \
+  cp $dir_data/.pgadmin ~/
 check_status
 # Valentina-DB (VStudio)
 # http://valentina-db.com/download/
@@ -294,10 +306,6 @@ sudo mv chromedriver /usr/bin/chromedriver && \
 sudo chown root:root /usr/bin/chromedriver && \
 sudo chmod +x /usr/bin/chromedriver
 EOF
-printf "${b}\tInstalling apt-file... ${n}"
-sudo apt-get install -q -y apt-file >> $logd && \
-  sudo apt-file update > /dev/null
-check_status
 
 echo
 printf "${b}Set keyboardlayout switcher by Caps key... ${n}"
@@ -345,7 +353,9 @@ echo "${b}Setting Desktop Enviroment${n}"
 printf "${b}Installing compiz (windows manager)... ${n}"
 # Change the number of Workspaces:
 #   compiz: General/General Options/Desktop Size
-sudo apt-get install -q -y compiz compiz-plugins compizconfig-settings-manager metacity dconf-tools >> $logd
+sudo apt-get install -q -y compiz compiz-plugins compizconfig-settings-manager metacity >> $logd
+# There isn't dconf-tools for Ubuntu 20.04 anymore
+#sudo apt-get install -q -y dconf-tools >> $logd
 check_status
 
 printf "${b}Switch xfwm4 to compiz. Autostart compiz... ${n}"
@@ -363,7 +373,7 @@ printf "${b}Setting the windows manager enviroment... ${n}"
 check_status
 
 printf "${b}Installing plugins for Desktop Enviroment... ${n}"
-sudo apt-get install -q -y xfce4-clipman-plugin xfce4-datetime-plugin xfce4-time-out-plugin >> $logd
+sudo apt-get install -q -y xfce4-clipman-plugin xfce4-datetime-plugin xfce4-time-out-plugin xfce4-timer-plugin >> $logd
 check_status
 
 # there isn't version for 18.04
@@ -486,21 +496,27 @@ if [ -d ~/.local/share/applications ]; then
 fi
 check_status
 
+:<<-EOF
+# for Lenovo Yoga only
 echo
 printf "${b}Fixing bug with Lenovo IdeaPad Yoga 13... ${n}"
 # /var/log/syslog: atkbd serio0: Unknown key released (translated set 2, code 0xbe on isa0060/serio0)
 # kernel: [57478.570447] atkbd serio0: Use 'setkeycodes e03e <keycode>' to make it known
 sudo dmidecode |grep 'Lenovo IdeaPad Yoga 13' && sudo setkeycodes e03e 255
 check_status
+EOF
 
-#echo
-#printf "${b}Fix for Xiaomi MIIIW Bluetooth Dual Mode Keyboard... ${n}"
-#cat <<-EOF >> ~/.Xmodmap
-#keycode 87 = End End KP_1 KP_1 KP_1 KP_1
-#keycode 79 = Home Home KP_7 KP_7 KP_7 KP_7 KP_7
-#EOF
-#xmodmap ~/.Xmodmap
-#check_status
+:<<-EOF1
+# for Xiaomi MIIIW Bluetooth Dual Mode Keyboard only
+echo
+printf "${b}Fix for Xiaomi MIIIW Bluetooth Dual Mode Keyboard... ${n}"
+cat <<-EOF >> ~/.Xmodmap
+keycode 87 = End End KP_1 KP_1 KP_1 KP_1
+keycode 79 = Home Home KP_7 KP_7 KP_7 KP_7 KP_7
+EOF
+xmodmap ~/.Xmodmap
+check_status
+EOF1
 
 echo
 printf "${b}Installing sysbench... ${n}"

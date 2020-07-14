@@ -8,16 +8,18 @@
 ## It has been tested on:
 - Xubuntu 14.04.3
 - Xubuntu 18.04.4
+- Xubuntu 20.04.0
 
 ## Update config. files of autodeploy_os
-export dir_data="$dir_script/data"
+Go to root dir of autodeploy_os
+
+export dir_data="./data"
 exportlist="xfce4 compiz-1 Mousepad Thunar terminator"
 
 for cur in $exportlist; do
   printf "${b}\t of $cur... ${n}"
   rm -Rf $dir_data/config/$cur && cp -Rf ~/.config/$cur $dir_data/config/ && \
     find $dir_data/config/$cur -type f -print0 | xargs -0 sed "s/$USER/snaiffer/g"
-  check_status
 done
 
 Check changes with difftool:
