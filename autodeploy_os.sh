@@ -55,6 +55,10 @@ if [[ "$?" != "0" ]]; then
   fi
   echo "continue"
 fi
+# Git: force to use SSH URL instead of HTTPS for github.com:
+# git config --global url."git@github.com:".insteadOf "https://github.com/"
+# Note: if you use HTTPS, you always have to input login&password
+# With help of this settings you can copy your public key (.ssh/id_rsa.pub) to website account and work with repos without login
 echo "done."
 
 printf "Intalling libraries for bash... "
