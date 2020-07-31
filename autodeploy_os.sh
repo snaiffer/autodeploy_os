@@ -1,5 +1,7 @@
 #!/bin/bash
 
+mode="desktop"  # "desktop" or "server"
+
 # Usefull:
 # lsb_release -sc	# get codename (Ex.: bionic, xenial)
 echo "To leave settings as in example - just press <Enter>"
@@ -10,7 +12,7 @@ export dir_data="$dir_script/data"
 export bin="/usr/bin"
 export logd="$dir_script/progress_details.log"
 echo "" > $logd
-echo -e "\nDetailed progress log you can get in: $logd\n"
+echo -e "\n${yellow}Detailed progress log you can get in: $logd\n"
 
 export git_email="a.danilov@runabank.ru"
 export git_name="Alexander Danilov"
@@ -62,7 +64,7 @@ check_status
 
 echo
 printf "${b}Creating dirs... ${n}"
-mkdir -p ~/git ~/temp ~/VM_share > /dev/null
+mkdir -p ~/git ~/temp ~/VM_share ~/payload > /dev/null
 check_status
 
 #printf "${b}Set Desktop count... ${n}"
@@ -78,7 +80,7 @@ check_status
 
 echo
 printf "${b}Removing packages... ${n}"
-sudo apt-get remove -q -y abiword* gnumeric* xfburn parole gmusicbrowser xfce4-notes firefox xfce4-terminal > /dev/null
+sudo apt-get remove -q -y xfce4-screensaver abiword* gnumeric* xfburn parole gmusicbrowser xfce4-notes firefox xfce4-terminal > /dev/null
 check_status
 
 echo
@@ -91,14 +93,16 @@ echo "${b}Installing packages:${n}"
 sudo apt-get update > /dev/null
 #############################################
 printf "${b}for console... ${n}"
-sudo apt-get install -q -y jq >> $logd && \  # pretty json output
+# iq              --pretty json output
+# vim-gui-common  --GUI features. Don't install it on a server
+sudo apt-get install -q -y jq >> $logd && \
 sudo apt-get install -q -y gawk >> $logd && \
-sudo apt-get install -q -y traceroute nethogs whois >> $logd && \
+sudo apt-get install -q -y net-tools traceroute nethogs whois >> $logd && \
 sudo apt-get install -q -y expect >> $logd && \
 sudo apt-get install -q -y alien >> $logd && \
 sudo apt-get install -q -y vim >> $logd && \
-sudo apt-get install -q -y vim-gui-common >> $logd && \  # GUI features. Don't install it on a server
-sudo apt-get install -q -y openssh-server openssh-client tree nmap iotop htop foremost sshfs powertop bless apt-file >> $logd && \
+sudo apt-get install -q -y vim-gui-common >> $logd && \
+sudo apt-get install -q -y openssh-server openssh-client tree nmap iotop htop foremost sshfs powertop bless apt-file curl >> $logd && \
 sudo apt-get install -q -y apt-file >> $logd && \
   sudo apt-file update > /dev/null
 check_status
@@ -111,6 +115,9 @@ check_status
 #sudo ln -s $bin/terminal_markdown_viewer/mdv/markdownviewer.py $bin/mdv
 #############################################
 echo -e "${b}ssh settings:${n}"
+printf "${b}\t ssh-server setting... ${n}"
+sudo sh -c "echo 'PermitRootLogin no' >> /etc/ssh/sshd_config"
+check_status
 printf "${b}\t turn off GSS for fast connection... ${n}"
 sudo sh -c 'echo "GSSAPIAuthentication no" >> /etc/ssh/ssh_config'
 check_status
@@ -122,6 +129,18 @@ ControlMaster auto
 ControlPath ~/.ssh/cm_%r@%h:%p
 EOF
 check_status
+if [[ "$mode" = "server" ]]; then
+  printf "${b}\t fail2ban (bruteforce protection)... ${n}"
+  sudo apt-get install -q -y fail2ban >> $logd && \
+  sudo cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
+:<<-EOF
+  Edit in [DEFAULT] section:
+    bantime = 1h
+    maxretry = 3
+EOF
+  sudo service fail2ban restart
+  check_status
+fi;
 #############################################
 printf "${b}for systems... ${n}"
 echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | sudo debconf-set-selections && \
@@ -164,7 +183,7 @@ echo "${b}for VirtualBox:${n}"
 sudo sh -c "echo 'deb http://download.virtualbox.org/virtualbox/debian `lsb_release -cs` contrib' >> /etc/apt/sources.list.d/virtualbox.list" && \
 wget -q https://www.virtualbox.org/download/oracle_vbox.asc -O- | sudo apt-key add - && \
 wget -q https://www.virtualbox.org/download/oracle_vbox_2016.asc -O- | sudo apt-key add - && \
-sudo apt-get update > /dev/null && sudo apt-get install -q -y virtualbox >> $logd
+sudo apt-get update > /dev/null && sudo apt-get install -y virtualbox # -q and >> $logd were commented as the installation process wants actions in firmware sign menu
 check_status
 #printf "${b}\tVirtualBox Extension Pack... ${n}"
 #wget -q $virtualbox_extenpack_link && \
@@ -225,12 +244,14 @@ printf "${b}VNC (Remote Desktop)...${n}"
 sudo add-apt-repository -y ppa:remmina-ppa-team/remmina-next > /dev/null && sudo apt-get update > /dev/null && \
 sudo apt-get install -q -y remmina remmina-plugin-rdp remmina-plugin-secret >> $logd
 check_status
+:<<-EOF
 # light-locker switch from DISPLAY=:0 to :1, what case problem with VNC logging
 printf "${b}  Replacing light-locker for gnome-screensaver...${n}"
 sudo apt-get purge -q -y light-locker >> $logd && \
 sudo apt-get install -q -y gnome-screensaver >> $logd && \
 #sudo killall light-locker
 check_status
+EOF
 #############################################
 printf "${b}OpenVPN...${n}"
 sudo apt-get install -q -y openvpn network-manager-openvpn network-manager-openvpn-gnome >> $logd
@@ -276,12 +297,22 @@ printf "${b}\tInstalling utils for RDBMS programming... ${n}"
 wget -q -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add - && \
 sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -sc`-pgdg main" >> /etc/apt/sources.list.d/pgdg.list' && \
 sudo apt-get update > /dev/null && \
-sudo apt-get install -q -y postgresql-9.6 postgresql-server-dev-9.6 pgadmin3 >> $logd
+sudo apt-get install -q -y postgresql-9.6 postgresql-server-dev-9.6 >> $logd && \
+  sudo -u postgres psql -c "create role $USER with superuser createdb createrole inherit login replication bypassrls"
 check_status
+:<<-EOF
+# Ubuntu 20.04: Query Tool crashed with error:
+# gdk_drawing_context_get_cairo_context: assertion 'GDK_IS_DRAWING_CONTEXT (context)' failed. Segmentation fault
 printf "${b}\t\tInstalling & setting pgadmin3... ${n}"
 sudo apt-get install -q -y pgadmin3 >> $logd && \
-  cp $dir_data/.pgadmin ~/
+  cp $dir_data/.pgadmin3 ~/ && sed -i "s/snaiffer/$USER/g" ~/.pgadmin3
 check_status
+EOF
+printf "${b}\t\tInstalling sqldump_search... ${n}"
+git clone -q https://github.com/snaiffer/sqldump_search.git ~/git/sqldump_search && \
+sudo ln -s ~/git/sqldump_search/sqldump_search.py /usr/bin/sqldump_search
+check_status
+
 # Valentina-DB (VStudio)
 # http://valentina-db.com/download/
 # Serial code:
@@ -474,7 +505,7 @@ fi
 echo
 printf "${b}Fixing bug with xfce-sessions... ${n}"
 # Even if sessions are turn off xfce make them and it follow to bugs of Desktop after reboot
-rm -f ~/.cache/sessions/* > /dev/null && \
+rm -Rf ~/.cache/sessions/* > /dev/null && \
 chmod -w ~/.cache/sessions
 check_status
 
@@ -528,6 +559,11 @@ sysbench --test=cpu run
 echo "${b}================================================${n}"
 
 echo
+echo -e "\n${yellow}Install VirtualBox Extension pack: $logd\n"
+echo "https://www.virtualbox.org/wiki/Downloads"
+echo "<Enter>" && read
+
+echo
 echo "Foxit Reader PDF (very fast and pretty)"
 echo "You can download and install it manually. Go to:"
 echo "https://www.foxitsoftware.com/downloads/"
@@ -559,6 +595,30 @@ Execute after reboot:"
 echo '  sed -i "/last-image/,/$/ s/value=\".*\"/value=\"\/usr\/share\/xfce4\/backdrops\/solitude\.jpg\"/" ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml'
 echo '  sudo reboot'
 echo "<Enter>" && read
+
+:<<-EOF
+echo -e "Change lid and key actions"
+sudo sed -i "/HandleLidSwitch/d" /etc/systemd/logind.conf && \
+sudo sh -c 'echo "HandleLidSwitch=ignore" >> /etc/systemd/logind.conf' && \
+sudo sed -i "/HandleSuspendKey/d" /etc/systemd/logind.conf && \
+sudo sh -c 'echo "HandleSuspendKey=ignore" >> /etc/systemd/logind.conf' && \
+sudo sed -i "/HandleLidSwitchDocked/d" /etc/systemd/logind.conf && \
+sudo sh -c 'echo "HandleLidSwitchDocked=ignore" >> /etc/systemd/logind.conf'
+EOF
+
+if [[ "$mode" = "server" ]]; then
+  echo -e "Ubuntu desktop to Ubuntu server"
+  sudo apt-get install tasksel
+  sudo tasksel remove ubuntu-desktop
+  sudo tasksel install server
+  sudo apt-get purge lightdm
+
+  Edit /etc/default/grub:
+  GRUB_CMDLINE_LINUX_DEFAULT="text"
+
+  sudo update-grub
+  sudo systemctl set-default multi-user.target
+fi
 
 echo
 printf "${b}Removing no longer required packages... ${n}"
