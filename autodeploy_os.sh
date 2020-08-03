@@ -543,6 +543,7 @@ EOF
 
 :<<-EOF1
 # for Xiaomi MIIIW Bluetooth Dual Mode Keyboard only
+# xev   --show key codes
 echo
 printf "${b}Fix for Xiaomi MIIIW Bluetooth Dual Mode Keyboard... ${n}"
 cat <<-EOF >> ~/.Xmodmap
