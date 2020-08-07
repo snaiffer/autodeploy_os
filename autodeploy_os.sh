@@ -108,6 +108,7 @@ sudo apt-get install -q -y vim >> $logd && \
 sudo apt-get install -q -y vim-gui-common >> $logd && \
 sudo apt-get install -q -y openssh-server openssh-client tree nmap iotop htop foremost sshfs powertop bless apt-file curl >> $logd && \
 sudo apt-get install -q -y apt-file >> $logd && \
+sudo apt-get install -q -y unrar >> $logd && \
   sudo apt-file update > /dev/null
 check_status
 #############################################
