@@ -2,6 +2,12 @@
 
 mode="desktop"  # "desktop" or "server"
 
+# Example:
+# printf "${b}my bold text${n}"
+export b=$(tput bold)   # bold text
+export n=$(tput sgr0)   # normal text
+export yellow="\033[1;33;40m"   # yellow text
+
 # Usefull:
 # lsb_release -sc	# get codename (Ex.: bionic, xenial)
 echo "To leave settings as in example - just press <Enter>"
@@ -12,7 +18,7 @@ export dir_data="$dir_script/data"
 export bin="/usr/bin"
 export logd="$dir_script/progress_details.log"
 echo "" > $logd
-echo -e "\n${yellow}Detailed progress log you can get in: $logd\n"
+echo -e "\n${yellow}Detailed progress log you can get in: $logd ${n}\n"
 
 export git_email="a.danilov@runabank.ru"
 export git_name="Alexander Danilov"
@@ -81,6 +87,18 @@ check_status
 ## xrandr -q | grep connected
 #xrandr --output LVDS --brightness 0.9
 #check_status
+printf "${b}Brightness shortcuts: Shift+F3/F4...${n}" # added for HP ProBook
+# https://unix.stackexchange.com/questions/356730/how-to-create-keyboard-shortcuts-for-screen-brightness-in-xubuntu-xfce-ubuntu
+# https://askubuntu.com/questions/715306/xbacklight-no-outputs-have-backlight-property-no-sys-class-backlight-folder
+sudo apt-get install -q -y jq >> $logd && \
+cat <<-EOF > ~/.xbindkeysrc
+"xbacklight -dec 10 -steps 1"
+  XF86MonBrightnessDown
+"xbacklight -inc 10 -steps 1"
+  XF86MonBrightnessUp
+EOF
+check_status
+
 
 echo
 printf "${b}Removing packages... ${n}"
@@ -100,7 +118,7 @@ printf "${b}for console... ${n}"
 # iq              --pretty json output
 # vim-gui-common  --GUI features. Don't install it on a server
 sudo apt-get install -q -y jq >> $logd && \
-sudo apt-get install -q -y gawk >> $logd && \
+sudo apt-get install -q -y gawk icdiff >> $logd && \
 sudo apt-get install -q -y net-tools traceroute nethogs whois >> $logd && \
 sudo apt-get install -q -y expect >> $logd && \
 sudo apt-get install -q -y alien >> $logd && \
@@ -211,11 +229,13 @@ printf "${b}for wine likes programs... ${n}"
   #The following packages have unmet dependencies:
   # winehq-stable : Depends: wine-stable (= 5.0.0~bionic)
   #E: Unable to correct problems, you have held broken packages.
+# https://wiki.winehq.org/Ubuntu
+sudo dpkg --add-architecture i386 && \
 wget -q -O - https://dl.winehq.org/wine-builds/winehq.key | sudo apt-key add - && \
 sudo sh -c 'echo "deb https://dl.winehq.org/wine-builds/ubuntu/ `lsb_release -sc` main" >> /etc/apt/sources.list.d/wine.list' && \
 sudo apt-get update > /dev/null && \
-# Ubuntu 20.04 Error: Could not configure 'libc6:i386'
-#sudo apt-get install -q -y winehq-stable playonlinux >> $logd
+# if Ubuntu 20.04 Error: Could not configure 'libc6:i386' then sudo apt upgrade
+sudo apt-get install -q -y winehq-stable playonlinux >> $logd
 
 :<<-EOF
 # playonlinux
@@ -554,6 +574,15 @@ EOF
 xmodmap ~/.Xmodmap
 check_status
 EOF1
+
+:<<-EOF2
+# Set up mouse scroll speed
+# https://dev.to/bbavouzet/ubuntu-20-04-mouse-scroll-wheel-speed-536o
+sudo apt install imwheel
+# set up via GUI
+bash <(curl -s http://www.nicknorton.net/mousewheel.sh)
+# Manualy add "imwheel" to the list of startup applications
+EOF2
 
 echo
 printf "${b}Installing sysbench... ${n}"
