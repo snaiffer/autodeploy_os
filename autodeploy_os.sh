@@ -115,7 +115,7 @@ echo "${b}Installing packages:${n}"
 sudo apt-get update > /dev/null
 #############################################
 printf "${b}for console... ${n}"
-# iq              --pretty json output
+# jq              --pretty json output
 # vim-gui-common  --GUI features. Don't install it on a server
 sudo apt-get install -q -y jq >> $logd && \
 sudo apt-get install -q -y gawk icdiff >> $logd && \
@@ -123,11 +123,12 @@ sudo apt-get install -q -y net-tools traceroute nethogs whois >> $logd && \
 sudo apt-get install -q -y expect >> $logd && \
 sudo apt-get install -q -y alien >> $logd && \
 sudo apt-get install -q -y vim >> $logd && \
-sudo apt-get install -q -y vim-gui-common >> $logd && \
+( [[ "$mode" = "server" ]] || sudo apt-get install -q -y vim-gui-common >> $logd ) && \
 sudo apt-get install -q -y openssh-server openssh-client tree nmap iotop htop foremost sshfs powertop bless apt-file curl >> $logd && \
 sudo apt-get install -q -y apt-file >> $logd && \
+  sudo apt-file update > /dev/null && \
 sudo apt-get install -q -y unrar >> $logd && \
-  sudo apt-file update > /dev/null
+sudo apt-get install -q -y pwgen >> $logd
 check_status
 #############################################
 printf "${b}markdown terminal viewer... ${n}"
@@ -153,6 +154,7 @@ ControlPath ~/.ssh/cm_%r@%h:%p
 EOF
 check_status
 if [[ "$mode" = "server" ]]; then
+  #############################################
   printf "${b}\t fail2ban (bruteforce protection)... ${n}"
   sudo apt-get install -q -y fail2ban >> $logd && \
   sudo cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
@@ -163,101 +165,138 @@ if [[ "$mode" = "server" ]]; then
 EOF
   sudo service fail2ban restart
   check_status
-fi;
+  #############################################
+  printf "${b}for systems... ${n}"
+  echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | sudo debconf-set-selections && \
+    sudo apt-get install -q -y terminator mtp-tools go-mtpfs pavucontrol >> $logd
+    # Can't find in 20.04: sudo apt-get install -q -y xubuntu-restricted-extras >> $logd
+  check_status
+  #############################################
+  echo "${b}for WWW:${n}"
+  #printf "${b}\tset chromium-browser by default... ${n}"
+  #sudo sed -i "s/firefox.desktop/chromium-browser.desktop/g" /usr/share/applications/defaults.list
+  #check_status
+  # for 14.04
+  #printf "${b}\tPepper Flash Player... ${n}"
+  #sudo add-apt-repository -y ppa:skunk/pepper-flash > /dev/null && \
+  #sudo apt-get update > /dev/null && sudo apt-get install -q -y pepflashplugin-installer >> $logd && \
+  #sudo sh -c 'echo ". /usr/lib/pepflashplugin-installer/pepflashplayer.sh" >> /etc/chromium-browser/default' > /dev/null
+  ## to check if it has been success:
+  ### open chromium and input "chrome://plugins" in the address line
+  #printf "${b}\tFlash Player... ${n}"
+  #sudo add-apt-repository "deb http://archive.canonical.com/ $(lsb_release -sc) partner" > /dev/null && \
+  #sudo apt-get update > /dev/null && sudo apt-get install -q -y adobe-flashplugin browser-plugin-freshplayer-pepperflash >> $logd
+  #check_status
+  #############################################
+  printf "${b}\tchrome-browser... ${n}"
+  wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add - && \
+  sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list' && \
+  sudo apt-get update > /dev/null && \
+  sudo apt-get install -q -y google-chrome-stable >> $logd
+  check_status
+  printf "${b}\tset google-chrome by default... ${n}"
+  sudo sed -i "s/firefox.desktop/google-chrome.desktop/g" /usr/share/applications/defaults.list
+  check_status
+  #############################################
+  #printf "${b}\tJava... ${n}"
+  #sudo add-apt-repository -y ppa:webupd8team/java > /dev/null && \
+  #sudo apt-get update > /dev/null && sudo apt-get install -q -y oracle-java8-installer >> $logd
+  #check_status
+  #############################################
+  echo "${b}for VirtualBox:${n}"
+  sudo sh -c "echo 'deb http://download.virtualbox.org/virtualbox/debian `lsb_release -cs` contrib' >> /etc/apt/sources.list.d/virtualbox.list" && \
+  wget -q https://www.virtualbox.org/download/oracle_vbox.asc -O- | sudo apt-key add - && \
+  wget -q https://www.virtualbox.org/download/oracle_vbox_2016.asc -O- | sudo apt-key add - && \
+  sudo apt-get update > /dev/null && sudo apt-get install -y virtualbox # -q and >> $logd were commented as the installation process wants actions in firmware sign menu
+  check_status
+  #printf "${b}\tVirtualBox Extension Pack... ${n}"
+  #wget -q $virtualbox_extenpack_link && \
+  #sudo VBoxManage extpack install ${virtualbox_extenpack_file}* && \
+  #rm -f ${virtualbox_extenpack_file}*
+  #check_status
 #############################################
-printf "${b}for systems... ${n}"
-echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | sudo debconf-set-selections && \
-  sudo apt-get install -q -y terminator mtp-tools go-mtpfs pavucontrol >> $logd
-  # Can't find in 20.04: sudo apt-get install -q -y xubuntu-restricted-extras >> $logd
-check_status
-#############################################
-echo "${b}for WWW:${n}"
-#printf "${b}\tset chromium-browser by default... ${n}"
-#sudo sed -i "s/firefox.desktop/chromium-browser.desktop/g" /usr/share/applications/defaults.list
-#check_status
-# for 14.04
-#printf "${b}\tPepper Flash Player... ${n}"
-#sudo add-apt-repository -y ppa:skunk/pepper-flash > /dev/null && \
-#sudo apt-get update > /dev/null && sudo apt-get install -q -y pepflashplugin-installer >> $logd && \
-#sudo sh -c 'echo ". /usr/lib/pepflashplugin-installer/pepflashplayer.sh" >> /etc/chromium-browser/default' > /dev/null
-## to check if it has been success:
-### open chromium and input "chrome://plugins" in the address line
-#printf "${b}\tFlash Player... ${n}"
-#sudo add-apt-repository "deb http://archive.canonical.com/ $(lsb_release -sc) partner" > /dev/null && \
-#sudo apt-get update > /dev/null && sudo apt-get install -q -y adobe-flashplugin browser-plugin-freshplayer-pepperflash >> $logd
-#check_status
-#############################################
-printf "${b}\tchrome-browser... ${n}"
-wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add - && \
-sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list' && \
-sudo apt-get update > /dev/null && \
-sudo apt-get install -q -y google-chrome-stable >> $logd
-check_status
-printf "${b}\tset google-chrome by default... ${n}"
-sudo sed -i "s/firefox.desktop/google-chrome.desktop/g" /usr/share/applications/defaults.list
-check_status
-#############################################
-#printf "${b}\tJava... ${n}"
-#sudo add-apt-repository -y ppa:webupd8team/java > /dev/null && \
-#sudo apt-get update > /dev/null && sudo apt-get install -q -y oracle-java8-installer >> $logd
-#check_status
-#############################################
-echo "${b}for VirtualBox:${n}"
-sudo sh -c "echo 'deb http://download.virtualbox.org/virtualbox/debian `lsb_release -cs` contrib' >> /etc/apt/sources.list.d/virtualbox.list" && \
-wget -q https://www.virtualbox.org/download/oracle_vbox.asc -O- | sudo apt-key add - && \
-wget -q https://www.virtualbox.org/download/oracle_vbox_2016.asc -O- | sudo apt-key add - && \
-sudo apt-get update > /dev/null && sudo apt-get install -y virtualbox # -q and >> $logd were commented as the installation process wants actions in firmware sign menu
-check_status
-#printf "${b}\tVirtualBox Extension Pack... ${n}"
-#wget -q $virtualbox_extenpack_link && \
-#sudo VBoxManage extpack install ${virtualbox_extenpack_file}* && \
-#rm -f ${virtualbox_extenpack_file}*
-#check_status
-#############################################
-printf "${b}for libreoffice... ${n}"
-sudo apt-get install -q -y libreoffice >> $logd
-check_status
-#############################################
-#printf "${b}for wireshark... ${n}"
-#sudo add-apt-repository -y ppa:wireshark-dev/stable > /dev/null && sudo apt-get update > /dev/null && \
-#sudo apt-get install -q -y wireshark >> $logd
-#check_status
-printf "${b}for wine likes programs... ${n}"
-# For Ubuntu 18.04:
-  # install wine: https://wiki.winehq.org/Ubuntu
-  # Error:
-  #The following packages have unmet dependencies:
-  # winehq-stable : Depends: wine-stable (= 5.0.0~bionic)
-  #E: Unable to correct problems, you have held broken packages.
-# https://wiki.winehq.org/Ubuntu
-sudo dpkg --add-architecture i386 && \
-wget -q -O - https://dl.winehq.org/wine-builds/winehq.key | sudo apt-key add - && \
-sudo sh -c 'echo "deb https://dl.winehq.org/wine-builds/ubuntu/ `lsb_release -sc` main" >> /etc/apt/sources.list.d/wine.list' && \
-sudo apt-get update > /dev/null && \
-# if Ubuntu 20.04 Error: Could not configure 'libc6:i386' then sudo apt upgrade
-sudo apt-get install -q -y winehq-stable playonlinux >> $logd
+  printf "${b}for libreoffice... ${n}"
+  sudo apt-get install -q -y libreoffice >> $logd
+  check_status
+  #############################################
+  #printf "${b}for wireshark... ${n}"
+  #sudo add-apt-repository -y ppa:wireshark-dev/stable > /dev/null && sudo apt-get update > /dev/null && \
+  #sudo apt-get install -q -y wireshark >> $logd
+  #check_status
+  printf "${b}for wine likes programs... ${n}"
+  # For Ubuntu 18.04:
+    # install wine: https://wiki.winehq.org/Ubuntu
+    # Error:
+    #The following packages have unmet dependencies:
+    # winehq-stable : Depends: wine-stable (= 5.0.0~bionic)
+    #E: Unable to correct problems, you have held broken packages.
+  # https://wiki.winehq.org/Ubuntu
+  sudo dpkg --add-architecture i386 && \
+  wget -q -O - https://dl.winehq.org/wine-builds/winehq.key | sudo apt-key add - && \
+  sudo sh -c 'echo "deb https://dl.winehq.org/wine-builds/ubuntu/ `lsb_release -sc` main" >> /etc/apt/sources.list.d/wine.list' && \
+  sudo apt-get update > /dev/null && \
+  # if Ubuntu 20.04 Error: Could not configure 'libc6:i386' then sudo apt upgrade
+  sudo apt-get install -q -y winehq-stable playonlinux >> $logd
 
-:<<-EOF
-# playonlinux
-# 2020-07-14: There isn't playonlinux ppa for Ubuntu 20.04
-wget -q -O - "http://deb.playonlinux.com/public.gpg" | sudo apt-key add - && \
-sudo wget -q http://deb.playonlinux.com/playonlinux_`lsb_release -sc`.list -O /etc/apt/sources.list.d/playonlinux.list && \
-sudo apt-get update > /dev/null && \
-sudo apt-get install -q -y playonlinux winetricks >> $logd 
-check_status
-EOF
+  :<<-EOF
+  # playonlinux
+  # 2020-07-14: There isn't playonlinux ppa for Ubuntu 20.04
+  wget -q -O - "http://deb.playonlinux.com/public.gpg" | sudo apt-key add - && \
+  sudo wget -q http://deb.playonlinux.com/playonlinux_`lsb_release -sc`.list -O /etc/apt/sources.list.d/playonlinux.list && \
+  sudo apt-get update > /dev/null && \
+  sudo apt-get install -q -y playonlinux winetricks >> $logd 
+  check_status
+  EOF
+  #############################################
+  printf "${b}for images... ${n}"
+  sudo apt-get install -q -y gimp pinta gthumb >> $logd && \
+  # https://github.com/cas--/PasteImg
+  sudo cp -f $dir_data/pasteimg $bin && sudo chmod +x $bin/pasteimg
+  check_status
+  #############################################
+  printf "${b}for media... ${n}"
+  sudo apt-get install -q -y vlc >> $logd
+  # for 14.04
+  #sudo apt-get install -q -y gnome-mplayer >> $logd
+  check_status
+  #############################################
+  printf "${b}for others... ${n}"
+  #for 14.04
+  #sudo apt-get install -q -y unetbootin k3b >> $logd
+  sudo apt-get install -q -y basket baobab >> $logd
+  check_status
+  # libreoffice doesn't support muilti-spellcheching
+  #printf "${b}plugins for LibreOffice... ${n}"
+  #export libreoffice_languagetools='https://www.languagetool.org/download/LanguageTool-3.0.oxt'
+  #dir_download=/tmp/libreoffice_plugins && \
+  #  mkdir $dir_download && \
+  #  wget -q $libreoffice_languagetools http://extensions.libreoffice.org/extension-center/russian-spellcheck-dictionary.-based-on-works-of-aot-group/pscreleasefolder.2011-09-06.6209385965/0.4.0/dict_ru_ru-aot-0-4-0.oxt -P $dir_download && \
+  #  rm -Rf $dir_download
+  #check_status
+  #
+  #Youtube Downloader
+  # https://github.com/ytdl-org/youtube-dl
+  # sudo -H pip install --upgrade youtube-dl
+  #
+  #############################################
+  echo
+  printf "${b}Installing utils for programming... ${n}"
+  sudo apt-get install -q -y meld kate >> $logd
+  check_status
+  # atom-editor: download & install deb: https://atom.io/
+fi
+
 #############################################
-printf "${b}for images... ${n}"
-sudo apt-get install -q -y gimp pinta gthumb >> $logd && \
-# https://github.com/cas--/PasteImg
-sudo cp -f $dir_data/pasteimg $bin && sudo chmod +x $bin/pasteimg
-check_status
-#############################################
-printf "${b}for media... ${n}"
-sudo apt-get install -q -y vlc >> $logd
-# for 14.04
-#sudo apt-get install -q -y gnome-mplayer >> $logd
-check_status
+if [[ "$mode" = "server" ]]; then
+  printf "${b}nginx... ${n}"
+  sudo sh -c 'echo "deb http://ppa.launchpad.net/nginx/stable/ubuntu `lsb_release -sc` main" > /etc/apt/sources.list.d/nginx.list' && \
+    sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys C300EE8C && \
+    sudo apt-get update && \
+    sudo apt-get install -q -y nginx >> $logd && \
+    nginx -v
+  check_status
+fi
+
 #############################################
 printf "${b}for tlp (power saving utils)...${n}"
 sudo add-apt-repository -y ppa:linrunner/tlp > /dev/null && sudo apt-get update > /dev/null && \
@@ -282,36 +321,12 @@ printf "${b}OpenVPN...${n}"
 sudo apt-get install -q -y openvpn network-manager-openvpn network-manager-openvpn-gnome >> $logd
 check_status
 #############################################
-printf "${b}for others... ${n}"
-#for 14.04
-#sudo apt-get install -q -y unetbootin k3b >> $logd
-sudo apt-get install -q -y basket baobab >> $logd
-check_status
-# libreoffice doesn't support muilti-spellcheching
-#printf "${b}plugins for LibreOffice... ${n}"
-#export libreoffice_languagetools='https://www.languagetool.org/download/LanguageTool-3.0.oxt'
-#dir_download=/tmp/libreoffice_plugins && \
-#  mkdir $dir_download && \
-#  wget -q $libreoffice_languagetools http://extensions.libreoffice.org/extension-center/russian-spellcheck-dictionary.-based-on-works-of-aot-group/pscreleasefolder.2011-09-06.6209385965/0.4.0/dict_ru_ru-aot-0-4-0.oxt -P $dir_download && \
-#  rm -Rf $dir_download
-#check_status
-#
-#Youtube Downloader
-# https://github.com/ytdl-org/youtube-dl
-# sudo -H pip install --upgrade youtube-dl
-#
-
 echo
 printf "${b}Forward copy/paste-buffer via ssh... ${n}"
 sudo apt-get install -q -y xclip >> $logd && \
   echo "ForwardX11 yes" >> ~/.ssh/config
 check_status
 
-echo
-printf "${b}Installing utils for programming... ${n}"
-sudo apt-get install -q -y meld kate >> $logd
-check_status
-# atom-editor: download & install deb: https://atom.io/
 printf "${b}\tInstalling utils for C++ programming... ${n}"
 # for 14.04
 #sudo add-apt-repository -y ppa:george-edison55/cmake-3.x > /dev/null && \
@@ -404,153 +419,155 @@ printf "${b}Turn off apport... ${n}"
 sudo sed -i "s/enabled=1/enabled=0/" /etc/default/apport
 check_status
 
-echo
-echo "${b}Setting Desktop Enviroment${n}"
-printf "${b}Installing compiz (windows manager)... ${n}"
-# Change the number of Workspaces:
-#   compiz: General/General Options/Desktop Size
-sudo apt-get install -q -y compiz compiz-plugins compizconfig-settings-manager metacity >> $logd
-# There isn't dconf-tools for Ubuntu 20.04 anymore
-#sudo apt-get install -q -y dconf-tools >> $logd
-check_status
-
-printf "${b}Switch xfwm4 to compiz. Autostart compiz... ${n}"
-#http://www.webupd8.org/2012/11/how-to-set-up-compiz-in-xubuntu-1210-or.html
-cp /etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-session.xml ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-session.xml && \
- sed -i "s/xfwm4/compiz/" ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-session.xml
-check_status
-
-printf "${b}Setting the windows manager enviroment... ${n}"
-# Close/minimize/maximize button not appearing
- DISPLAY=:0.0 gsettings set org.gnome.desktop.wm.preferences button-layout ':minimize,maximize,close,' && \
- DISPLAY=:0.0 gsettings set org.gnome.desktop.wm.preferences titlebar-font 'Droid Sans Bold 10' && \
-# list of themes: /usr/share/themes/
- DISPLAY=:0.0 gsettings set org.gnome.desktop.wm.preferences theme 'Greybird'
-check_status
-
-printf "${b}Installing plugins for Desktop Enviroment... ${n}"
-sudo apt-get install -q -y xfce4-clipman-plugin xfce4-datetime-plugin xfce4-time-out-plugin xfce4-timer-plugin >> $logd
-check_status
-
-# there isn't version for 18.04
-#printf "${b}Installing DockbarX (side-panel) ... ${n}"
-## http://www.webupd8.org/2013/03/dockbarx-available-as-xfce-panel-plugin.html
-## if you want preview: install compiz and add KDE compability
-#sudo add-apt-repository -y ppa:dockbar-main/ppa > /dev/null && \
-# sudo apt-get update > /dev/null && \
-# sudo apt-get install -q -y --no-install-recommends xfce4-dockbarx-plugin >> $logd
-#check_status
-#
-#printf "${b}Adding to autostart DockbarX ... ${n}"
-#sudo sh -c 'cat <<-EOF > /etc/xdg/autostart/dockx.desktop
-#[Desktop Entry]
-#Encoding=UTF-8
-#Name=dockx
-#Comment=dockx
-#Exec=dockx
-#Type=Application
-#EOF'
-#check_status
-#
-#printf "${b}Installing System Load Indicator for Desktop Enviroment... ${n}"
-#sudo add-apt-repository -y ppa:indicator-multiload/stable-daily > /dev/null && \
-# sudo apt-get update > /dev/null && \
-# sudo apt-get install -q -y indicator-multiload >> $logd
-#check_status
-#
-#printf "${b}Installing Windowck Plugin for moving titlebar to panel... ${n}"
-#sudo add-apt-repository -y ppa:eugenesan/ppa > /dev/null && \
-# sudo apt-get update > /dev/null && \
-# sudo apt-get install -q -y xfce4-windowck-plugin maximus >> $logd && \
-# gconftool-2 --set /apps/maximus/no_maximize --type=bool true
-#check_status
-
-#printf "${b}Installing local dictionary for xfce plugin... ${n}"
-#sudo apt-get install -q -y dictd xfce4-dict mueller7accent-dict >> $logd
-#check_status
-
-#printf "${b}Allow hibirnate... ${n}"
-#sudo awk -i inplace '{if ($0 == "[Disable hibernate by default in upower]" || $0 == "[Disable hibernate by default in logind]") { found=1 }; if (found == 1 && $0 ~ /^ResultActive=.*/) {print "ResultActive=yes"; found=0} else {print $0};}' /var/lib/polkit-1/localauthority/10-vendor.d/com.ubuntu.desktop.pkla
-#check_status
-
-echo "${b}Export settings${n}"
-printf "${b}\t of background... ${n}"
-p="/usr/share/xfce4/backdrops"
-sudo mkdir -p $p > /dev/null && \
-sudo cp -f $dir_data/solitude.jpg $p
-check_status
-#exportlist="xfce4 compiz-1 autostart dconf Mousepad Thunar terminator xfce4-dict"
-#exportlist="xfce4 compiz-1 autostart Mousepad Thunar terminator xfce4-dict"
-exportlist="xfce4 compiz-1 Mousepad Thunar terminator"
-# xfce4     --general settings of Desktop Enviroment. Thunar settings.
-# compiz-1  --settings of compiz
-# autostart --autostart of System Load Indicator
-
-## dconf     --settings of System Load Indicator plugin <= it is loaded from dump now (test mode)
-## remove dconf dir from data_dir, when it will be tested
-
-# Mousepad  --hotkeys
-# Thunar    --
-# terminator -- settings of Terminator
-# xfce4-dict -- settings for dictionary
-for cur in $exportlist; do
-  printf "${b}\t of $cur... ${n}"
-  rm -Rf ~/.config/$cur && cp -Rf $dir_data/config/$cur ~/.config/ && \
-    find ~/.config/$cur -type f -print0 | xargs -0 sed "s/snaiffer/$SUDO_USER/g"
-  check_status
-done
-#printf "${b}\t of DockbarX... ${n}"
-#rm -Rf ~/.gconf && cp -Rf $dir_data/gconf ~/.gconf && \
-#  find ~/.gconf -type f -print0 | xargs -0 sed "s/snaiffer/$SUDO_USER/g"
-#check_status
-printf "${b}\t of Preferred Applications... ${n}"
-mkdir -p ~/.local/share/xfce4 && \
-cp -Rf $dir_data/helpers ~/.local/share/xfce4/ && \
-  find ~/.local/share/xfce4/helpers -type f -print0 | xargs -0 sed "s/snaiffer/$SUDO_USER/g"
-check_status
-#printf "${b}\t of System load indicator... ${n}"
-#sudo cp $dir_data/indicator-multiload-settings /usr/bin/ && \
-#  sudo chmod +x /usr/bin/indicator-multiload-settings
-# by hand:
-## cat $dir_data/system_load_indicator.dconf.dump | dconf load /de/mh21/indicator-multiload/
-#check_status
-
-echo
-printf "${b}Settings for Background... ${n}"
-rm -f ~/.config/xfce4/desktop/* > /dev/null
-check_status
-
-if [[ `terminator -v  | sed "s/terminator //"` < 0.97 ]]; then
+if [[ "$mode" != "server" ]]; then
   echo
-  printf "${b}\t bug fix for Terminator with keybind... ${n}"
-  sudo patch /usr/share/terminator/terminatorlib/container.py < $dir_data/terminator_close_multiterminals_withoutconfirm.patch > /dev/null
+  echo "${b}Setting Desktop Enviroment${n}"
+  printf "${b}Installing compiz (windows manager)... ${n}"
+  # Change the number of Workspaces:
+  #   compiz: General/General Options/Desktop Size
+  sudo apt-get install -q -y compiz compiz-plugins compizconfig-settings-manager metacity >> $logd
+  # There isn't dconf-tools for Ubuntu 20.04 anymore
+  #sudo apt-get install -q -y dconf-tools >> $logd
+  check_status
+
+  printf "${b}Switch xfwm4 to compiz. Autostart compiz... ${n}"
+  #http://www.webupd8.org/2012/11/how-to-set-up-compiz-in-xubuntu-1210-or.html
+  cp /etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-session.xml ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-session.xml && \
+   sed -i "s/xfwm4/compiz/" ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-session.xml
+  check_status
+
+  printf "${b}Setting the windows manager enviroment... ${n}"
+  # Close/minimize/maximize button not appearing
+   DISPLAY=:0.0 gsettings set org.gnome.desktop.wm.preferences button-layout ':minimize,maximize,close,' && \
+   DISPLAY=:0.0 gsettings set org.gnome.desktop.wm.preferences titlebar-font 'Droid Sans Bold 10' && \
+  # list of themes: /usr/share/themes/
+   DISPLAY=:0.0 gsettings set org.gnome.desktop.wm.preferences theme 'Greybird'
+  check_status
+
+  printf "${b}Installing plugins for Desktop Enviroment... ${n}"
+  sudo apt-get install -q -y xfce4-clipman-plugin xfce4-datetime-plugin xfce4-time-out-plugin xfce4-timer-plugin >> $logd
+  check_status
+
+  # there isn't version for 18.04
+  #printf "${b}Installing DockbarX (side-panel) ... ${n}"
+  ## http://www.webupd8.org/2013/03/dockbarx-available-as-xfce-panel-plugin.html
+  ## if you want preview: install compiz and add KDE compability
+  #sudo add-apt-repository -y ppa:dockbar-main/ppa > /dev/null && \
+  # sudo apt-get update > /dev/null && \
+  # sudo apt-get install -q -y --no-install-recommends xfce4-dockbarx-plugin >> $logd
+  #check_status
+  #
+  #printf "${b}Adding to autostart DockbarX ... ${n}"
+  #sudo sh -c 'cat <<-EOF > /etc/xdg/autostart/dockx.desktop
+  #[Desktop Entry]
+  #Encoding=UTF-8
+  #Name=dockx
+  #Comment=dockx
+  #Exec=dockx
+  #Type=Application
+  #EOF'
+  #check_status
+  #
+  #printf "${b}Installing System Load Indicator for Desktop Enviroment... ${n}"
+  #sudo add-apt-repository -y ppa:indicator-multiload/stable-daily > /dev/null && \
+  # sudo apt-get update > /dev/null && \
+  # sudo apt-get install -q -y indicator-multiload >> $logd
+  #check_status
+  #
+  #printf "${b}Installing Windowck Plugin for moving titlebar to panel... ${n}"
+  #sudo add-apt-repository -y ppa:eugenesan/ppa > /dev/null && \
+  # sudo apt-get update > /dev/null && \
+  # sudo apt-get install -q -y xfce4-windowck-plugin maximus >> $logd && \
+  # gconftool-2 --set /apps/maximus/no_maximize --type=bool true
+  #check_status
+
+  #printf "${b}Installing local dictionary for xfce plugin... ${n}"
+  #sudo apt-get install -q -y dictd xfce4-dict mueller7accent-dict >> $logd
+  #check_status
+
+  #printf "${b}Allow hibirnate... ${n}"
+  #sudo awk -i inplace '{if ($0 == "[Disable hibernate by default in upower]" || $0 == "[Disable hibernate by default in logind]") { found=1 }; if (found == 1 && $0 ~ /^ResultActive=.*/) {print "ResultActive=yes"; found=0} else {print $0};}' /var/lib/polkit-1/localauthority/10-vendor.d/com.ubuntu.desktop.pkla
+  #check_status
+
+  echo "${b}Export settings${n}"
+  printf "${b}\t of background... ${n}"
+  p="/usr/share/xfce4/backdrops"
+  sudo mkdir -p $p > /dev/null && \
+  sudo cp -f $dir_data/solitude.jpg $p
+  check_status
+  #exportlist="xfce4 compiz-1 autostart dconf Mousepad Thunar terminator xfce4-dict"
+  #exportlist="xfce4 compiz-1 autostart Mousepad Thunar terminator xfce4-dict"
+  exportlist="xfce4 compiz-1 Mousepad Thunar terminator"
+  # xfce4     --general settings of Desktop Enviroment. Thunar settings.
+  # compiz-1  --settings of compiz
+  # autostart --autostart of System Load Indicator
+
+  ## dconf     --settings of System Load Indicator plugin <= it is loaded from dump now (test mode)
+  ## remove dconf dir from data_dir, when it will be tested
+
+  # Mousepad  --hotkeys
+  # Thunar    --
+  # terminator -- settings of Terminator
+  # xfce4-dict -- settings for dictionary
+  for cur in $exportlist; do
+    printf "${b}\t of $cur... ${n}"
+    rm -Rf ~/.config/$cur && cp -Rf $dir_data/config/$cur ~/.config/ && \
+      find ~/.config/$cur -type f -print0 | xargs -0 sed "s/snaiffer/$SUDO_USER/g"
+    check_status
+  done
+  #printf "${b}\t of DockbarX... ${n}"
+  #rm -Rf ~/.gconf && cp -Rf $dir_data/gconf ~/.gconf && \
+  #  find ~/.gconf -type f -print0 | xargs -0 sed "s/snaiffer/$SUDO_USER/g"
+  #check_status
+  printf "${b}\t of Preferred Applications... ${n}"
+  mkdir -p ~/.local/share/xfce4 && \
+  cp -Rf $dir_data/helpers ~/.local/share/xfce4/ && \
+    find ~/.local/share/xfce4/helpers -type f -print0 | xargs -0 sed "s/snaiffer/$SUDO_USER/g"
+  check_status
+  #printf "${b}\t of System load indicator... ${n}"
+  #sudo cp $dir_data/indicator-multiload-settings /usr/bin/ && \
+  #  sudo chmod +x /usr/bin/indicator-multiload-settings
+  # by hand:
+  ## cat $dir_data/system_load_indicator.dconf.dump | dconf load /de/mh21/indicator-multiload/
+  #check_status
+
+  echo
+  printf "${b}Settings for Background... ${n}"
+  rm -f ~/.config/xfce4/desktop/* > /dev/null
+  check_status
+
+  if [[ `terminator -v  | sed "s/terminator //"` < 0.97 ]]; then
+    echo
+    printf "${b}\t bug fix for Terminator with keybind... ${n}"
+    sudo patch /usr/share/terminator/terminatorlib/container.py < $dir_data/terminator_close_multiterminals_withoutconfirm.patch > /dev/null
+    check_status
+  fi
+
+  echo
+  printf "${b}Fixing bug with xfce-sessions... ${n}"
+  # Even if sessions are turn off xfce make them and it follow to bugs of Desktop after reboot
+  rm -Rf ~/.cache/sessions/* > /dev/null && \
+  chmod -w ~/.cache/sessions
+  check_status
+
+  # it isn't actual for kernel < 4.9
+  #echo
+  #printf "${b}Fixing bug with network... ${n}"
+  #sudo cp -f $dir_data/wifi_unfreeze /bin/ && \
+  #  chmod +x /bin/wifi_unfreeze && \
+  #sudo cp -f $dir_data/55_local_networkmanager /etc/pm/sleep.d/55_local_networkmanager && \
+  #  chmod +x /etc/pm/sleep.d/55_local_networkmanager
+  #check_status
+
+  echo
+  printf "${b}Fixing 'Open with other application...' saving chose... ${n}"
+  if [ -d ~/.local/share/applications ]; then
+    # back up file application. For what is its file?
+    mv ~/.local/share/applications ~/.local/share/applications.bac > /dev/null && \
+    mkdir -p ~/.local/share/applications > /dev/null
+  fi
   check_status
 fi
-
-echo
-printf "${b}Fixing bug with xfce-sessions... ${n}"
-# Even if sessions are turn off xfce make them and it follow to bugs of Desktop after reboot
-rm -Rf ~/.cache/sessions/* > /dev/null && \
-chmod -w ~/.cache/sessions
-check_status
-
-# it isn't actual for kernel < 4.9
-#echo
-#printf "${b}Fixing bug with network... ${n}"
-#sudo cp -f $dir_data/wifi_unfreeze /bin/ && \
-#  chmod +x /bin/wifi_unfreeze && \
-#sudo cp -f $dir_data/55_local_networkmanager /etc/pm/sleep.d/55_local_networkmanager && \
-#  chmod +x /etc/pm/sleep.d/55_local_networkmanager
-#check_status
-
-echo
-printf "${b}Fixing 'Open with other application...' saving chose... ${n}"
-if [ -d ~/.local/share/applications ]; then
-  # back up file application. For what is its file?
-  mv ~/.local/share/applications ~/.local/share/applications.bac > /dev/null && \
-  mkdir -p ~/.local/share/applications > /dev/null
-fi
-check_status
 
 :<<-EOF
 # for Lenovo Yoga only
