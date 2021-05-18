@@ -579,18 +579,29 @@ sudo dmidecode |grep 'Lenovo IdeaPad Yoga 13' && sudo setkeycodes e03e 255
 check_status
 EOF
 
-:<<-EOF1
-# for Xiaomi MIIIW Bluetooth Dual Mode Keyboard only
 # xev   --show key codes
 echo
-printf "${b}Fix for Xiaomi MIIIW Bluetooth Dual Mode Keyboard... ${n}"
+printf "${b}Right Ctrl => End; Right Shift => Home; Right Alt => Right Ctrl... ${n}"
+# xev   --show key codes
+# xmodmap -pm   --show current modifier keys
+# https://wiki.archlinux.org/title/Xmodmap
 cat <<-EOF >> ~/.Xmodmap
-keycode 87 = End End KP_1 KP_1 KP_1 KP_1
-keycode 79 = Home Home KP_7 KP_7 KP_7 KP_7 KP_7
+! Shift_R => Home
+clear shift
+add shift = Shift_L
+keycode 62 = Home Home Home Home Home Home Home
+
+clear control
+clear mod1
+! Alt_R => Control_R
+keycode 108 = Control_R Control_R Control_R Control_R Control_R Control_R Control_R
+add control = Control_L Control_R
+add mod1 = Alt_L Meta_L
+! Control_R => End
+keycode 105 = End End End End End End End
 EOF
 xmodmap ~/.Xmodmap
 check_status
-EOF1
 
 :<<-EOF2
 # Set up mouse scroll speed
