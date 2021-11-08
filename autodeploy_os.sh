@@ -1,6 +1,37 @@
 #!/bin/bash
+# -e    --exit on error
+# -u    --to treat unset variables as an error and exit immediately
 
+dir_local="$(dirname $(readlink -f $0))"
+
+##################################################################
+# settings
 mode="desktop"  # "desktop" or "server"
+export git_email="a.danilov@runabank.ru"
+export git_name="Alexander Danilov"
+
+##################################################################
+
+help() {
+  cat <<-EOF
+Скрипт автонастройки окружений ОС сразу после инсталяции.
+
+Синтаксис:
+`basename $0` [<mode>]
+  <mode>  --режим установки:
+    desktop   -- по умолчанию
+    server
+EOF
+}
+
+case "$cmd" in
+  "-h"|"--help"|"help")
+    help
+    exit 0
+    ;;
+esac
+
+##################################################################
 
 # Example:
 # printf "${b}my bold text${n}"
@@ -13,15 +44,14 @@ export yellow="\033[1;33;40m"   # yellow text
 echo "To leave settings as in example - just press <Enter>"
 echo
 
-export dir_script=`dirname $0`
-export dir_data="$dir_script/data"
+export dir_local=`dirname $0`
+export dir_data="$dir_local/data"
 export bin="/usr/bin"
-export logd="$dir_script/progress_details.log"
+export logd="$dir_local/progress_details.log"
 echo "" > $logd
 echo -e "\n${yellow}Detailed progress log you can get in: $logd ${n}\n"
 
-export git_email="a.danilov@runabank.ru"
-export git_name="Alexander Danilov"
+
 echo "Git settings:"
 printf "\temail ($git_email): "
 read temp; if [[ "$temp" != "" ]]; then export git_email=$temp; fi
@@ -31,7 +61,7 @@ read temp; if [[ "$temp" != "" ]]; then export git_name=$temp; fi
 function log()
 {
   msg=$1
-  echo "$(date "+%F %T"): $msg"
+  echo -e "$(date "+%Y-%m-%d %T"): `basename $0`: $msg"
 }
 # usage: log "started"
 
@@ -87,10 +117,11 @@ check_status
 ## xrandr -q | grep connected
 #xrandr --output LVDS --brightness 0.9
 #check_status
+: <<-EOF1
 printf "${b}Brightness shortcuts: Shift+F3/F4...${n}" # added for HP ProBook
 # https://unix.stackexchange.com/questions/356730/how-to-create-keyboard-shortcuts-for-screen-brightness-in-xubuntu-xfce-ubuntu
 # https://askubuntu.com/questions/715306/xbacklight-no-outputs-have-backlight-property-no-sys-class-backlight-folder
-sudo apt-get install -q -y jq >> $logd && \
+sudo apt-get install -q -y xbacklight >> $logd && \
 cat <<-EOF > ~/.xbindkeysrc
 "xbacklight -dec 10 -steps 1"
   XF86MonBrightnessDown
@@ -98,6 +129,7 @@ cat <<-EOF > ~/.xbindkeysrc
   XF86MonBrightnessUp
 EOF
 check_status
+EOF1
 
 
 echo
@@ -124,7 +156,7 @@ sudo apt-get install -q -y expect >> $logd && \
 sudo apt-get install -q -y alien >> $logd && \
 sudo apt-get install -q -y vim >> $logd && \
 ( [[ "$mode" = "server" ]] || sudo apt-get install -q -y vim-gui-common >> $logd ) && \
-sudo apt-get install -q -y openssh-server openssh-client tree nmap iotop htop foremost sshfs powertop bless apt-file curl >> $logd && \
+sudo apt-get install -q -y openssh-server openssh-client tree nmap iotop htop foremost sshfs powertop bless curl >> $logd && \
 sudo apt-get install -q -y apt-file >> $logd && \
   sudo apt-file update > /dev/null && \
 sudo apt-get install -q -y unrar >> $logd && \
@@ -139,6 +171,8 @@ check_status
 #sudo ln -s $bin/terminal_markdown_viewer/mdv/markdownviewer.py $bin/mdv
 #############################################
 echo -e "${b}ssh settings:${n}"
+# without prompt
+ssh-keygen -q -t rsa -N '' -f ~/.ssh/id_rsa <<<y >/dev/null 2>&1
 printf "${b}\t ssh-server setting... ${n}"
 sudo sh -c "echo 'PermitRootLogin no' >> /etc/ssh/sshd_config"
 check_status
@@ -194,8 +228,12 @@ EOF
   sudo apt-get update > /dev/null && \
   sudo apt-get install -q -y google-chrome-stable >> $logd
   check_status
-  printf "${b}\tset google-chrome by default... ${n}"
-  sudo sed -i "s/firefox.desktop/google-chrome.desktop/g" /usr/share/applications/defaults.list
+  #printf "${b}\tset google-chrome by default... ${n}"
+  #sudo sed -i "s/firefox.desktop/google-chrome.desktop/g" /usr/share/applications/defaults.list
+  #check_status
+  #############################################
+  printf "${b}\tchrome-browser... ${n}"
+  sudo apt-get install -q -y firefox >> $logd
   check_status
   #############################################
   #printf "${b}\tJava... ${n}"
@@ -303,11 +341,13 @@ sudo add-apt-repository -y ppa:linrunner/tlp > /dev/null && sudo apt-get update 
 sudo apt-get install -q -y tlp tlp-rdw smartmontools ethtool linux-tools-`uname -r` >> $logd
 check_status
 #############################################
+:<<-EOF
 printf "${b}VNC (Remote Desktop)...${n}"
 # if you need VNC server (x11vnc) see manual in the Basket
 sudo add-apt-repository -y ppa:remmina-ppa-team/remmina-next > /dev/null && sudo apt-get update > /dev/null && \
 sudo apt-get install -q -y remmina remmina-plugin-rdp remmina-plugin-secret >> $logd
 check_status
+EOF
 :<<-EOF
 # light-locker switch from DISPLAY=:0 to :1, what case problem with VNC logging
 printf "${b}  Replacing light-locker for gnome-screensaver...${n}"
@@ -333,13 +373,16 @@ printf "${b}\tInstalling utils for C++ programming... ${n}"
 # sudo apt-get update > /dev/null && \
 sudo apt-get install -q -y g++ valgrind doxygen cmake gdb clang >> $logd
 check_status
+:<<-EOF
 printf "${b}\tInstalling utils for RDBMS programming... ${n}"
 wget -q -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add - && \
-sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -sc`-pgdg main" >> /etc/apt/sources.list.d/pgdg.list' && \
+sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -sc`-pgdg main" >> /etc/apt/sources.list.d/pgdg.list'
+check_status
 sudo apt-get update > /dev/null && \
 sudo apt-get install -q -y postgresql-9.6 postgresql-server-dev-9.6 >> $logd && \
   sudo -u postgres psql -c "create role $USER with superuser createdb createrole inherit login replication bypassrls"
 check_status
+EOF
 :<<-EOF
 # Ubuntu 20.04: Query Tool crashed with error:
 # gdk_drawing_context_get_cairo_context: assertion 'GDK_IS_DRAWING_CONTEXT (context)' failed. Segmentation fault
@@ -621,11 +664,7 @@ echo "${b}================================================${n}"
 sysbench --test=cpu run
 echo "${b}================================================${n}"
 
-echo
-echo -e "\n${yellow}Install VirtualBox Extension pack: $logd\n"
-echo "https://www.virtualbox.org/wiki/Downloads"
-echo "<Enter>" && read
-
+: <<-EOF
 echo
 echo "Foxit Reader PDF (very fast and pretty)"
 echo "You can download and install it manually. Go to:"
@@ -650,7 +689,7 @@ echo -e "MS Office
 - Change associative commands
     $ sudo cp $dir_data/ms_office_associations/* /usr/share/applications/
 "
-echo "<Enter>" && read
+EOF
 
 echo
 echo -e "Background settings
@@ -658,6 +697,7 @@ Execute after reboot:"
 echo '  sed -i "/last-image/,/$/ s/value=\".*\"/value=\"\/usr\/share\/xfce4\/backdrops\/solitude\.jpg\"/" ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml'
 echo '  sudo reboot'
 echo "<Enter>" && read
+
 
 :<<-EOF
 echo -e "Change lid and key actions"
@@ -692,4 +732,3 @@ echo
 reboot_request
 #printf "${b}Relogin... ${n}"
 #sudo service lightdm restart
-
