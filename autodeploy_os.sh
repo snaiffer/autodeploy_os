@@ -610,6 +610,15 @@ if [[ "$mode" != "server" ]]; then
     mkdir -p ~/.local/share/applications > /dev/null
   fi
   check_status
+
+  echo
+  printf "${b}Don't put to sleep the display... ${n}"
+  xfconf-query -c xfce4-power-manager -p /xfce4-power-manager/dpms-enabled -s false && \
+  xfconf-query -c xfce4-power-manager -p /xfce4-power-manager/dpms-on-ac-off -s 999999 && \
+  xfconf-query -c xfce4-power-manager -p /xfce4-power-manager/dpms-on-ac-sleep -s 999999
+  check_status
+  # check config
+  #xfconf-query -c xfce4-power-manager -v -l
 fi
 
 :<<-EOF
