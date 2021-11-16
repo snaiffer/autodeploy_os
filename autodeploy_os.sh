@@ -415,6 +415,14 @@ check_status
 #   Danilov
 #   a.danilov@runabank.ru
 #   VS-L-DWF2NA2H61XL9EA8-61UMWAT575Q3YEKT-R3W9F4ECM74A82EC-LYG9D2NMKU7T29J4
+
+:<<-EOF
+Oracle SQLDeveloper
+use: https://dev.to/ishakantony/how-to-install-oracle-sql-developer-on-ubuntu-20-04-3jpd
+but install sqldeveloper from rpm with help of "alien"
+sudo cp /opt/sqldeveloper/sqldeveloper.desktop /usr/share/applications
+EOF
+
 printf "${b}\tInstalling utils for Python programming... ${n}"
 sudo apt-get install -q -y python3 ipython3  >> $logd
 check_status

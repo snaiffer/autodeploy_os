@@ -9,6 +9,7 @@
 - Xubuntu 14.04.3
 - Xubuntu 18.04.4
 - Xubuntu 20.04.0
+- Xubuntu 20.04.4
 
 ## Update config. files of autodeploy_os
 Go to root dir of autodeploy_os
