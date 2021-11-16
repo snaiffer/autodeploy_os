@@ -310,11 +310,29 @@ EOF
   #sudo apt-get install -q -y gnome-mplayer >> $logd
   check_status
   #############################################
+  printf "${b}for BasKet... ${n}"
+  #for 14.04
+  #sudo apt-get install -q -y unetbootin k3b >> $logd
+  sudo apt-get install -q -y basket >> $logd
+  check_status
+  printf "${b}  BasKet fixing... ${n}"
+sudo bash -c 'cat <<-EOFBASKET > /usr/bin/basket_fixed.sh
+#!/bin/bash
+unset SESSION_MANAGER
+basket
+EOFBASKET
+' && \
+  sudo chmod +x /usr/bin/basket_fixed.sh && \
+  sudo sed -i 's/Exec=basket.*$/Exec=\/usr\/bin\/basket_fixed.sh/' /usr/share/applications/basket.desktop
+  check_status
+  
+  #############################################
   printf "${b}for others... ${n}"
   #for 14.04
   #sudo apt-get install -q -y unetbootin k3b >> $logd
-  sudo apt-get install -q -y basket baobab >> $logd
+  sudo apt-get install -q -y baobab >> $logd
   check_status
+  
   # libreoffice doesn't support muilti-spellcheching
   #printf "${b}plugins for LibreOffice... ${n}"
   #export libreoffice_languagetools='https://www.languagetool.org/download/LanguageTool-3.0.oxt'
