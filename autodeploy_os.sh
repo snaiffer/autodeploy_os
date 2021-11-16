@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/bin/bash -xu
+# -x    --print commands and their arguments as they are executed
 # -e    --exit on error
 # -u    --to treat unset variables as an error and exit immediately
 
@@ -6,8 +7,7 @@ dir_local="$(dirname $(readlink -f $0))"
 
 ##################################################################
 # settings
-mode="desktop"  # "desktop" or "server"
-export git_email="a.danilov@runabank.ru"
+export git_email="Alexander.Danilov@cma.ru"
 export git_name="Alexander Danilov"
 
 ##################################################################
@@ -19,16 +19,24 @@ help() {
 Синтаксис:
 `basename $0` [<mode>]
   <mode>  --режим установки:
-    desktop   -- по умолчанию
+    desktop
     server
 EOF
 }
 
-case "$cmd" in
+case "$1" in
+  "desktop"|"server")
+    mode="$1"
+    ;;
   "-h"|"--help"|"help")
     help
     exit 0
     ;;
+  *)
+    echo "ERROR: parameter is required"
+    echo
+    help
+    exit 1
 esac
 
 ##################################################################
@@ -74,6 +82,7 @@ function log()
 # auth. for sudo
 sudo echo
 
+:<<-EOFTEMP
 printf "Install & Set git... "
 sudo apt-get install -q -y git >> $logd && \
 git config --global user.email $git_email && \
@@ -134,7 +143,7 @@ EOF1
 
 echo
 printf "${b}Removing packages... ${n}"
-sudo apt-get remove -q -y xfce4-screensaver abiword* gnumeric* xfburn parole gmusicbrowser xfce4-notes firefox xfce4-terminal > /dev/null
+sudo apt-get remove -q -y xfce4-screensaver abiword* gnumeric* xfburn parole gmusicbrowser xfce4-notes xfce4-terminal > /dev/null
 check_status
 
 echo
@@ -199,6 +208,9 @@ if [[ "$mode" = "server" ]]; then
 EOF
   sudo service fail2ban restart
   check_status
+fi
+EOFTEMP
+if [[ "$mode" = "desktop" ]]; then
   #############################################
   printf "${b}for systems... ${n}"
   echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | sudo debconf-set-selections && \
@@ -207,9 +219,6 @@ EOF
   check_status
   #############################################
   echo "${b}for WWW:${n}"
-  #printf "${b}\tset chromium-browser by default... ${n}"
-  #sudo sed -i "s/firefox.desktop/chromium-browser.desktop/g" /usr/share/applications/defaults.list
-  #check_status
   # for 14.04
   #printf "${b}\tPepper Flash Player... ${n}"
   #sudo add-apt-repository -y ppa:skunk/pepper-flash > /dev/null && \
@@ -232,8 +241,11 @@ EOF
   #sudo sed -i "s/firefox.desktop/google-chrome.desktop/g" /usr/share/applications/defaults.list
   #check_status
   #############################################
-  printf "${b}\tchrome-browser... ${n}"
+  printf "${b}\tfirefox-browser... ${n}"
   sudo apt-get install -q -y firefox >> $logd
+  check_status
+  printf "${b}\tset firefox by default... ${n}"
+  sudo sed -i "s/google-chrome.desktop/firefox.desktop/g" /usr/share/applications/defaults.list
   check_status
   #############################################
   #printf "${b}\tJava... ${n}"
@@ -276,7 +288,7 @@ EOF
   # if Ubuntu 20.04 Error: Could not configure 'libc6:i386' then sudo apt upgrade
   sudo apt-get install -q -y winehq-stable playonlinux >> $logd
 
-  :<<-EOF
+:<<-EOF
   # playonlinux
   # 2020-07-14: There isn't playonlinux ppa for Ubuntu 20.04
   wget -q -O - "http://deb.playonlinux.com/public.gpg" | sudo apt-key add - && \
@@ -284,7 +296,7 @@ EOF
   sudo apt-get update > /dev/null && \
   sudo apt-get install -q -y playonlinux winetricks >> $logd 
   check_status
-  EOF
+EOF
   #############################################
   printf "${b}for images... ${n}"
   sudo apt-get install -q -y gimp pinta gthumb >> $logd && \
@@ -670,7 +682,7 @@ sudo apt-get install -q -y sysbench >> $logd
 check_status
 echo "${b}Start 'sysbench --test=cpu run':${n}"
 echo "${b}================================================${n}"
-sysbench --test=cpu run
+sysbench --test=cpu --threads=`nproc` run
 echo "${b}================================================${n}"
 
 : <<-EOF
