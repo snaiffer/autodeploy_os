@@ -346,6 +346,13 @@ EOFBASKET
   # https://github.com/ytdl-org/youtube-dl
   # sudo -H pip install --upgrade youtube-dl
   #
+
+  #############################################
+  printf "${b}simple screen recorder...${n}"
+  sudo add-apt-repository -y ppa:maarten-baert/simplescreenrecorder > /dev/null && sudo apt-get update > /dev/null && \
+  sudo apt-get install -q -y simplescreenrecorder >> $logd
+  check_status
+
   #############################################
   echo
   printf "${b}Installing utils for programming... ${n}"
@@ -741,6 +748,7 @@ EOF
 echo
 echo -e "Background settings
 Execute after reboot:"
+# sed -i "/last-image/,/$/ s/value=\".*\"/value=\"\/usr\/share\/xfce4\/backdrops\/solitude\.jpg\"/" ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml
 echo '  sed -i "/last-image/,/$/ s/value=\".*\"/value=\"\/usr\/share\/xfce4\/backdrops\/solitude\.jpg\"/" ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml'
 echo '  sudo reboot'
 echo "<Enter>" && read
