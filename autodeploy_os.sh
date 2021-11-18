@@ -325,13 +325,17 @@ EOFBASKET
   sudo chmod +x /usr/bin/basket_fixed.sh && \
   sudo sed -i 's/Exec=basket.*$/Exec=\/usr\/bin\/basket_fixed.sh/' /usr/share/applications/basket.desktop
   check_status
-  
   #############################################
   printf "${b}for others... ${n}"
   #for 14.04
   #sudo apt-get install -q -y unetbootin k3b >> $logd
   sudo apt-get install -q -y baobab >> $logd
   check_status
+  #############################################
+  printf "${b}for smb(Samba)... ${n}"
+  sudo apt-get install -q -y smbclient cifs-utils >> $logd
+  check_status
+  sudo sed -i "/\[global\]/a \ \ \ client min protocol = NT1" /etc/samba/smb.conf
   
   # libreoffice doesn't support muilti-spellcheching
   #printf "${b}plugins for LibreOffice... ${n}"
