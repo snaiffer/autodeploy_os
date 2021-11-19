@@ -82,7 +82,6 @@ function log()
 # auth. for sudo
 sudo echo
 
-:<<-EOFTEMP
 printf "Install & Set git... "
 sudo apt-get install -q -y git >> $logd && \
 git config --global user.email $git_email && \
@@ -126,8 +125,9 @@ check_status
 ## xrandr -q | grep connected
 #xrandr --output LVDS --brightness 0.9
 #check_status
-: <<-EOF1
-printf "${b}Brightness shortcuts: Shift+F3/F4...${n}" # added for HP ProBook
+
+#printf "${b}Brightness shortcuts: Shift+F3/F4...${n}" # added for HP ProBook
+printf "${b}Display brightness control...${n}"
 # https://unix.stackexchange.com/questions/356730/how-to-create-keyboard-shortcuts-for-screen-brightness-in-xubuntu-xfce-ubuntu
 # https://askubuntu.com/questions/715306/xbacklight-no-outputs-have-backlight-property-no-sys-class-backlight-folder
 sudo apt-get install -q -y xbacklight >> $logd && \
@@ -138,7 +138,6 @@ cat <<-EOF > ~/.xbindkeysrc
   XF86MonBrightnessUp
 EOF
 check_status
-EOF1
 
 
 echo
@@ -209,7 +208,7 @@ EOF
   sudo service fail2ban restart
   check_status
 fi
-EOFTEMP
+
 if [[ "$mode" = "desktop" ]]; then
   #############################################
   printf "${b}for systems... ${n}"
@@ -305,7 +304,7 @@ EOF
   check_status
   #############################################
   printf "${b}for media... ${n}"
-  sudo apt-get install -q -y vlc >> $logd
+  sudo apt-get install -q -y vlc smplayer >> $logd
   # for 14.04
   #sudo apt-get install -q -y gnome-mplayer >> $logd
   check_status
