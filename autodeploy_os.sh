@@ -106,7 +106,7 @@ fi
 echo "done."
 
 printf "Intalling libraries for bash... "
-sudo git clone -q https://github.com/snaiffer/libbash.git /usr/lib/bash && \
+sudo git clone -q git@github.com:snaiffer/libbash.git /usr/lib/bash && \
 source /usr/lib/bash/general.sh
 check_status
 
@@ -432,7 +432,7 @@ sudo apt-get install -q -y pgadmin3 >> $logd && \
 check_status
 EOF
 printf "${b}\t\tInstalling sqldump_search... ${n}"
-git clone -q https://github.com/snaiffer/sqldump_search.git ~/git/sqldump_search && \
+git clone -q git@github.com:snaiffer/sqldump_search.git ~/git/sqldump_search && \
 sudo ln -s ~/git/sqldump_search/sqldump_search.py /usr/bin/sqldump_search
 check_status
 
@@ -454,6 +454,10 @@ EOF
 printf "${b}\tInstalling utils for Python programming... ${n}"
 sudo apt-get install -q -y python3 ipython3  >> $logd
 check_status
+<<-EOF
+PyCharm
+sudo snap install [pycharm-professional|pycharm-community] --classic
+EOF
 <<-EOF
 printf "${b}\t\tselenium... ${n}"
 sudo apt install python3-pip && \
@@ -489,18 +493,18 @@ check_status
 
 printf "${b}Clone syncfrom... ${n}"
 mkdir -p ~/git/ && \
-git clone -q https://github.com/snaiffer/syncfrom.git ~/git/syncfrom/
+git clone -q git@github.com:snaiffer/syncfrom.git ~/git/syncfrom/
 check_status
 
 printf "${b}Setting bash enviroment... ${n}"
-git clone -q https://github.com/snaiffer/bash_env.git ~/.bash_env && \
+git clone -q git@github.com:snaiffer/.bash_env.git ~/.bash_env && \
 sudo ~/.bash_env/install.sh > /dev/null
 check_status
 
 printf "${b}Setting vim... ${n}"
 sudo apt-get install -q -y vim git ctags clang libclang-dev >> $logd && \
 rm -Rf ~/.vim ~/.vimrc && \
-git clone -q https://github.com/snaiffer/vim.git ~/.vim && \
+git clone -q git@github.com:snaiffer/vim.git ~/.vim && \
 ln -s ~/.vim/vimrc ~/.vimrc && \
 vim -c "BundleInstall" -c 'qa!'
 #~/.vim/bundle/youcompleteme
@@ -661,9 +665,17 @@ if [[ "$mode" != "server" ]]; then
 
   echo
   printf "${b}Don't put to sleep the display... ${n}"
+  # Note: in minutes
+  # Note: when I set 999999, it wasn't worked
   xfconf-query -c xfce4-power-manager -p /xfce4-power-manager/dpms-enabled -s false && \
-  xfconf-query -c xfce4-power-manager -p /xfce4-power-manager/dpms-on-ac-off -s 999999 && \
-  xfconf-query -c xfce4-power-manager -p /xfce4-power-manager/dpms-on-ac-sleep -s 999999
+  xfconf-query -c xfce4-power-manager -p /xfce4-power-manager/dpms-on-ac-off -s 254 && \
+  xfconf-query -c xfce4-power-manager -p /xfce4-power-manager/dpms-on-ac-sleep -s 254 && \
+  xfconf-query -c xfce4-power-manager -p /xfce4-power-manager/dpms-on-battery-off -s 20 && \
+  xfconf-query -c xfce4-power-manager -p /xfce4-power-manager/dpms-on-battery-sleep -s 15 && \
+  xfconf-query -c xfce4-power-manager -p /xfce4-power-manager/blank-on-ac -s 254 && \
+  xfconf-query -c xfce4-power-manager -p /xfce4-power-manager/blank-on-battery -s 15 && \
+  xfconf-query -c xfce4-power-manager -p /xfce4-power-manager/inactivity-sleep-mode-on-ac -s 0 && \
+  xfconf-query -c xfce4-power-manager -p /xfce4-power-manager/inactivity-sleep-mode-on-battery -s 1
   check_status
   # check config
   #xfconf-query -c xfce4-power-manager -v -l
