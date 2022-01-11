@@ -106,7 +106,8 @@ fi
 echo "done."
 
 printf "Intalling libraries for bash... "
-sudo git clone -q git@github.com:snaiffer/libbash.git /usr/lib/bash && \
+sudo git clone -q https://github.com/snaiffer/libbash.git /usr/lib/bash && \
+cd /usr/lib/bash && sudo git remote set-url origin git@github.com:snaiffer/libbash.git && cd $OLDPWD && \
 source /usr/lib/bash/general.sh
 check_status
 
@@ -432,7 +433,8 @@ sudo apt-get install -q -y pgadmin3 >> $logd && \
 check_status
 EOF
 printf "${b}\t\tInstalling sqldump_search... ${n}"
-git clone -q git@github.com:snaiffer/sqldump_search.git ~/git/sqldump_search && \
+git clone -q https://github.com/snaiffer/sqldump_search.git ~/git/sqldump_search && \
+cd ~/git/sqldump_search && git remote set-url origin git@github.com:snaiffer/sqldump_search.git && cd $OLDPWD && \
 sudo ln -s ~/git/sqldump_search/sqldump_search.py /usr/bin/sqldump_search
 check_status
 
@@ -493,18 +495,21 @@ check_status
 
 printf "${b}Clone syncfrom... ${n}"
 mkdir -p ~/git/ && \
-git clone -q git@github.com:snaiffer/syncfrom.git ~/git/syncfrom/
+git clone -q https://github.com/snaiffer/syncfrom.git ~/git/syncfrom/
+cd ~/git/syncfrom/ && git remote set-url origin git@github.com:snaiffer/syncfrom.git && cd $OLDPWD && \
 check_status
 
 printf "${b}Setting bash enviroment... ${n}"
-git clone -q git@github.com:snaiffer/.bash_env.git ~/.bash_env && \
+git clone -q https://github.com/snaiffer/bash_env.git ~/.bash_env && \
+cd ~/.bash_env && git remote set-url origin git@github.com:snaiffer/.bash_env.git && cd $OLDPWD && \
 sudo ~/.bash_env/install.sh > /dev/null
 check_status
 
 printf "${b}Setting vim... ${n}"
 sudo apt-get install -q -y vim git ctags clang libclang-dev >> $logd && \
 rm -Rf ~/.vim ~/.vimrc && \
-git clone -q git@github.com:snaiffer/vim.git ~/.vim && \
+git clone -q https://github.com/snaiffer/vim.git ~/.vim && \
+cd ~/.vim && git remote set-url origin git@github.com:snaiffer/vim.git && cd $OLDPWD && \
 ln -s ~/.vim/vimrc ~/.vimrc && \
 vim -c "BundleInstall" -c 'qa!'
 #~/.vim/bundle/youcompleteme
