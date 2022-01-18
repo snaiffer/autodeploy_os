@@ -696,6 +696,14 @@ sudo dmidecode |grep 'Lenovo IdeaPad Yoga 13' && sudo setkeycodes e03e 255
 check_status
 EOF
 
+# https://bugs.launchpad.net/ubuntu/+source/xserver-xorg-video-intel/+bug/1876219
+# Can't start any video without it
+glxinfo | grep 'HD Graphics [56]30' > /dev/null
+if [[ "$?" = "0" ]]; then
+  echo '# bug fix for HD Graphics 530/630' >> ~/.profile
+  echo 'export MESA_LOADER_DRIVER_OVERRIDE=i965' >> ~/.profile
+fi;
+
 # xev   --show key codes
 echo
 printf "${b}Right Ctrl => End; Right Shift => Home; Right Alt => Right Ctrl... ${n}"
