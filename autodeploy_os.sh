@@ -159,6 +159,7 @@ printf "${b}for console... ${n}"
 # jq              --pretty json output
 # vim-gui-common  --GUI features. Don't install it on a server
 sudo apt-get install -q -y jq >> $logd && \
+sudo apt-get install -q -y libxml2-utils >> $logd && \
 sudo apt-get install -q -y gawk icdiff >> $logd && \
 sudo apt-get install -q -y net-tools traceroute nethogs whois >> $logd && \
 sudo apt-get install -q -y expect >> $logd && \
@@ -173,7 +174,7 @@ sudo apt-get install -q -y pwgen >> $logd
 check_status
 #############################################
 printf "${b}markdown terminal viewer... ${n}"
-sudo apt-get install -q -y python2.7 python3-pip >> $logd && \
+sudo apt-get install -q -y python2.7 python3-pip python3-virtualenv >> $logd && \
 pip3 install -q markdown pygments pyyaml >> $logd
 check_status
 #sudo git clone -q https://github.com/axiros/terminal_markdown_viewer $bin/terminal_markdown_viewer && \
@@ -237,16 +238,16 @@ if [[ "$mode" = "desktop" ]]; then
   sudo apt-get update > /dev/null && \
   sudo apt-get install -q -y google-chrome-stable >> $logd
   check_status
-  #printf "${b}\tset google-chrome by default... ${n}"
-  #sudo sed -i "s/firefox.desktop/google-chrome.desktop/g" /usr/share/applications/defaults.list
-  #check_status
+  printf "${b}\tset google-chrome by default... ${n}"
+  sudo sed -i "s/firefox.desktop/google-chrome.desktop/g" /usr/share/applications/defaults.list
+  check_status
   #############################################
-  printf "${b}\tfirefox-browser... ${n}"
-  sudo apt-get install -q -y firefox >> $logd
-  check_status
-  printf "${b}\tset firefox by default... ${n}"
-  sudo sed -i "s/google-chrome.desktop/firefox.desktop/g" /usr/share/applications/defaults.list
-  check_status
+  #printf "${b}\tfirefox-browser... ${n}"
+  #sudo apt-get install -q -y firefox >> $logd
+  #check_status
+  #printf "${b}\tset firefox by default... ${n}"
+  #sudo sed -i "s/google-chrome.desktop/firefox.desktop/g" /usr/share/applications/defaults.list
+  #check_status
   #############################################
   #printf "${b}\tJava... ${n}"
   #sudo add-apt-repository -y ppa:webupd8team/java > /dev/null && \
