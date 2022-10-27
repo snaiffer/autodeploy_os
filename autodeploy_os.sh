@@ -258,13 +258,14 @@ if [[ "$mode" = "desktop" ]]; then
   sudo sh -c "echo 'deb http://download.virtualbox.org/virtualbox/debian `lsb_release -cs` contrib' >> /etc/apt/sources.list.d/virtualbox.list" && \
   wget -q https://www.virtualbox.org/download/oracle_vbox.asc -O- | sudo apt-key add - && \
   wget -q https://www.virtualbox.org/download/oracle_vbox_2016.asc -O- | sudo apt-key add - && \
-  sudo apt-get update > /dev/null && sudo apt-get install -y virtualbox # -q and >> $logd were commented as the installation process wants actions in firmware sign menu
+  sudo apt-get update > /dev/null && sudo apt-get install -y virtualbox virtualbox-dkms virtualbox-ext-pack # -q and >> $logd were commented as the installation process wants actions in firmware sign menu
   check_status
-  #printf "${b}\tVirtualBox Extension Pack... ${n}"
-  #wget -q $virtualbox_extenpack_link && \
-  #sudo VBoxManage extpack install ${virtualbox_extenpack_file}* && \
-  #rm -f ${virtualbox_extenpack_file}*
-  #check_status
+  #Another way for virtualbox-ext-pack:
+  # printf "${b}\tVirtualBox Extension Pack... ${n}"
+  # wget -q $virtualbox_extenpack_link && \
+  # sudo VBoxManage extpack install ${virtualbox_extenpack_file}* && \
+  # rm -f ${virtualbox_extenpack_file}*
+  # check_status
 #############################################
   printf "${b}for libreoffice... ${n}"
   sudo apt-get install -q -y libreoffice >> $logd
