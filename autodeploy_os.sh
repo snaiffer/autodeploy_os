@@ -805,17 +805,16 @@ echo '  sudo reboot'
 echo "<Enter>" && read
 
 
-:<<-EOF
-echo -e "Change lid and key actions"
-sudo sed -i "/HandleLidSwitch/d" /etc/systemd/logind.conf && \
-sudo sh -c 'echo "HandleLidSwitch=ignore" >> /etc/systemd/logind.conf' && \
-sudo sed -i "/HandleSuspendKey/d" /etc/systemd/logind.conf && \
-sudo sh -c 'echo "HandleSuspendKey=ignore" >> /etc/systemd/logind.conf' && \
-sudo sed -i "/HandleLidSwitchDocked/d" /etc/systemd/logind.conf && \
-sudo sh -c 'echo "HandleLidSwitchDocked=ignore" >> /etc/systemd/logind.conf'
-EOF
-
 if [[ "$mode" = "server" ]]; then
+  echo -e "Change lid and key actions"
+  sudo sed -i "/HandleLidSwitch/d" /etc/systemd/logind.conf && \
+  sudo sh -c 'echo "HandleLidSwitch=ignore" >> /etc/systemd/logind.conf' && \
+  sudo sed -i "/HandleSuspendKey/d" /etc/systemd/logind.conf && \
+  sudo sh -c 'echo "HandleSuspendKey=ignore" >> /etc/systemd/logind.conf' && \
+  sudo sed -i "/HandleLidSwitchDocked/d" /etc/systemd/logind.conf && \
+  sudo sh -c 'echo "HandleLidSwitchDocked=ignore" >> /etc/systemd/logind.conf'
+  check_status
+
   echo -e "Ubuntu desktop to Ubuntu server"
   sudo apt-get install -q -y tasksel >> $logd
   sudo tasksel remove ubuntu-desktop >> $logd
