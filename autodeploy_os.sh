@@ -14,11 +14,11 @@ export git_name="Alexander Danilov"
 
 help() {
   cat <<-EOF
-Скрипт автонастройки окружений ОС сразу после инсталяции.
+Script for auto-settinging OS enviroment after installation.
 
-Синтаксис:
+Syntax:
 `basename $0` [<mode>]
-  <mode>  --режим установки:
+  <mode>  --installation mode:
     desktop
     server
 EOF
@@ -41,6 +41,8 @@ esac
 
 ##################################################################
 
+os_release_major=$(lsb_release -rs | sed 's/\..*$//')
+
 # Example:
 # printf "${b}my bold text${n}"
 export b=$(tput bold)   # bold text
@@ -55,7 +57,7 @@ echo
 export dir_local=`dirname $0`
 export dir_data="$dir_local/data"
 export bin="/usr/bin"
-export logd="$dir_local/progress_details.log"
+export logd="$dir_local/progress_details_`date +%m%d_%H%M`.log"
 echo "" > $logd
 echo -e "\n${yellow}Detailed progress log you can get in: $logd ${n}\n"
 
@@ -370,12 +372,23 @@ fi
 #############################################
 if [[ "$mode" = "server" ]]; then
   printf "${b}nginx... ${n}"
-  sudo sh -c 'echo "deb http://ppa.launchpad.net/nginx/stable/ubuntu `lsb_release -sc` main" > /etc/apt/sources.list.d/nginx.list' && \
+  sudo apt-get install -q -y nginx >> $logd && \
+    nginx -v
+  check_status
+  
+:<<-EOF
+  printf "The latest ${b}nginx... ${n}"
+  sudo sh -c 'echo "deb https://nginx.org/packages/ubuntu/ `lsb_release -sc` main" > /etc/apt/sources.list.d/nginx.list' && \
     sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys C300EE8C && \
     sudo apt-get update && \
     sudo apt-get install -q -y nginx >> $logd && \
     nginx -v
   check_status
+  
+  # If a W: GPG error: https://nginx.org/packages/ubuntu focal InRelease: The following signatures couldn't be verified because the public key is not available: NO_PUBKEY $key
+  ## Replace $key with the corresponding $key from your GPG error.
+    # sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys $key
+    # sudo apt update
 fi
 
 #############################################
@@ -410,12 +423,14 @@ sudo apt-get install -q -y xclip >> $logd && \
   echo "ForwardX11 yes" >> ~/.ssh/config
 check_status
 
-printf "${b}\tInstalling utils for C++ programming... ${n}"
-# for 14.04
-#sudo add-apt-repository -y ppa:george-edison55/cmake-3.x > /dev/null && \
-# sudo apt-get update > /dev/null && \
-sudo apt-get install -q -y g++ valgrind doxygen cmake gdb clang >> $logd
-check_status
+if [[ "$mode" = "desktop" ]]; then
+    printf "${b}\tInstalling utils for C++ programming... ${n}"
+    # for 14.04
+    #sudo add-apt-repository -y ppa:george-edison55/cmake-3.x > /dev/null && \
+    # sudo apt-get update > /dev/null && \
+    sudo apt-get install -q -y g++ valgrind doxygen cmake gdb clang >> $logd
+    check_status
+fi
 :<<-EOF
 printf "${b}\tInstalling utils for RDBMS programming... ${n}"
 wget -q -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add - && \
@@ -508,7 +523,11 @@ sudo ~/.bash_env/install.sh > /dev/null
 check_status
 
 printf "${b}Setting vim... ${n}"
-sudo apt-get install -q -y vim git ctags clang libclang-dev >> $logd && \
+
+
+sudo apt-get install -q -y vim clang libclang-dev \
+  $(if (( $os_release_major < 22 )); then echo ctags else echo exuberant-ctags fi) \
+  >> $logd && \
 rm -Rf ~/.vim ~/.vimrc && \
 git clone -q https://github.com/snaiffer/vim.git ~/.vim && \
 cd ~/.vim && git remote set-url origin git@github.com:snaiffer/vim.git && cd $OLDPWD && \
@@ -707,6 +726,7 @@ if [[ "$?" = "0" ]]; then
 fi;
 
 # xev   --show key codes
+if [[ "$mode" = "desktop" ]]; then
 echo
 printf "${b}Right Ctrl => End; Right Shift => Home; Right Alt => Right Ctrl... ${n}"
 # xev   --show key codes
@@ -729,6 +749,7 @@ keycode 105 = End End End End End End End
 EOF
 xmodmap ~/.Xmodmap
 check_status
+fi;
 
 :<<-EOF2
 # Set up mouse scroll speed
@@ -796,10 +817,10 @@ EOF
 
 if [[ "$mode" = "server" ]]; then
   echo -e "Ubuntu desktop to Ubuntu server"
-  sudo apt-get install tasksel
-  sudo tasksel remove ubuntu-desktop
-  sudo tasksel install server
-  sudo apt-get purge lightdm
+  sudo apt-get install -q -y tasksel >> $logd
+  sudo tasksel remove ubuntu-desktop >> $logd
+  sudo tasksel install server >> $logd
+  sudo apt-get purge -q -y lightdm >> $logd
 
   Edit /etc/default/grub:
   GRUB_CMDLINE_LINUX_DEFAULT="text"

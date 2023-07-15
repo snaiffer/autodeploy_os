@@ -11,6 +11,7 @@
 - Xubuntu 20.04.0
 - Xubuntu 20.04.4
 - Xubuntu 22.04.1
+- Ubuntu Server 22.04.2
 
 ## Update config. files of autodeploy_os
 Go to root dir of autodeploy_os
