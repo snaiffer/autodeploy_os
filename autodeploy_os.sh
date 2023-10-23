@@ -519,7 +519,7 @@ check_status
 printf "${b}Setting bash enviroment... ${n}"
 git clone -q https://github.com/snaiffer/bash_env.git ~/.bash_env && \
 cd ~/.bash_env && git remote set-url origin git@github.com:snaiffer/.bash_env.git && cd $OLDPWD && \
-sudo ~/.bash_env/install.sh > /dev/null
+~/.bash_env/install.sh > /dev/null
 check_status
 
 printf "${b}Setting vim... ${n}"
