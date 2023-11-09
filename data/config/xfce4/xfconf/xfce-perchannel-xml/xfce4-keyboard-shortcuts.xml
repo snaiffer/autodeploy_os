@@ -12,21 +12,23 @@
       </property>
       <property name="&lt;Primary&gt;&lt;Alt&gt;Delete" type="empty"/>
       <property name="&lt;Primary&gt;&lt;Alt&gt;l" type="empty"/>
+      <property name="&lt;Primary&gt;&lt;Alt&gt;t" type="empty"/>
       <property name="XF86Display" type="empty"/>
       <property name="&lt;Super&gt;p" type="empty"/>
       <property name="&lt;Primary&gt;Escape" type="empty"/>
       <property name="XF86WWW" type="empty"/>
       <property name="XF86Mail" type="empty"/>
-      <property name="&lt;Primary&gt;&lt;Alt&gt;Escape" type="empty"/>
       <property name="Print" type="empty"/>
+      <property name="&lt;Super&gt;l" type="empty"/>
+      <property name="&lt;Primary&gt;&lt;Alt&gt;Escape" type="empty"/>
       <property name="&lt;Alt&gt;Print" type="empty"/>
+      <property name="&lt;Shift&gt;Print" type="empty"/>
       <property name="XF86HomePage" type="empty"/>
       <property name="&lt;Super&gt;w" type="string" value="exo-open --launch WebBrowser"/>
       <property name="&lt;Super&gt;m" type="empty"/>
       <property name="XF86Explorer" type="empty"/>
       <property name="&lt;Super&gt;f" type="empty"/>
       <property name="&lt;Super&gt;F1" type="empty"/>
-      <property name="&lt;Primary&gt;&lt;Alt&gt;t" type="empty"/>
       <property name="&lt;Super&gt;t" type="empty"/>
       <property name="&lt;Super&gt;r" type="empty"/>
       <property name="&lt;Super&gt;e" type="empty"/>
@@ -68,8 +70,10 @@
       <property name="&lt;Primary&gt;&lt;Alt&gt;p" type="string" value="pgadmin3"/>
       <property name="&lt;Primary&gt;&lt;Alt&gt;m" type="string" value="meld"/>
       <property name="&lt;Super&gt;Alt_L" type="string" value="xfce4-popup-whiskermenu"/>
-      <property name="XF86MonBrightnessUp" type="string" value="xbacklight +10"/>
-      <property name="XF86MonBrightnessDown" type="string" value="xbacklight -10"/>
+      <property name="MonBrightnessDown" type="string" value="xbacklight -10"/>
+      <property name="MonBrightnessUp" type="string" value="xbacklight +10"/>
+      <property name="&lt;Primary&gt;&lt;Alt&gt;j" type="string" value="bash -i -c buffer_jsonformat"/>
+      <property name="&lt;Primary&gt;&lt;Alt&gt;x" type="string" value="bash -i -c buffer_xmlformat"/>
     </property>
   </property>
   <property name="xfwm4" type="empty">
@@ -135,6 +139,7 @@
       <property name="&lt;Super&gt;KP_7" type="empty"/>
       <property name="&lt;Super&gt;Up" type="empty"/>
       <property name="&lt;Super&gt;KP_9" type="empty"/>
+      <property name="&lt;Super&gt;d" type="empty"/>
       <property name="&lt;Control&gt;&lt;Alt&gt;Down" type="empty"/>
       <property name="&lt;Control&gt;&lt;Alt&gt;Left" type="empty"/>
       <property name="&lt;Control&gt;&lt;Shift&gt;&lt;Alt&gt;Left" type="empty"/>
