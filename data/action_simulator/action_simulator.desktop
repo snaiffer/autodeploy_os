@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=Action simulator
+Exec=/opt/action_simulator.sh
+Encoding=UTF-8
+Terminal=true
+Type=Application
+Icon=terminator

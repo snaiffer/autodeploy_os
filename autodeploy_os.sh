@@ -470,6 +470,12 @@ but install sqldeveloper from rpm with help of "alien"
 sudo cp /opt/sqldeveloper/sqldeveloper.desktop /usr/share/applications
 EOF
 
+printf "${b}\tInstalling Person Action Simulator... ${n}"
+sudo apt-get install -q -y xdotool  >> $logd
+sudo cp $dir_data/action_simulator/action_simulator.sh /opt/
+cp $dir_data/action_simulator/action_simulator.desktop ~/Desktop
+check_status
+
 printf "${b}\tInstalling utils for Python programming... ${n}"
 sudo apt-get install -q -y python3 ipython3  >> $logd
 check_status
@@ -640,11 +646,6 @@ if [[ "$mode" != "server" ]]; then
   #rm -Rf ~/.gconf && cp -Rf $dir_data/gconf ~/.gconf && \
   #  find ~/.gconf -type f -print0 | xargs -0 sed "s/snaiffer/$SUDO_USER/g"
   #check_status
-  printf "${b}\t of Preferred Applications... ${n}"
-  mkdir -p ~/.local/share/xfce4 && \
-  cp -Rf $dir_data/helpers ~/.local/share/xfce4/ && \
-    find ~/.local/share/xfce4/helpers -type f -print0 | xargs -0 sed "s/snaiffer/$SUDO_USER/g"
-  check_status
   #printf "${b}\t of System load indicator... ${n}"
   #sudo cp $dir_data/indicator-multiload-settings /usr/bin/ && \
   #  sudo chmod +x /usr/bin/indicator-multiload-settings
