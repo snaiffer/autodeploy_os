@@ -309,7 +309,7 @@ EOF
   check_status
   #############################################
   printf "${b}for media... ${n}"
-  sudo apt-get install -q -y vlc smplayer >> $logd
+  sudo apt-get install -q -y vlc smplayer audacity >> $logd
   # for 14.04
   #sudo apt-get install -q -y gnome-mplayer >> $logd
   check_status
