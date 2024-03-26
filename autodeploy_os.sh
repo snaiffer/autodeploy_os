@@ -172,7 +172,8 @@ sudo apt-get install -q -y openssh-server openssh-client tree nmap iotop htop fo
 sudo apt-get install -q -y apt-file >> $logd && \
   sudo apt-file update > /dev/null && \
 sudo apt-get install -q -y unrar >> $logd && \
-sudo apt-get install -q -y pwgen >> $logd
+sudo apt-get install -q -y pwgen >> $logd && \
+sudo apt-get install -q -y byobu >> $logd
 check_status
 #############################################
 printf "${b}markdown terminal viewer... ${n}"
