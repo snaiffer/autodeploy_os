@@ -13,6 +13,11 @@
 - Xubuntu 22.04.1
 - Ubuntu Server 22.04.2
 
+## Install
+mkdir -p ~/git && cd ~/git && git clone https://github.com/snaiffer/autodeploy_os && cd autodeploy_os
+./autodeploy_os.sh 2>&1 | tee ./log_`date +%m%d_%H%M`
+
+
 ## Update config. files of autodeploy_os
 Go to root dir of autodeploy_os
 
