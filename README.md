@@ -2,7 +2,6 @@
 
 ## Requements:
 - Debian family
-- LXDE, XFCE desktop managers
 - home dir has to be "/home/<user_name>"
 
 ## It has been tested on:
@@ -12,11 +11,14 @@
 - Xubuntu 20.04.4
 - Xubuntu 22.04.1
 - Ubuntu Server 22.04.2
+- Kubuntu 24.04
 
 ## Install
 mkdir -p ~/git && cd ~/git && git clone https://github.com/snaiffer/autodeploy_os && cd autodeploy_os
-./autodeploy_os.sh 2>&1 | tee ./log_`date +%m%d_%H%M`
+./autodeploy_os_<distributive>.sh 2>&1 | tee ./log_`date +%m%d_%H%M`
 
+
+# Below information is for Xubuntu only
 
 ## Update config. files of autodeploy_os
 Go to root dir of autodeploy_os
