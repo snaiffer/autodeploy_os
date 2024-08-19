@@ -1,0 +1,152 @@
+
+-------------------------------------------------------------------------
+-------------------------------------------------------------------------
+-- Shortcuts
+* Meta -- Win key
+
+-------------------------------------------------------------------------
+-- Activity, Virtual Desktop, Window
+
+Activity    -- a bunch of Virtual Desktops
+    Virtual Desktop    -- workspace
+        Window / Application
+
+----
+-- Activity
+Path: Shortcuts / Shortcuts / Activity switching
+    Meta+Q          -- Show Activity Switcher
+
+----
+-- Virtual Desktop
+Path: Shortcuts / Shortcuts / Kwin
+    -- Go to another desktop
+    Ctrl+Alt+Down           -- Switch One Desktop Down
+    ...
+    Ctrl+Alt+0              -- Show Desktop Grid / All desktops on one Screen
+    
+    -- Move the current window to another desktop
+    Ctrl+Meta+Down          -- Window One Desktop Down
+    ...
+    
+    
+----
+-- Window / Application
+Path: Shortcuts / Shortcuts / Kwin
+
+    -- General
+    Meta+*      -- Keep above others
+    Meta+Num5   -- Maximize Window
+    Meta+Num+   -- ZoomIn
+    Meta+Num-   -- ZoomOut
+
+    -- Resizing inside the Virtual Desktop
+    Meta+Num2   -- Quick Tile Window to the Bottom 
+    Meta+Num1   -- Quick Tile Window to the Bottom Left
+    Meta+Num3   -- Quick Tile Window to the Bottom Right
+    ...
+    
+-------------------------------------------------------------------------
+-- PrintScreen
+
+Shift+PrtScr    -- Capture Rectangular Region
+Meta+PrtScr     -- Capture Active Window
+
+-------------------------------------------------------------------------
+-- Clipboard history
+Path: Shortcuts / Shortcuts / Activity switching
+
+Ctrl+Shift+V    -- Open Klipper at Mouse Position
+Ctrl+Up   -- More newer History Item
+Ctrl+Down -- More older History Item
+Alt+V           -- Edit content of the current clipboard
+
+-------------------------------------------------------------------------
+-- Power
+Ctrl+PowerOff   -- Sleep
+
+-------------------------------------------------------------------------
+-- Others
+    
+Meta+L, Ctrl+Alt+L      -- Lock screen
+    Path: Shortcuts / Shortcuts / Keyboard Layout Switcher
+
+Ctrl+alt+Backspace      -- Key sequence to kill the X-server
+    Path: Input Devices / Keyboard / Layouts / Advanced / Key sequence to kill the X-server
+
+-------------------------------------------------------------------------
+-- for application
+Path: Shortcuts / Custom Shortcuts / KMenuEdit
+
+Press Edit: New / Global Shortcut / K-Meny Entry
+    In Trigger: set shortcut
+    In Action: application for start
+
+-------------------------------------------------------------------------
+-------------------------------------------------------------------------
+-- Settings
+
+----
+-- Switch Language
+Path: Input Devices / Keyboard / Layouts / Shortcuts for Switching Layout
+    Main Shortcuts:     CapsLock
+    
+----
+-- Power Management / Energy Saving
+
+On AC Power:
+    OFF Dim screen
+    OFF Screen Energy Saving
+
+On Batttery:
+    OFF Dim screen
+    OFF Screen Energy Saving
+    OFF Suspen session
+
+On Low Battery:
+    OFF Dim screen
+    OFF Screen Energy Saving
+
+----
+-- Workspace Behavior / Virtual Desktops
+OFF Navigation wraps around
+Show animation when switching: Slide
+    Duration: 350 milliseconds
+    Horizontal: 10
+    Vertical: 10
+    Slide desktop background
+Show on-screen display when switching: 300ms
+Show desktop layout indicators
+
+----
+-- Activities (Bunch of Virtual Desktops)
+-- Workspace Behavior / Activities
+Create New...
+
+----
+-- Hardware / Input Devices / Touchpad
+
+Tap-to-click
+Press anywhere with two fingers
+
+----
+-- Startup and Shutdown / Desktop Session
+When logging in: Start with an empty session
+
+----
+-- Other Notifications
+OFF Upgrade information
+
+----
+-- Konsole
+Settings / Configure Konsole / Tab Bar / Position: Above terminal area
+Settings / Show menu bar: OFF
+Settings / Configure keyboard shortcuts
+    ...
+
+----
+--
+
+
+
+    
+    
