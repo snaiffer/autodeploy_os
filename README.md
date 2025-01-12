@@ -16,6 +16,7 @@
 - Kubuntu 22.04
 
 ## Install
+sudo apt install git
 mkdir -p ~/git && cd ~/git && git clone https://github.com/snaiffer/autodeploy_os && cd autodeploy_os
 ./autodeploy_os_<distributive>.sh 2>&1 | tee ./log_`date +%m%d_%H%M`
 
@@ -45,7 +46,7 @@ In case of problems with desktop or background image:
 ```sh
 rm ~/.config/xfce4/desktop/*
 # Change to
-# <property name="last-image" type="string" value="/usr/share/xfce4/backdrops/solitude.jpg"/>
+# <property name="last-image" type="string" value="/usr/share/xfce4/backdrops/Fethiye_20240504_195128.jpg"/>
 vim ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml
 rm ~/.cache/sessions/*
 sudo service lightdm restart

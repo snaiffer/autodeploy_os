@@ -621,7 +621,7 @@ if [[ "$mode" != "server" ]]; then
   printf "${b}\t of background... ${n}"
   p="/usr/share/xfce4/backdrops"
   sudo mkdir -p $p > /dev/null && \
-  sudo cp -f $dir_data/solitude.jpg $p
+  sudo cp -f $dir_data/Fethiye_20240504_195128.jpg $p
   check_status
   #exportlist="xfce4 compiz-1 autostart dconf Mousepad Thunar terminator xfce4-dict"
   #exportlist="xfce4 compiz-1 autostart Mousepad Thunar terminator xfce4-dict"
