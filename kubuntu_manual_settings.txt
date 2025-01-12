@@ -1,6 +1,36 @@
 
 -------------------------------------------------------------------------
 -------------------------------------------------------------------------
+--  KDE Plasma: Saving and restoring configuration
+
+## Backup
+mkdir -p ./kde-backup
+cp -Rf ~/.config ./kde-backup/
+mkdir -p ./kde-backup/.local/share
+cp -Rf ~/.local/share/plasma ./kde-backup/.local/share/
+cp -Rf ~/.local/share/wallpapers ./kde-backup/.local/share/
+cp -Rf ~/.local/share/kservices5 ./kde-backup/.local/share/
+tar -czf kde-config-backup.tgz kde-backup
+
+## Restore
+rm -Rf ./kde-backup
+tar -xf kde-config-backup.tgz -C ./
+cp -Rf ./kde-backup/.config ~/
+mkdir -p ~/.local/share
+cp -Rf ./kde-backup/.local/share/plasma ~/.local/share/
+t=./kde-backup/.local/share/wallpapers
+if [ -f $t ]; then
+    cp -Rf $t ~/.local/share/
+fi
+t=./kde-backup/.local/share/kservices5
+if [ -f $t ]; then
+    cp -Rf $t ~/.local/share/
+fi
+kquitapp5 plasmashell && plasmashell &
+
+
+-------------------------------------------------------------------------
+-------------------------------------------------------------------------
 -- Shortcuts
 * Meta -- Win key
 

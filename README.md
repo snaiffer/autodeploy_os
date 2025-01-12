@@ -4,14 +4,16 @@
 - Debian family
 - home dir has to be "/home/<user_name>"
 
-## It has been tested on:
+## "autodeploy_os_xubuntu.sh" has been tested on:
 - Xubuntu 14.04.3
 - Xubuntu 18.04.4
 - Xubuntu 20.04.0
 - Xubuntu 20.04.4
 - Xubuntu 22.04.1
 - Ubuntu Server 22.04.2
-- Kubuntu 24.04
+
+## "autodeploy_os_kubuntu.sh" was written but not fully tested on:
+- Kubuntu 22.04
 
 ## Install
 mkdir -p ~/git && cd ~/git && git clone https://github.com/snaiffer/autodeploy_os && cd autodeploy_os
