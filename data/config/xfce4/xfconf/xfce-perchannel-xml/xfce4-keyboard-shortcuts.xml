@@ -70,10 +70,11 @@
       <property name="&lt;Primary&gt;&lt;Alt&gt;p" type="string" value="pgadmin3"/>
       <property name="&lt;Primary&gt;&lt;Alt&gt;m" type="string" value="meld"/>
       <property name="&lt;Super&gt;Alt_L" type="string" value="xfce4-popup-whiskermenu"/>
-      <property name="MonBrightnessDown" type="string" value="xbacklight -10"/>
-      <property name="MonBrightnessUp" type="string" value="xbacklight +10"/>
       <property name="&lt;Primary&gt;&lt;Alt&gt;j" type="string" value="bash -i -c buffer_jsonformat"/>
       <property name="&lt;Primary&gt;&lt;Alt&gt;x" type="string" value="bash -i -c buffer_xmlformat"/>
+      <property name="&lt;Primary&gt;&lt;Alt&gt;o" type="string" value="bash -i -c buffer_concatenate"/>
+      <property name="MonBrightnessUp" type="string" value="brightness_all.sh +10%"/>
+      <property name="MonBrightnessDown" type="string" value="brightness_all.sh -10%"/>
     </property>
   </property>
   <property name="xfwm4" type="empty">

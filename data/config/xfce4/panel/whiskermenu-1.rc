@@ -1,5 +1,5 @@
-favorites=exo-web-browser.desktop,libreoffice-writer.desktop,libreoffice-calc.desktop,exo-terminal-emulator.desktop,virtualbox.desktop,basket.desktop,sqldeveloper.desktop,xfce4-screenshooter.desktop,simplescreenrecorder.desktop,clion_clion.desktop,Oxygen XML Editor 17.0-0.desktop,org.remmina.Remmina.desktop,xfce-display-settings.desktop,vstudio.desktop,shotcut_shotcut.desktop,teams.desktop
-recent=xfce4-power-manager-settings.desktop,teams.desktop,firefox.desktop,xfce-display-settings.desktop,xfce4-screenshooter.desktop,virtualbox.desktop,simplescreenrecorder.desktop,anydesk.desktop,org.gnome.meld.desktop,shotcut_shotcut.desktop
+favorites=exo-web-browser.desktop,libreoffice-writer.desktop,libreoffice-calc.desktop,exo-terminal-emulator.desktop,virtualbox.desktop,basket.desktop,sqldeveloper.desktop,xfce4-screenshooter.desktop,simplescreenrecorder.desktop,clion_clion.desktop,Oxygen XML Editor 17.0-0.desktop,org.remmina.Remmina.desktop,xfce-display-settings.desktop,vstudio.desktop,shotcut_shotcut.desktop,teams.desktop,teams-for-linux_teams-for-linux.desktop
+recent=firefox.desktop,xfce-keyboard-settings.desktop,teams-for-linux_teams-for-linux.desktop,virtualbox.desktop,xfce4-screenshooter.desktop,org.gnome.meld.desktop,pinta.desktop,xfce-display-settings.desktop,xfce-session-settings.desktop,teams.desktop
 button-title=Applications Menu
 button-icon=xubuntu-logo-menu
 button-single-row=false

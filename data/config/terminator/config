@@ -9,6 +9,8 @@
   enabled_plugins = LaunchpadCodeURLHandler, APTURLHandler, LaunchpadBugURLHandler
   suppress_multiple_term_dialog = True
 [keybindings]
+  zoom_out = <Primary>minus
+  zoom_normal = <Primary>equal
   new_tab = <Primary><Shift>t
   go_next = None
   go_prev = None

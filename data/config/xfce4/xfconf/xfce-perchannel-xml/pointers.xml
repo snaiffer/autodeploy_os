@@ -9,7 +9,7 @@
   <property name="Logitech_M705" type="empty">
     <property name="RightHanded" type="bool" value="true"/>
     <property name="Threshold" type="int" value="1"/>
-    <property name="Acceleration" type="double" value="10.000000"/>
+    <property name="Acceleration" type="double" value="3.900000"/>
   </property>
   <property name="SynPS2_Synaptics_TouchPad" type="empty">
     <property name="Properties" type="empty">
@@ -33,5 +33,10 @@
     <property name="RightHanded" type="bool" value="true"/>
     <property name="Threshold" type="int" value="-1"/>
     <property name="Acceleration" type="double" value="-1.000000"/>
+  </property>
+  <property name="MX_Master_3S_Mouse" type="empty">
+    <property name="RightHanded" type="bool" value="true"/>
+    <property name="Threshold" type="int" value="1"/>
+    <property name="Acceleration" type="double" value="10.000000"/>
   </property>
 </channel>

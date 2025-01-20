@@ -1,0 +1,12 @@
+[Unit]
+Description=Bash Language Server
+After=network.target
+
+[Service]
+ExecStart=/snap/bin/bash-language-server start
+Restart=always
+User=your-username
+Environment=PATH=/usr/local/bin:/usr/bin:/bin
+
+[Install]
+WantedBy=default.target

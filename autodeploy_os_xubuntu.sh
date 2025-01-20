@@ -24,7 +24,7 @@ Syntax:
 EOF
 }
 
-case "$1" in
+case "${1:-}" in
   "desktop"|"server")
     mode="$1"
     ;;
@@ -75,6 +75,8 @@ function log()
 }
 # usage: log "started"
 
+##################################################################
+
 # find out links for a newer version https://www.virtualbox.org/wiki/Downloads
 #export virtualbox_extenpack_link='https://download.virtualbox.org/virtualbox/5.2.12/Oracle_VM_VirtualBox_Extension_Pack-5.2.12.vbox-extpack'
 #export virtualbox_extenpack_file='Oracle_VM_VirtualBox_Extension_Pack'
@@ -118,6 +120,44 @@ printf "${b}Creating dirs... ${n}"
 mkdir -p ~/git ~/temp ~/VM_share ~/payload > /dev/null
 check_status
 
+printf "${b}Setting bash enviroment... ${n}"
+git clone -q https://github.com/snaiffer/bash_env.git ~/.bash_env && \
+cd ~/.bash_env && git remote set-url origin git@github.com:snaiffer/.bash_env.git && cd $OLDPWD && \
+~/.bash_env/install.sh > /dev/null
+check_status
+
+# xev   --show key codes
+if [[ "$mode" = "desktop" ]]; then
+echo
+printf "${b}Right Ctrl => End; Right Shift => Home; Right Alt => Right Ctrl... ${n}"
+# xev   --show key codes
+# xmodmap -pm   --show current modifier keys
+# https://wiki.archlinux.org/title/Xmodmap
+cat <<-EOF >> ~/.Xmodmap
+! Shift_R => Home
+clear shift
+add shift = Shift_L
+! keycode <key_code> = <Key> <L_Shift+Key> <L_Alt+Key>...
+keycode 62 = Home Home Home Home Home Home Home
+
+clear control
+clear mod1
+! Alt_R => Control_R
+keycode 108 = Control_R Control_R Control_R Control_R Control_R Control_R Control_R
+add control = Control_L Control_R
+add mod1 = Alt_L Meta_L
+! Control_R => End
+keycode 105 = End End End End End End End
+EOF
+xmodmap ~/.Xmodmap # apply changes without relogin
+check_status
+fi;
+
+echo
+printf "${b}Installing drivers... ${n}"
+sudo ubuntu-drivers autoinstall > /dev/null
+check_status
+
 #printf "${b}Set Desktop count... ${n}"
 #echo "${b}Run obconf and go to Desktop${n}"
 #obconf
@@ -129,28 +169,83 @@ check_status
 #xrandr --output LVDS --brightness 0.9
 #check_status
 
-#printf "${b}Brightness shortcuts: Shift+F3/F4...${n}" # added for HP ProBook
-printf "${b}Display brightness control...${n}"
-# https://unix.stackexchange.com/questions/356730/how-to-create-keyboard-shortcuts-for-screen-brightness-in-xubuntu-xfce-ubuntu
-# https://askubuntu.com/questions/715306/xbacklight-no-outputs-have-backlight-property-no-sys-class-backlight-folder
-sudo apt-get install -q -y xbacklight >> $logd && \
-cat <<-EOF > ~/.xbindkeysrc
+if [ -d /sys/class/backlight/intel_backlight ]; then
+    printf "${b}Display brightness control...${n}"
+    sudo apt-get install -q -y brightnessctl >> $logd && \
+    sudo bash -c 'cat > /etc/udev/rules.d/90-intel-backlight.rules' <<-EOF 
+ACTION=="add", SUBSYSTEM=="backlight", RUN+="/bin/chmod 664 /sys/class/backlight/intel_backlight/brightness"
+ACTION=="add", SUBSYSTEM=="backlight", RUN+="/bin/chown root:video /sys/class/backlight/intel_backlight/brightness"
+EOF
+    sudo udevadm control --reload && \
+    sudo udevadm trigger && \
+    sudo usermod -aG video $USER && \
+    sudo cp -f $dir_data/brightness_all.sh /usr/bin/ && \
+    sudo chmod +x /usr/bin/brightness_all.sh
+    # Log out and log back in to apply the group change.
+    # for test:
+    #   brightness_all.sh +30%
+    #   brightness_all.sh -30%
+    # Add to Keyboard / Aplication Shortcuts:
+    #   brightness_all.sh +10%    | Monitor brightness up
+    #   brightness_all.sh -10%    | Monitor brightness down
+    # Check Hardware Brightness:
+    #   cat /sys/class/backlight/intel_backlight/brightness
+    #   cat /sys/class/backlight/intel_backlight/max_brightness
+    check_status
+:<<-EOFOFF
+    # !!! Doesn't work on HP PROBOOK
+    # https://unix.stackexchange.com/questions/356730/how-to-create-keyboard-shortcuts-for-screen-brightness-in-xubuntu-xfce-ubuntu
+    # https://askubuntu.com/questions/715306/xbacklight-no-outputs-have-backlight-property-no-sys-class-backlight-folder
+    sudo apt-get install -q -y xbacklight >> $logd
+    # Add to Keyboard / Aplication Shortcuts:
+    #   xbacklight +10    | Monitor brightness up
+    #   xbacklight -10    | Monitor brightness down
+    # OR use xbindkeys:
+:<<-EOFxbindkeys
+    sudo apt-get install -q -y xbacklight xbindkeys >> $logd && \
+    cat <<-EOF > ~/.xbindkeysrc
 "xbacklight -dec 10 -steps 1"
   XF86MonBrightnessDown
 "xbacklight -inc 10 -steps 1"
   XF86MonBrightnessUp
 EOF
+    # ... add "xbindkeys" to startup
+:EOFxbindkeys
+    check_status
+EOFOFF
+fi
+
+if [[ "$mode" = "desktop" ]]; then
+  echo "${b}Installing VirtualBox:${n}"
+  sudo sh -c "echo 'deb http://download.virtualbox.org/virtualbox/debian `lsb_release -cs` contrib' >> /etc/apt/sources.list.d/virtualbox.list" && \
+  wget -q https://www.virtualbox.org/download/oracle_vbox.asc -O- | sudo apt-key add - && \
+  wget -q https://www.virtualbox.org/download/oracle_vbox_2016.asc -O- | sudo apt-key add - && \
+  sudo apt-get update > /dev/null && sudo apt-get install -y virtualbox virtualbox-dkms virtualbox-ext-pack # -q and >> $logd were commented as the installation process wants actions in firmware sign menu
+  check_status
+  #Another way for virtualbox-ext-pack:
+  # printf "${b}\tVirtualBox Extension Pack... ${n}"
+  # wget -q $virtualbox_extenpack_link && \
+  # sudo VBoxManage extpack install ${virtualbox_extenpack_file}* && \
+  # rm -f ${virtualbox_extenpack_file}*
+  # check_status
+fi
+
+printf "${b}Clone syncfrom... ${n}"
+mkdir -p ~/git/ && \
+git clone -q https://github.com/snaiffer/syncfrom.git ~/git/syncfrom/
+cd ~/git/syncfrom/ && git remote set-url origin git@github.com:snaiffer/syncfrom.git && cd $OLDPWD && \
 check_status
 
-
-echo
-printf "${b}Removing packages... ${n}"
-sudo apt-get remove -q -y xfce4-screensaver abiword* gnumeric* xfburn parole gmusicbrowser xfce4-notes xfce4-terminal > /dev/null
-check_status
-
-echo
-printf "${b}Installing drivers... ${n}"
-sudo ubuntu-drivers autoinstall > /dev/null
+printf "${b}Setting vim... ${n}"
+sudo apt-get install -q -y vim clang libclang-dev \
+  $(if (( $os_release_major < 22 )); then echo ctags; else echo exuberant-ctags; fi) \
+  >> $logd && \
+rm -Rf ~/.vim ~/.vimrc && \
+git clone -q https://github.com/snaiffer/vim.git ~/.vim && \
+cd ~/.vim && git remote set-url origin git@github.com:snaiffer/vim.git && cd $OLDPWD && \
+ln -s ~/.vim/vimrc ~/.vimrc && \
+vim -c "BundleInstall" -c 'qa!'
+#~/.vim/bundle/youcompleteme
 check_status
 
 echo
@@ -160,6 +255,7 @@ sudo apt-get update > /dev/null
 printf "${b}for console... ${n}"
 # jq              --pretty json output
 # vim-gui-common  --GUI features. Don't install it on a server
+# ghex            --instead of "bless"
 sudo apt-get install -q -y jq >> $logd && \
 sudo apt-get install -q -y libxml2-utils >> $logd && \
 sudo apt-get install -q -y gawk icdiff >> $logd && \
@@ -168,7 +264,7 @@ sudo apt-get install -q -y expect >> $logd && \
 sudo apt-get install -q -y alien >> $logd && \
 sudo apt-get install -q -y vim >> $logd && \
 ( [[ "$mode" = "server" ]] || sudo apt-get install -q -y vim-gui-common >> $logd ) && \
-sudo apt-get install -q -y openssh-server openssh-client tree nmap iotop htop foremost sshfs powertop bless curl >> $logd && \
+sudo apt-get install -q -y openssh-server openssh-client tree nmap iotop htop foremost sshfs powertop ghex curl >> $logd && \
 sudo apt-get install -q -y apt-file >> $logd && \
   sudo apt-file update > /dev/null && \
 sudo apt-get install -q -y unrar >> $logd && \
@@ -221,6 +317,10 @@ if [[ "$mode" = "desktop" ]]; then
     sudo apt-get install -q -y terminator mtp-tools go-mtpfs pavucontrol >> $logd
     # Can't find in 20.04: sudo apt-get install -q -y xubuntu-restricted-extras >> $logd
   check_status
+  echo
+  printf "${b}Removing packages... ${n}"
+  sudo apt-get remove -q -y xfce4-screensaver abiword* gnumeric* xfburn parole gmusicbrowser xfce4-notes xfce4-terminal > /dev/null
+  check_status
   #############################################
   echo "${b}for WWW:${n}"
   # for 14.04
@@ -257,19 +357,6 @@ if [[ "$mode" = "desktop" ]]; then
   #sudo apt-get update > /dev/null && sudo apt-get install -q -y oracle-java8-installer >> $logd
   #check_status
   #############################################
-  echo "${b}for VirtualBox:${n}"
-  sudo sh -c "echo 'deb http://download.virtualbox.org/virtualbox/debian `lsb_release -cs` contrib' >> /etc/apt/sources.list.d/virtualbox.list" && \
-  wget -q https://www.virtualbox.org/download/oracle_vbox.asc -O- | sudo apt-key add - && \
-  wget -q https://www.virtualbox.org/download/oracle_vbox_2016.asc -O- | sudo apt-key add - && \
-  sudo apt-get update > /dev/null && sudo apt-get install -y virtualbox virtualbox-dkms virtualbox-ext-pack # -q and >> $logd were commented as the installation process wants actions in firmware sign menu
-  check_status
-  #Another way for virtualbox-ext-pack:
-  # printf "${b}\tVirtualBox Extension Pack... ${n}"
-  # wget -q $virtualbox_extenpack_link && \
-  # sudo VBoxManage extpack install ${virtualbox_extenpack_file}* && \
-  # rm -f ${virtualbox_extenpack_file}*
-  # check_status
-#############################################
   printf "${b}for libreoffice... ${n}"
   sudo apt-get install -q -y libreoffice >> $logd
   check_status
@@ -279,20 +366,26 @@ if [[ "$mode" = "desktop" ]]; then
   #sudo apt-get install -q -y wireshark >> $logd
   #check_status
   printf "${b}for wine likes programs... ${n}"
+  printf "\t${b}set up PPA repository... ${n}"
   # For Ubuntu 18.04:
     # install wine: https://wiki.winehq.org/Ubuntu
     # Error:
     #The following packages have unmet dependencies:
     # winehq-stable : Depends: wine-stable (= 5.0.0~bionic)
     #E: Unable to correct problems, you have held broken packages.
+  # WineHQ delivers the latest version of wine
   # https://wiki.winehq.org/Ubuntu
   sudo dpkg --add-architecture i386 && \
-  wget -q -O - https://dl.winehq.org/wine-builds/winehq.key | sudo apt-key add - && \
-  sudo sh -c 'echo "deb https://dl.winehq.org/wine-builds/ubuntu/ `lsb_release -sc` main" >> /etc/apt/sources.list.d/wine.list' && \
-  sudo apt-get update > /dev/null && \
+  sudo mkdir -pm755 /etc/apt/keyrings && \
+  sudo wget -O /etc/apt/keyrings/winehq-archive.key https://dl.winehq.org/wine-builds/winehq.key && \
+  sudo wget -NP /etc/apt/sources.list.d/ https://dl.winehq.org/wine-builds/ubuntu/dists/$(lsb_release -cs)/winehq-$(lsb_release -cs).sources && \
+  sudo apt-get update > /dev/null
+  check_status
+  printf "\t${b}install... ${n}"
+  apt search winehq-stable | grep winehq-stable > /dev/null && wine_ver="winehq-stable" || wine_ver="wine"
   # if Ubuntu 20.04 Error: Could not configure 'libc6:i386' then sudo apt upgrade
-  sudo apt-get install -q -y winehq-stable playonlinux >> $logd
-
+  sudo apt-get install -q -y $wine_ver playonlinux >> $logd
+  check_status
 :<<-EOF
   # playonlinux
   # 2020-07-14: There isn't playonlinux ppa for Ubuntu 20.04
@@ -304,7 +397,8 @@ if [[ "$mode" = "desktop" ]]; then
 EOF
   #############################################
   printf "${b}for images... ${n}"
-  sudo apt-get install -q -y gimp pinta gthumb >> $logd && \
+  sudo apt-get install -q -y gimp gthumb >> $logd && \
+  sudo snap install pinta && \
   # https://github.com/cas--/PasteImg
   sudo cp -f $dir_data/pasteimg $bin && sudo chmod +x $bin/pasteimg
   check_status
@@ -358,8 +452,21 @@ EOFBASKET
 
   #############################################
   printf "${b}simple screen recorder...${n}"
-  sudo add-apt-repository -y ppa:maarten-baert/simplescreenrecorder > /dev/null && sudo apt-get update > /dev/null && \
+  # before 24.04
+  #sudo add-apt-repository -y ppa:maarten-baert/simplescreenrecorder > /dev/null && sudo apt-get update > /dev/null && \
   sudo apt-get install -q -y simplescreenrecorder >> $logd
+  check_status
+
+  #############################################
+  echo
+  printf "${b}Installing Bash Language Server... ${n}"
+  # https://github.com/bash-lsp/bash-language-server
+  sudo apt-get install -q -y shellcheck >> $logd && \
+  sudo snap install bash-language-server --classic && \
+  sudo cp -f $dir_data/bash-language-server.service /etc/systemd/system/ && \
+  sudo systemctl daemon-reload >> $logd && \
+  sudo systemctl enable bash-language-server >> $logd && \
+  sudo systemctl start bash-language-server >> $logd
   check_status
 
   #############################################
@@ -385,7 +492,7 @@ if [[ "$mode" = "server" ]]; then
     sudo apt-get install -q -y nginx >> $logd && \
     nginx -v
   check_status
-  
+EOF
   # If a W: GPG error: https://nginx.org/packages/ubuntu focal InRelease: The following signatures couldn't be verified because the public key is not available: NO_PUBKEY $key
   ## Replace $key with the corresponding $key from your GPG error.
     # sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys $key
@@ -394,7 +501,8 @@ fi
 
 #############################################
 printf "${b}for tlp (power saving utils)...${n}"
-sudo add-apt-repository -y ppa:linrunner/tlp > /dev/null && sudo apt-get update > /dev/null && \
+# before 24.04
+#sudo add-apt-repository -y ppa:linrunner/tlp > /dev/null && sudo apt-get update > /dev/null && \
 sudo apt-get install -q -y tlp tlp-rdw smartmontools ethtool linux-tools-`uname -r` >> $logd
 check_status
 #############################################
@@ -506,6 +614,7 @@ sudo sed -i "s/XKBOPTIONS=\"/XKBOPTIONS=\"grp:caps_toggle\,/" /etc/default/keybo
 #sudo cp -f $dir_data/keyboardlayout_switcher.desktop /etc/xdg/autostart/
 check_status
 
+
 #echo
 #printf "${b}Installing and setting Hamachi VPN network... ${n}"
 #sudo wget -q $hamachi_link -P /tmp/ && \
@@ -516,32 +625,6 @@ check_status
 #  sudo hamachi join snaifvpn && \
 #  sudo hamachi list
 #check_status
-
-printf "${b}Clone syncfrom... ${n}"
-mkdir -p ~/git/ && \
-git clone -q https://github.com/snaiffer/syncfrom.git ~/git/syncfrom/
-cd ~/git/syncfrom/ && git remote set-url origin git@github.com:snaiffer/syncfrom.git && cd $OLDPWD && \
-check_status
-
-printf "${b}Setting bash enviroment... ${n}"
-git clone -q https://github.com/snaiffer/bash_env.git ~/.bash_env && \
-cd ~/.bash_env && git remote set-url origin git@github.com:snaiffer/.bash_env.git && cd $OLDPWD && \
-~/.bash_env/install.sh > /dev/null
-check_status
-
-printf "${b}Setting vim... ${n}"
-
-
-sudo apt-get install -q -y vim clang libclang-dev \
-  $(if (( $os_release_major < 22 )); then echo ctags else echo exuberant-ctags fi) \
-  >> $logd && \
-rm -Rf ~/.vim ~/.vimrc && \
-git clone -q https://github.com/snaiffer/vim.git ~/.vim && \
-cd ~/.vim && git remote set-url origin git@github.com:snaiffer/vim.git && cd $OLDPWD && \
-ln -s ~/.vim/vimrc ~/.vimrc && \
-vim -c "BundleInstall" -c 'qa!'
-#~/.vim/bundle/youcompleteme
-check_status
 
 printf "${b}Turn off apport... ${n}"
 sudo sed -i "s/enabled=1/enabled=0/" /etc/default/apport
@@ -640,12 +723,12 @@ if [[ "$mode" != "server" ]]; then
   for cur in $exportlist; do
     printf "${b}\t of $cur... ${n}"
     rm -Rf ~/.config/$cur && cp -Rf $dir_data/config/$cur ~/.config/ && \
-      find ~/.config/$cur -type f -print0 | xargs -0 sed "s/snaiffer/$SUDO_USER/g"
+      find ~/.config/$cur -type f -print0 | xargs -0 sed "s/snaiffer/$USER/g"
     check_status
   done
   #printf "${b}\t of DockbarX... ${n}"
   #rm -Rf ~/.gconf && cp -Rf $dir_data/gconf ~/.gconf && \
-  #  find ~/.gconf -type f -print0 | xargs -0 sed "s/snaiffer/$SUDO_USER/g"
+  #  find ~/.gconf -type f -print0 | xargs -0 sed "s/snaiffer/$USER/g"
   #check_status
   #printf "${b}\t of System load indicator... ${n}"
   #sudo cp $dir_data/indicator-multiload-settings /usr/bin/ && \
@@ -727,32 +810,6 @@ if [[ "$?" = "0" ]]; then
   echo 'export MESA_LOADER_DRIVER_OVERRIDE=i965' >> ~/.profile
 fi;
 
-# xev   --show key codes
-if [[ "$mode" = "desktop" ]]; then
-echo
-printf "${b}Right Ctrl => End; Right Shift => Home; Right Alt => Right Ctrl... ${n}"
-# xev   --show key codes
-# xmodmap -pm   --show current modifier keys
-# https://wiki.archlinux.org/title/Xmodmap
-cat <<-EOF >> ~/.Xmodmap
-! Shift_R => Home
-clear shift
-add shift = Shift_L
-keycode 62 = Home Home Home Home Home Home Home
-
-clear control
-clear mod1
-! Alt_R => Control_R
-keycode 108 = Control_R Control_R Control_R Control_R Control_R Control_R Control_R
-add control = Control_L Control_R
-add mod1 = Alt_L Meta_L
-! Control_R => End
-keycode 105 = End End End End End End End
-EOF
-xmodmap ~/.Xmodmap
-check_status
-fi;
-
 :<<-EOF2
 # Set up mouse scroll speed
 # https://dev.to/bbavouzet/ubuntu-20-04-mouse-scroll-wheel-speed-536o
@@ -801,8 +858,8 @@ EOF
 echo
 echo -e "Background settings
 Execute after reboot:"
-# sed -i "/last-image/,/$/ s/value=\".*\"/value=\"\/usr\/share\/xfce4\/backdrops\/solitude\.jpg\"/" ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml
-echo '  sed -i "/last-image/,/$/ s/value=\".*\"/value=\"\/usr\/share\/xfce4\/backdrops\/solitude\.jpg\"/" ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml'
+# sed -i "/last-image/,/$/ s/value=\".*\"/value=\"\/usr\/share\/xfce4\/backdrops\/Fethiye_20240504_195128\.jpg\"/" ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml
+echo '  sed -i "/last-image/,/$/ s/value=\".*\"/value=\"\/usr\/share\/xfce4\/backdrops\/Fethiye_20240504_195128\.jpg\"/" ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml'
 echo '  sudo reboot'
 echo "<Enter>" && read
 

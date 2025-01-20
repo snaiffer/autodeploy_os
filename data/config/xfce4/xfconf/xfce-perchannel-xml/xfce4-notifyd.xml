@@ -7,6 +7,10 @@
   <property name="do-fadeout" type="empty"/>
   <property name="applications" type="empty">
     <property name="known_applications" type="array">
+      <value type="string" value="/snap/teams-for-linux/702/teams-for-linux"/>
+      <value type="string" value="/snap/teams-for-linux/715/teams-for-linux"/>
+      <value type="string" value="/snap/teams-for-linux/724/teams-for-linux"/>
+      <value type="string" value="/snap/teams-for-linux/730/teams-for-linux"/>
       <value type="string" value="blueman"/>
       <value type="string" value="CLion"/>
       <value type="string" value="Firefox"/>

@@ -17,8 +17,8 @@
 
 ## Install
 sudo apt install git
-mkdir -p ~/git && cd ~/git && git clone https://github.com/snaiffer/autodeploy_os && cd autodeploy_os
-./autodeploy_os_<distributive>.sh 2>&1 | tee ./log_`date +%m%d_%H%M`
+mkdir -p ~/sync/git && cd ~/sync/git && git clone https://github.com/snaiffer/autodeploy_os && cd autodeploy_os
+./autodeploy_os_xubuntu.sh desktop 2>&1 | tee ./log_`date +%m%d_%H%M`
 
 
 # Below information is for Xubuntu only
