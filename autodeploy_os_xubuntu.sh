@@ -319,7 +319,7 @@ if [[ "$mode" = "desktop" ]]; then
   check_status
   echo
   printf "${b}Removing packages... ${n}"
-  sudo apt-get remove -q -y xfce4-screensaver abiword* gnumeric* xfburn parole gmusicbrowser xfce4-notes xfce4-terminal > /dev/null
+  sudo apt-get remove -q -y abiword* gnumeric* xfburn parole gmusicbrowser xfce4-notes xfce4-terminal > /dev/null
   check_status
   #############################################
   echo "${b}for WWW:${n}"
@@ -513,14 +513,14 @@ sudo add-apt-repository -y ppa:remmina-ppa-team/remmina-next > /dev/null && sudo
 sudo apt-get install -q -y remmina remmina-plugin-rdp remmina-plugin-secret >> $logd
 check_status
 EOF
-:<<-EOF
+
 # light-locker switch from DISPLAY=:0 to :1, what case problem with VNC logging
 printf "${b}  Replacing light-locker for gnome-screensaver...${n}"
-sudo apt-get purge -q -y light-locker >> $logd && \
-sudo apt-get install -q -y gnome-screensaver >> $logd && \
-#sudo killall light-locker
+sudo apt-get purge -q -y xfce4-screensaver >> $logd && \
+sudo apt-get install -q -y light-locker >> $logd && \
 check_status
-EOF
+#sudo killall light-locker 2> /dev/null
+
 #############################################
 printf "${b}OpenVPN...${n}"
 sudo apt-get install -q -y openvpn network-manager-openvpn network-manager-openvpn-gnome >> $logd
