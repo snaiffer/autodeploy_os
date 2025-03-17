@@ -472,7 +472,14 @@ EOFBASKET
   #############################################
   echo
   printf "${b}Installing utils for programming... ${n}"
-  sudo apt-get install -q -y meld kate >> $logd
+  sudo apt-get install -q -y kate >> $logd && \
+  cp -f $dir_data/.config/katerc ~/.config/
+  check_status
+
+  #############################################
+  echo
+  printf "${b}Installing utils for programming... ${n}"
+  sudo apt-get install -q -y meld >> $logd
   check_status
   # atom-editor: download & install deb: https://atom.io/
 fi
