@@ -479,11 +479,10 @@ EOFBASKET
   #############################################
   echo
   printf "${b}Installing Docker ${n}"
-  curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg >> $logd && \
-  sudo chmod a+r /etc/apt/keyrings/docker.gpg >> $logd && \
-  echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null && \
-  echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null && \
-  sudo apt-get install -q -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin >> $logd
+  sudo apt-get install -q -y docker.io >> $logd && \
+  ( sudo groupadd docker || true ) && \ 	#* If the group already exists, you will see an error message, but you can ignore it.
+  sudo usermod -aG docker adanilov && \
+  newgrp docker		# To apply the changes without relogin
   check_status
 
   #############################################
