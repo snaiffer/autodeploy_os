@@ -561,6 +561,8 @@ if [[ "$mode" = "desktop" ]]; then
     sudo mkdir -p /opt/ccache/bin && \
     sudo ln -s /usr/bin/ccache /opt/ccache/bin/gcc && \
     sudo ln -s /usr/bin/ccache /opt/ccache/bin/g++ && \
+    sudo ln -s /usr/bin/ccache /opt/ccache/bin/cc && \
+    sudo ln -s /usr/bin/ccache /opt/ccache/bin/c++ && \
     sudo sh -c 'echo "export PATH=/opt/ccache/bin:\$PATH" >> /etc/profile' && \
     sudo chown -R $USER:$USER ~/.ccache && \
     touch ~/.ccache/ccache.conf && \
