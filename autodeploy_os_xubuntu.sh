@@ -481,7 +481,7 @@ EOFBASKET
   printf "${b}Installing Docker ${n}"
   sudo apt-get install -q -y docker.io >> $logd && \
   ( sudo groupadd docker || true ) && \ 	#* If the group already exists, you will see an error message, but you can ignore it.
-  sudo usermod -aG docker adanilov && \
+  sudo usermod -aG docker $USER && \
   newgrp docker		# To apply the changes without relogin
   check_status
 
@@ -554,6 +554,17 @@ if [[ "$mode" = "desktop" ]]; then
     #sudo add-apt-repository -y ppa:george-edison55/cmake-3.x > /dev/null && \
     # sudo apt-get update > /dev/null && \
     sudo apt-get install -q -y g++ valgrind doxygen cmake gdb clang >> $logd
+    check_status
+
+    printf "${b}\tInstalling ccache ( compilator cache )... ${n}"
+    sudo apt-get install -q -y ccache >> $logd && \
+    sudo mkdir -p /opt/ccache/bin && \
+    sudo ln -s /usr/bin/ccache /opt/ccache/bin/gcc && \
+    sudo ln -s /usr/bin/ccache /opt/ccache/bin/g++ && \
+    sudo sh -c 'echo "export PATH=/opt/ccache/bin:\$PATH" >> /etc/profile' && \
+    sudo touch ~/.ccache/ccache.conf && \
+    sudo chown $USER:$USER ~/.ccache/ccache.conf && \
+    echo 'max_size = 25.0G' >> ~/.ccache/ccache.conf
     check_status
 fi
 :<<-EOF
