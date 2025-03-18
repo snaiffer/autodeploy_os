@@ -562,8 +562,8 @@ if [[ "$mode" = "desktop" ]]; then
     sudo ln -s /usr/bin/ccache /opt/ccache/bin/gcc && \
     sudo ln -s /usr/bin/ccache /opt/ccache/bin/g++ && \
     sudo sh -c 'echo "export PATH=/opt/ccache/bin:\$PATH" >> /etc/profile' && \
-    sudo touch ~/.ccache/ccache.conf && \
-    sudo chown $USER:$USER ~/.ccache/ccache.conf && \
+    sudo chown -R $USER:$USER ~/.ccache && \
+    touch ~/.ccache/ccache.conf && \
     echo 'max_size = 25.0G' >> ~/.ccache/ccache.conf
     check_status
 fi
