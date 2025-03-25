@@ -553,7 +553,7 @@ if [[ "$mode" = "desktop" ]]; then
     # for 14.04
     #sudo add-apt-repository -y ppa:george-edison55/cmake-3.x > /dev/null && \
     # sudo apt-get update > /dev/null && \
-    sudo apt-get install -q -y g++ valgrind doxygen cmake gdb clang >> $logd
+    sudo apt-get install -q -y g++ clang ninja-build cmake gdb valgrind doxygen >> $logd
     check_status
 
     printf "${b}\tInstalling ccache ( compilator cache )... ${n}"
