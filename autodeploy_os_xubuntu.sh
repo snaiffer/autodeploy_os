@@ -435,6 +435,11 @@ EOFBASKET
   sudo apt-get install -q -y smbclient cifs-utils >> $logd
   check_status
   sudo sed -i "/\[global\]/a \ \ \ client min protocol = NT1" /etc/samba/smb.conf
+
+  #############################################
+  printf "${b}xfreerdp / freerdp2-x11...${n}"
+  sudo apt-get install -q -y freerdp2-x11 >> $logd
+  check_status
   
   # libreoffice doesn't support muilti-spellcheching
   #printf "${b}plugins for LibreOffice... ${n}"
