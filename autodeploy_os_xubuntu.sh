@@ -493,7 +493,7 @@ EOFBASKET
   #############################################
   echo
   printf "${b}Installing utils for programming... ${n}"
-  sudo apt-get install -q -y meld >> $logd
+  sudo apt-get install -q -y meld subversion >> $logd
   check_status
   # atom-editor: download & install deb: https://atom.io/
 fi
