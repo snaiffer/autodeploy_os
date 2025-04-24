@@ -492,6 +492,13 @@ EOFBASKET
 
   #############################################
   echo
+  printf "${b}Installing conan ${n}"
+  # since 24.04
+  pipx install "conan==1.66.*"
+  check_status
+
+  #############################################
+  echo
   printf "${b}Installing utils for programming... ${n}"
   sudo apt-get install -q -y meld subversion git-svn >> $logd
   check_status
