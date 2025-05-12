@@ -1,16 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <channel name="xfce4-notifyd" version="1.0">
-  <property name="notify-location" type="empty"/>
+  <property name="notify-location" type="string" value="top-right"/>
   <property name="theme" type="empty"/>
   <property name="initial-opacity" type="empty"/>
   <property name="do-fadeout" type="empty"/>
   <property name="applications" type="empty">
     <property name="known_applications" type="array">
+      <value type="string" value=""/>
       <value type="string" value="/snap/teams-for-linux/702/teams-for-linux"/>
       <value type="string" value="/snap/teams-for-linux/715/teams-for-linux"/>
       <value type="string" value="/snap/teams-for-linux/724/teams-for-linux"/>
       <value type="string" value="/snap/teams-for-linux/730/teams-for-linux"/>
+      <value type="string" value="/snap/teams-for-linux/747/teams-for-linux"/>
+      <value type="string" value="/snap/teams-for-linux/760/teams-for-linux"/>
+      <value type="string" value="/snap/teams-for-linux/793/teams-for-linux"/>
+      <value type="string" value="/snap/teams-for-linux/796/teams-for-linux"/>
+      <value type="string" value="/snap/teams-for-linux/807/teams-for-linux"/>
       <value type="string" value="blueman"/>
       <value type="string" value="CLion"/>
       <value type="string" value="Firefox"/>
@@ -19,9 +25,12 @@
       <value type="string" value="io.snapcraft.SessionAgent"/>
       <value type="string" value="nm-applet"/>
       <value type="string" value="notify-send"/>
+      <value type="string" value="org.freedesktop.network-manager-applet"/>
       <value type="string" value="org.gnome.baobab"/>
       <value type="string" value="org.gnome.Software"/>
       <value type="string" value="org.remmina.Remmina"/>
+      <value type="string" value="org.xfce.Thunar"/>
+      <value type="string" value="snapd-desktop-integration_snapd-desktop-integration"/>
       <value type="string" value="System Config Printer Notification"/>
       <value type="string" value="teams"/>
       <value type="string" value="thunar"/>
@@ -36,7 +45,8 @@
     <property name="muted_applications" type="array">
     </property>
   </property>
-  <property name="primary-monitor" type="uint" value="0"/>
-  <property name="log-level" type="uint" value="0"/>
-  <property name="log-level-apps" type="uint" value="0"/>
+  <property name="log-max-size-enabled" type="bool" value="true"/>
+  <property name="show-notifications-on" type="string" value="active-monitor"/>
+  <property name="log-level" type="string" value="not-fully-shown"/>
+  <property name="log-level-apps" type="string" value="all"/>
 </channel>

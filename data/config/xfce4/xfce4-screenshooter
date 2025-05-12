@@ -1,8 +1,13 @@
-delay=6
+delay=0
 region=3
 action=2
 show_mouse=0
 screenshot_dir=file:/home/adanilov/Downloads
-app=pinta
+app=ristretto
 last_user=
+custom_action_command=/usr/libexec/xfce4/screenshooter/scripts/imgur-upload.sh %f %imgur_client_id
+last_extension=png
+enable_imgur_upload=true
+show_in_folder=false
+show_border=1
 

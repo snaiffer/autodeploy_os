@@ -1,16 +1,19 @@
 
 -------------------------------------------------------------------------
 -------------------------------------------------------------------------
---  KDE Plasma: Saving and restoring configuration
+-- KDE Plasma: Saving and restoring configuration
+
+# General
 
 ## Backup
 mkdir -p ./kde-backup
 cp -Rf ~/.config ./kde-backup/
 mkdir -p ./kde-backup/.local/share
-cp -Rf ~/.local/share/plasma ./kde-backup/.local/share/
-cp -Rf ~/.local/share/wallpapers ./kde-backup/.local/share/
-cp -Rf ~/.local/share/kservices5 ./kde-backup/.local/share/
+cp -Rf ~/.local/share/plasma ./kde-backup/.local/share/ 2> /dev/null
+cp -Rf ~/.local/share/wallpapers ./kde-backup/.local/share/ 2> /dev/null
+cp -Rf ~/.local/share/kservices5 ./kde-backup/.local/share/ 2> /dev/null
 tar -czf kde-config-backup.tgz kde-backup
+rm -Rf ./kde-backup
 
 ## Restore
 rm -Rf ./kde-backup
@@ -26,8 +29,20 @@ t=./kde-backup/.local/share/kservices5
 if [ -f $t ]; then
     cp -Rf $t ~/.local/share/
 fi
-kquitapp5 plasmashell && plasmashell &
+nohup setsid kquitapp5 plasmashell && nohup setsid plasmashell
 
+
+# Shortcuts
+System Settings / Shortcuts
+    Export Scheme   --backup
+    Import Scheme   --restore
+
+
+-------------------------------------------------------------------------
+-------------------------------------------------------------------------
+-- ^[[200~ symbol when copy to console
+It's a special symbol to avoid mistaken copy to console.
+Use Ctrl+Shift+V for coping to console.
 
 -------------------------------------------------------------------------
 -------------------------------------------------------------------------
@@ -64,10 +79,12 @@ Path: Shortcuts / Shortcuts / Kwin
 Path: Shortcuts / Shortcuts / Kwin
 
     -- General
-    Meta+*      -- Keep above others
+    Meta+*      -- Keep Window Above Others
     Meta+Num5   -- Maximize Window
     Meta+Num+   -- ZoomIn
     Meta+Num-   -- ZoomOut
+    Meta+Num0   -- Zoom to Actual Size
+    Meta+=      -- Zoom to Actual Size
 
     -- Resizing inside the Virtual Desktop
     Meta+Num2   -- Quick Tile Window to the Bottom 
@@ -83,12 +100,12 @@ Meta+PrtScr     -- Capture Active Window
 
 -------------------------------------------------------------------------
 -- Clipboard history
-Path: Shortcuts / Shortcuts / Activity switching
+Context menu on Klipper in tray / Configure clipboard... / Shortcuts
 
-Ctrl+Shift+V    -- Open Klipper at Mouse Position
-Ctrl+Up   -- More newer History Item
-Ctrl+Down -- More older History Item
-Alt+V           -- Edit content of the current clipboard
+Shift+Alt+V    -- Open Klipper at Mouse Position
+Shift+Alt+Up   -- Previous History Item
+Shift+Alt+Down -- Next History Item
+Shift+Alt+E    -- Edit Contents...
 
 -------------------------------------------------------------------------
 -- Power

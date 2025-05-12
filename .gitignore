@@ -1,3 +1,4 @@
 *.swp
 *~
 progress_details.log
+.idea

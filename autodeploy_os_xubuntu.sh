@@ -3,8 +3,6 @@
 # -e    --exit on error
 # -u    --to treat unset variables as an error and exit immediately
 
-dir_local="$(dirname $(readlink -f $0))"
-
 ##################################################################
 # settings
 export git_email="Alexander.Danilov@cma.ru"
@@ -54,7 +52,7 @@ export yellow="\033[1;33;40m"   # yellow text
 echo "To leave settings as in example - just press <Enter>"
 echo
 
-export dir_local=`dirname $0`
+export dir_local="$(dirname $(readlink -f $0))"
 export dir_data="$dir_local/data"
 export bin="/usr/bin"
 export logd="$dir_local/progress_details_`date +%m%d_%H%M`.log"
@@ -172,7 +170,7 @@ check_status
 if [ -d /sys/class/backlight/intel_backlight ]; then
     printf "${b}Display brightness control...${n}"
     sudo apt-get install -q -y brightnessctl >> $logd && \
-    sudo bash -c 'cat > /etc/udev/rules.d/90-intel-backlight.rules' <<-EOF 
+    sudo bash -c 'cat > /etc/udev/rules.d/90-intel-backlight.rules' <<-EOF
 ACTION=="add", SUBSYSTEM=="backlight", RUN+="/bin/chmod 664 /sys/class/backlight/intel_backlight/brightness"
 ACTION=="add", SUBSYSTEM=="backlight", RUN+="/bin/chown root:video /sys/class/backlight/intel_backlight/brightness"
 EOF
@@ -272,9 +270,14 @@ sudo apt-get install -q -y pwgen >> $logd && \
 sudo apt-get install -q -y byobu >> $logd
 check_status
 #############################################
-printf "${b}markdown terminal viewer... ${n}"
-sudo apt-get install -q -y python2.7 python3-pip python3-virtualenv >> $logd && \
-pip3 install -q markdown pygments pyyaml >> $logd
+printf "${b}Python + markdown terminal viewer... ${n}"
+sudo apt-get install -q -y python3 python3-pip python3-virtualenv ipython3 >> $logd
+if (( $os_release_major < 24 )); then
+  sudo apt-get install -q -y python2.7 >> $logd && \
+  pip3 install -q markdown pygments pyyaml >> $logd
+else
+  sudo apt-get install -q -y python3-markdown pipx >> $logd
+fi
 check_status
 #sudo git clone -q https://github.com/axiros/terminal_markdown_viewer $bin/terminal_markdown_viewer && \
 #sudo ln -s $bin/terminal_markdown_viewer/mdv/markdownviewer.py $bin/mdv
@@ -319,7 +322,7 @@ if [[ "$mode" = "desktop" ]]; then
   check_status
   echo
   printf "${b}Removing packages... ${n}"
-  sudo apt-get remove -q -y abiword* gnumeric* xfburn parole gmusicbrowser xfce4-notes xfce4-terminal > /dev/null
+  sudo apt-get remove -q -y abiword* gnumeric* xfburn parole gmusicbrowser xfce4-notes xfce4-terminal konsole* > /dev/null
   check_status
   #############################################
   echo "${b}for WWW:${n}"
@@ -382,7 +385,7 @@ if [[ "$mode" = "desktop" ]]; then
   sudo apt-get update > /dev/null
   check_status
   printf "\t${b}install... ${n}"
-  apt search winehq-stable | grep winehq-stable > /dev/null && wine_ver="winehq-stable" || wine_ver="wine"
+  apt-cache search winehq-stable | grep winehq-stable > /dev/null && wine_ver="winehq-stable" || wine_ver="wine"
   # if Ubuntu 20.04 Error: Could not configure 'libc6:i386' then sudo apt upgrade
   sudo apt-get install -q -y $wine_ver playonlinux >> $logd
   check_status
@@ -457,9 +460,11 @@ EOFBASKET
 
   #############################################
   printf "${b}simple screen recorder...${n}"
-  # before 24.04
-  #sudo add-apt-repository -y ppa:maarten-baert/simplescreenrecorder > /dev/null && sudo apt-get update > /dev/null && \
-  sudo apt-get install -q -y simplescreenrecorder >> $logd
+  if (( $os_release_major < 24 )); then
+    sudo add-apt-repository -y ppa:maarten-baert/simplescreenrecorder > /dev/null && sudo apt-get update > /dev/null
+  else
+    sudo apt-get install -q -y simplescreenrecorder >> $logd
+  fi
   check_status
 
   #############################################
@@ -477,15 +482,14 @@ EOFBASKET
   #############################################
   echo
   printf "${b}Installing KATE-editor... ${n}"
-  sudo apt-get install -q -y kate >> $logd && \
-  cp -f $dir_data/.config/katerc ~/.config/
+  sudo apt-get install -q -y kate >> $logd
   check_status
 
   #############################################
   echo
   printf "${b}Installing Docker ${n}"
   sudo apt-get install -q -y docker.io >> $logd && \
-  ( sudo groupadd docker || true ) && \ 	#* If the group already exists, you will see an error message, but you can ignore it.
+  ( sudo groupadd docker 2> /dev/null || true ) && \ 	#* If the group already exists, you will see an error message, but you can ignore it.
   sudo usermod -aG docker $USER && \
   newgrp docker		# To apply the changes without relogin
   check_status
@@ -493,8 +497,12 @@ EOFBASKET
   #############################################
   echo
   printf "${b}Installing conan ${n}"
-  # since 24.04
-  pipx install "conan==1.66.*"
+  if (( $os_release_major < 24 )); then
+    sudo pip3 install --force-reinstall -v "conan==1.59.0"
+  else
+    # since 24.04
+    pipx install "conan==1.66.*"
+  fi
   check_status
 
   #############################################
@@ -529,8 +537,9 @@ fi
 
 #############################################
 printf "${b}for tlp (power saving utils)...${n}"
-# before 24.04
-#sudo add-apt-repository -y ppa:linrunner/tlp > /dev/null && sudo apt-get update > /dev/null && \
+if (( $os_release_major < 24 )); then
+  sudo add-apt-repository -y ppa:linrunner/tlp > /dev/null && sudo apt-get update > /dev/null
+fi
 sudo apt-get install -q -y tlp tlp-rdw smartmontools ethtool linux-tools-`uname -r` >> $logd
 check_status
 #############################################
@@ -576,7 +585,7 @@ if [[ "$mode" = "desktop" ]]; then
     sudo ln -s /usr/bin/ccache /opt/ccache/bin/cc && \
     sudo ln -s /usr/bin/ccache /opt/ccache/bin/c++ && \
     sudo sh -c 'echo "export PATH=/opt/ccache/bin:\$PATH" >> /etc/profile' && \
-    sudo chown -R $USER:$USER ~/.ccache && \
+    mkdir -p ~/.ccache && sudo chown -R $USER:$USER ~/.ccache && \
     touch ~/.ccache/ccache.conf && \
     echo 'max_size = 25.0G' >> ~/.ccache/ccache.conf
     check_status
@@ -626,10 +635,8 @@ sudo cp $dir_data/action_simulator/action_simulator.sh /opt/
 cp $dir_data/action_simulator/action_simulator.desktop ~/Desktop
 check_status
 
-printf "${b}\tInstalling utils for Python programming... ${n}"
-sudo apt-get install -q -y python3 ipython3  >> $logd
-check_status
 <<-EOF
+printf "${b}\tInstalling utils for Python programming... ${n}"
 PyCharm
 sudo snap install [pycharm-professional|pycharm-community] --classic
 EOF
@@ -749,7 +756,7 @@ if [[ "$mode" != "server" ]]; then
   check_status
   #exportlist="xfce4 compiz-1 autostart dconf Mousepad Thunar terminator xfce4-dict"
   #exportlist="xfce4 compiz-1 autostart Mousepad Thunar terminator xfce4-dict"
-  exportlist="xfce4 compiz-1 Mousepad Thunar terminator"
+  exportlist="xfce4 compiz-1 Mousepad Thunar terminator katerc"
   # xfce4     --general settings of Desktop Enviroment. Thunar settings.
   # compiz-1  --settings of compiz
   # autostart --autostart of System Load Indicator
@@ -869,7 +876,7 @@ echo "${b}================================================${n}"
 sysbench --test=cpu --threads=`nproc` run
 echo "${b}================================================${n}"
 
-: <<-EOF
+:<<-EOF
 echo
 echo "Foxit Reader PDF (very fast and pretty)"
 echo "You can download and install it manually. Go to:"
