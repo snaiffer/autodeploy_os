@@ -482,8 +482,17 @@ EOFBASKET
   #############################################
   echo
   printf "${b}Installing KATE-editor... ${n}"
-  sudo apt-get install -q -y kate >> $logd
+  # + open in a new window
+  sudo apt-get install -q -y kate >> $logd && \
+  sudo mv /usr/bin/kate /usr/bin/kate.orig
+  sudo bash -c 'cat > /usr/bin/kate' <<-EOF
+#!/bin/bash
+/usr/bin/kate.orig -n \$@
+EOF
   check_status
+  sudo chmod +x /usr/bin/kate
+  check_status
+
 
   #############################################
   echo
