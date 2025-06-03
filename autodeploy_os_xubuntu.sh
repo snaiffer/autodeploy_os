@@ -468,6 +468,15 @@ EOFBASKET
   check_status
 
   #############################################
+  printf "${b}shotcut -- video editor...${n}"
+  if (( $os_release_major < 24 )); then
+    sudo snap install shotcut --classic
+  else
+    sudo apt-get install -q -y shotcut >> $logd
+  fi
+  check_status
+
+  #############################################
   echo
   printf "${b}Installing Bash Language Server... ${n}"
   # https://github.com/bash-lsp/bash-language-server
