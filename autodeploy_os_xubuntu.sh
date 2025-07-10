@@ -496,7 +496,7 @@ EOFBASKET
   sudo mv /usr/bin/kate /usr/bin/kate.orig
   sudo bash -c 'cat > /usr/bin/kate' <<-EOF
 #!/bin/bash
-/usr/bin/kate.orig -n \$@
+/usr/bin/kate.orig -n "\$@"
 EOF
   check_status
   sudo chmod +x /usr/bin/kate
