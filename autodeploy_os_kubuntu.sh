@@ -464,9 +464,8 @@ EOF
   printf "${b}simple screen recorder...${n}"
   if (( $os_release_major < 24 )); then
     sudo add-apt-repository -y ppa:maarten-baert/simplescreenrecorder > /dev/null && sudo apt-get update > /dev/null
-  else
-    sudo apt-get install -q -y simplescreenrecorder >> $logd
   fi
+  sudo apt-get install -q -y simplescreenrecorder >> $logd
   check_status
 
   #############################################
