@@ -291,12 +291,19 @@ check_status
 printf "${b}\t turn off GSS for fast connection... ${n}"
 sudo sh -c 'echo "GSSAPIAuthentication no" >> /etc/ssh/ssh_config'
 check_status
-printf "${b}\t setting for keeping connection ~/.ssh... ${n}"
+printf "${b}\t setting for multiplexing connection... ${n}"
 mkdir -p ~/.ssh
-cat <<-EOF > ~/.ssh/config
+cat <<-EOF >> ~/.ssh/config
 Host *
 ControlMaster auto
 ControlPath ~/.ssh/cm_%r@%h:%p
+EOF
+check_status
+printf "${b}\t setting for keeping alive connection... ${n}"
+mkdir -p ~/.ssh
+cat <<-EOF >> ~/.ssh/config
+ServerAliveInterval 60
+ServerAliveCountMax 3
 EOF
 check_status
 if [[ "$mode" = "server" ]]; then
