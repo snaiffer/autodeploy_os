@@ -507,6 +507,9 @@ EOF
   check_status
   sudo chmod +x /usr/bin/kate
   check_status
+  printf "${b}KATE-editor: turn off ProjectPlugin... ${n}"
+  sed -i 's/kateprojectplugin=true/kateprojectplugin=false/' ~/.local/share/kate/anonymous.katesession
+  check_status
 
 
   #############################################
