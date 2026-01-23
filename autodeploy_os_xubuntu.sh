@@ -262,7 +262,7 @@ sudo apt-get install -q -y expect >> $logd && \
 sudo apt-get install -q -y alien >> $logd && \
 sudo apt-get install -q -y vim >> $logd && \
 ( [[ "$mode" = "server" ]] || sudo apt-get install -q -y vim-gui-common >> $logd ) && \
-sudo apt-get install -q -y openssh-server openssh-client tree nmap iotop htop foremost sshfs powertop ghex curl >> $logd && \
+sudo apt-get install -q -y openssh-server openssh-client tree nmap iotop htop nvtop foremost sshfs powertop ghex curl >> $logd && \
 sudo apt-get install -q -y apt-file >> $logd && \
   sudo apt-file update > /dev/null && \
 sudo apt-get install -q -y unrar >> $logd && \
