@@ -262,7 +262,7 @@ sudo apt-get install -q -y expect >> $logd && \
 sudo apt-get install -q -y alien >> $logd && \
 sudo apt-get install -q -y vim >> $logd && \
 ( [[ "$mode" = "server" ]] || sudo apt-get install -q -y vim-gui-common >> $logd ) && \
-sudo apt-get install -q -y openssh-server openssh-client tree nmap iotop htop nvtop foremost sshfs powertop ghex curl >> $logd && \
+sudo apt-get install -q -y openssh-server openssh-client tree nmap iotop htop nvtop foremost sshfs powertop ghex curl ca-certificates >> $logd && \
 sudo apt-get install -q -y apt-file >> $logd && \
   sudo apt-file update > /dev/null && \
 sudo apt-get install -q -y unrar >> $logd && \
@@ -515,10 +515,14 @@ EOF
   #############################################
   echo
   printf "${b}Installing Docker ${n}"
-  sudo apt-get install -q -y docker.io >> $logd && \
-  ( sudo groupadd docker 2> /dev/null || true ) && \ 	#* If the group already exists, you will see an error message, but you can ignore it.
+  # Use docker-ce (official Docker repo) instead of docker.io (Ubuntu repo) as there is the latest features and bugfixes
+  sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc >> $logd && \
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | sudo tee /etc/apt/sources.list.d/docker.list >> $logd && \
+  sudo apt-get install -q -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin >> $logd && \
+  ( sudo groupadd docker 2> /dev/null || true ) && \
   sudo usermod -aG docker $USER && \
-  newgrp docker		# To apply the changes without relogin
+  newgrp docker	&& \
+  sudo systemctl enable --now docker >> $logd
   check_status
 
   #############################################
