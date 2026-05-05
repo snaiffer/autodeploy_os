@@ -12,6 +12,7 @@
 - Xubuntu 22.04.1
 - Xubuntu 24.04.1
 - Ubuntu Server 22.04.2
+- Ubuntu Server 26.04
 
 ## "autodeploy_os_kubuntu.sh" was written but not fully tested on:
 - Kubuntu 22.04
@@ -19,7 +20,7 @@
 ## Install
 ```sh
 sudo apt install git
-mkdir -p ~/sync/git && cd ~/sync/git && git clone https://github.com/snaiffer/autodeploy_os && cd autodeploy_os
+mkdir -p ~/git && cd ~/git && git clone https://github.com/snaiffer/autodeploy_os && cd autodeploy_os
 ./autodeploy_os_xubuntu.sh desktop 2>&1 | tee ./log_`date +%m%d_%H%M`
 ```
 

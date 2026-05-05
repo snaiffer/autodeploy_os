@@ -8,15 +8,15 @@ trap 'printf "\nERROR: line %s: command `%s` failed with exit code %s\n" "$LINEN
 
 ##################################################################
 # settings
-export git_email="Alexander.Danilov@cma.se"
+export git_email="Alexander.Danilov@cma.ru"
 export git_name="Alexander Danilov"
-export DEBIAN_FRONTEND=noninteractive
+export DEBIAN_FRONTEND=noninteractive   # control how package installation tools behave
 
 ##################################################################
 
 help() {
   cat <<-EOF
-Script for auto-settinging OS enviroment after installation.
+Script for auto-setting OS environment after installation.
 
 Syntax:
 `basename $0` [<mode>]
@@ -53,19 +53,19 @@ export yellow="\033[1;33;40m"   # yellow text
 
 # Usefull:
 # lsb_release -sc	# get codename (Ex.: bionic, xenial)
-echo "To leave settings as in example - just press <Enter>"
+echo "To keep the default settings - press <Enter>"
 echo
 
-export dir_local="$(dirname $(readlink -f $0))"
+export dir_local="$(dirname "$(readlink -f "$0")")"
 export dir_data="$dir_local/data"
 export bin="/usr/bin"
 export logd="$dir_local/progress_details_`date +%m%d_%H%M`.log"
-echo "" > $logd
-echo -e "\n${yellow}Detailed progress log you can get in: $logd ${n}\n"
+echo "" > "$logd"
+echo -e "\n${yellow}Detailed progress log: $logd ${n}\n"
 
 printf_p1() {
   local msg="$1"
-  printf "%b%s%b" "$b" "$msg" "$n"
+  printf "%b%b%b" "$b" "$msg" "$n"
 }
 
 
@@ -91,7 +91,7 @@ function log()
 #export hamachi_link='https://www.vpn.net/installers/logmein-hamachi_2.1.0.165-1_amd64.deb'
 
 # auth. for sudo
-sudo echo
+sudo -v
 
 printf_p1 "Install & Set git... "
 if ! {
@@ -118,9 +118,9 @@ fi
 # With help of this settings you can copy your public key (.ssh/id_rsa.pub) to website account and work with repos without login
 echo "done."
 
-printf_p1 "Intalling libraries for bash... "
+printf_p1 "Installing libraries for bash... "
 sudo git clone -q https://github.com/snaiffer/libbash.git /usr/lib/bash && \
-cd /usr/lib/bash && sudo git remote set-url origin git@github.com:snaiffer/libbash.git && cd $OLDPWD && \
+sudo git -C /usr/lib/bash remote set-url origin git@github.com:snaiffer/libbash.git && \
 source /usr/lib/bash/general.sh
 check_status
 
@@ -129,9 +129,9 @@ printf_p1 "Creating dirs... "
 mkdir -p ~/git ~/temp ~/VM_share ~/payload > /dev/null
 check_status
 
-printf_p1 "Setting bash enviroment... "
+printf_p1 "Setting bash environment... "
 git clone -q https://github.com/snaiffer/bash_env.git ~/.bash_env && \
-cd ~/.bash_env && git remote set-url origin git@github.com:snaiffer/.bash_env.git && cd $OLDPWD && \
+git -C ~/.bash_env remote set-url origin git@github.com:snaiffer/.bash_env.git && \
 ~/.bash_env/install.sh > /dev/null
 check_status
 
@@ -163,8 +163,25 @@ check_status
 fi;
 
 echo
+printf_p1 "Setting Europe/Moscow timezone... "
+sudo timedatectl set-timezone Europe/Moscow
+check_status
+printf_p1 "Sync datetime with NTP servers... "
+sudo timedatectl set-ntp true && \
+sudo chronyc makestep >> "$logd" && \
+sudo systemctl restart chrony >> "$logd" && \
+printf " Waitting 30 seconds... " && sleep 30 && \
+timedatectl
+check_status
+
+echo
 printf_p1 "Installing drivers... "
-sudo ubuntu-drivers autoinstall > /dev/null
+sudo apt-get install -q -y alsa-utils >> "$logd" # alsa-utils is required for ubuntu-drivers
+if [ "$os_release_major" -lt 24 ]; then
+    sudo ubuntu-drivers autoinstall > /dev/null
+else
+    sudo ubuntu-drivers install > /dev/null
+fi
 check_status
 
 #printf_p1 "Set Desktop count... "
@@ -180,7 +197,7 @@ check_status
 
 if [ -d /sys/class/backlight/intel_backlight ]; then
     printf_p1 "Display brightness control..."
-    sudo apt-get install -q -y brightnessctl >> $logd && \
+    sudo apt-get install -q -y brightnessctl >> "$logd" && \
     sudo bash -c 'cat > /etc/udev/rules.d/90-intel-backlight.rules' <<-EOF
 ACTION=="add", SUBSYSTEM=="backlight", RUN+="/bin/chmod 664 /sys/class/backlight/intel_backlight/brightness"
 ACTION=="add", SUBSYSTEM=="backlight", RUN+="/bin/chown root:video /sys/class/backlight/intel_backlight/brightness"
@@ -205,13 +222,13 @@ EOF
     # !!! Doesn't work on HP PROBOOK
     # https://unix.stackexchange.com/questions/356730/how-to-create-keyboard-shortcuts-for-screen-brightness-in-xubuntu-xfce-ubuntu
     # https://askubuntu.com/questions/715306/xbacklight-no-outputs-have-backlight-property-no-sys-class-backlight-folder
-    sudo apt-get install -q -y xbacklight >> $logd
+    sudo apt-get install -q -y xbacklight >> "$logd"
     # Add to Keyboard / Aplication Shortcuts:
     #   xbacklight +10    | Monitor brightness up
     #   xbacklight -10    | Monitor brightness down
     # OR use xbindkeys:
 :<<-EOFxbindkeys
-    sudo apt-get install -q -y xbacklight xbindkeys >> $logd && \
+    sudo apt-get install -q -y xbacklight xbindkeys >> "$logd" && \
     cat <<-EOF > ~/.xbindkeysrc
 "xbacklight -dec 10 -steps 1"
   XF86MonBrightnessDown
@@ -229,7 +246,7 @@ if [[ "$mode" = "desktop" ]]; then
   sudo install -d -m 0755 /etc/apt/keyrings && \
   sudo wget -q -O /etc/apt/keyrings/virtualbox.asc https://www.virtualbox.org/download/oracle_vbox_2016.asc && \
   echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/virtualbox.asc] http://download.virtualbox.org/virtualbox/debian $(lsb_release -cs) contrib" | sudo tee /etc/apt/sources.list.d/virtualbox.list > /dev/null && \
-  sudo apt-get update > /dev/null && sudo apt-get install -y virtualbox virtualbox-dkms virtualbox-ext-pack # -q and >> $logd were commented as the installation process wants actions in firmware sign menu
+  sudo apt-get update > /dev/null && sudo apt-get install -y virtualbox virtualbox-dkms virtualbox-ext-pack # -q and >> "$logd" were commented as the installation process wants actions in firmware sign menu
   check_status
   #Another way for virtualbox-ext-pack:
   # printf_p1 "\tVirtualBox Extension Pack... "
@@ -241,17 +258,17 @@ fi
 
 printf_p1 "Clone syncfrom... "
 mkdir -p ~/git/ && \
-git clone -q https://github.com/snaiffer/syncfrom.git ~/git/syncfrom/
-cd ~/git/syncfrom/ && git remote set-url origin git@github.com:snaiffer/syncfrom.git && cd $OLDPWD && \
+git clone -q https://github.com/snaiffer/syncfrom.git ~/git/syncfrom/ && \
+git -C ~/git/syncfrom remote set-url origin git@github.com:snaiffer/syncfrom.git
 check_status
 
 printf_p1 "Setting vim... "
 sudo apt-get install -q -y vim clang libclang-dev \
-  $(if (( $os_release_major < 22 )); then echo ctags; else echo exuberant-ctags; fi) \
-  >> $logd && \
+  $(if (( $os_release_major < 22 )); then echo exuberant-ctags; else echo universal-ctags; fi) \
+  >> "$logd" && \
 rm -Rf ~/.vim ~/.vimrc && \
 git clone -q https://github.com/snaiffer/vim.git ~/.vim && \
-cd ~/.vim && git remote set-url origin git@github.com:snaiffer/vim.git && cd $OLDPWD && \
+git -C ~/.vim remote set-url origin git@github.com:snaiffer/vim.git && \
 ln -s ~/.vim/vimrc ~/.vimrc && \
 vim -c "BundleInstall" -c 'qa!'
 #~/.vim/bundle/youcompleteme
@@ -265,29 +282,29 @@ printf_p1 "for console... "
 # jq              --pretty json output
 # vim-gui-common  --GUI features. Don't install it on a server
 # ghex            --instead of "bless"
-sudo apt-get install -q -y jq >> $logd && \
-sudo apt-get install -q -y libxml2-utils >> $logd && \
-sudo apt-get install -q -y gawk icdiff >> $logd && \
-sudo apt-get install -q -y net-tools traceroute nethogs whois >> $logd && \
-sudo apt-get install -q -y expect >> $logd && \
-sudo apt-get install -q -y alien >> $logd && \
-sudo apt-get install -q -y vim >> $logd && \
-( [[ "$mode" = "server" ]] || sudo apt-get install -q -y vim-gui-common >> $logd ) && \
-sudo apt-get install -q -y openssh-server openssh-client tree nmap iotop htop nvtop foremost sshfs powertop ghex curl ca-certificates >> $logd && \
-sudo apt-get install -q -y apt-file >> $logd && \
+sudo apt-get install -q -y jq >> "$logd" && \
+sudo apt-get install -q -y libxml2-utils >> "$logd" && \
+sudo apt-get install -q -y gawk icdiff >> "$logd" && \
+sudo apt-get install -q -y net-tools traceroute nethogs whois >> "$logd" && \
+sudo apt-get install -q -y expect >> "$logd" && \
+sudo apt-get install -q -y alien >> "$logd" && \
+sudo apt-get install -q -y vim >> "$logd" && \
+( [[ "$mode" = "server" ]] || sudo apt-get install -q -y vim-gui-common >> "$logd" ) && \
+sudo apt-get install -q -y openssh-server openssh-client tree nmap iotop htop nvtop foremost sshfs powertop ghex curl ca-certificates >> "$logd" && \
+sudo apt-get install -q -y apt-file >> "$logd" && \
   sudo apt-file update > /dev/null && \
-sudo apt-get install -q -y unrar >> $logd && \
-sudo apt-get install -q -y pwgen >> $logd && \
-sudo apt-get install -q -y byobu >> $logd
+sudo apt-get install -q -y unrar >> "$logd" && \
+sudo apt-get install -q -y pwgen >> "$logd" && \
+sudo apt-get install -q -y byobu >> "$logd"
 check_status
 #############################################
 printf_p1 "Python + markdown terminal viewer... "
-sudo apt-get install -q -y python3 python3-pip python3-virtualenv ipython3 >> $logd
+sudo apt-get install -q -y python3 python3-pip python3-virtualenv ipython3 >> "$logd"
 if (( $os_release_major < 24 )); then
-  sudo apt-get install -q -y python2.7 >> $logd && \
-  pip3 install -q markdown pygments pyyaml >> $logd
+  sudo apt-get install -q -y python2.7 >> "$logd" && \
+  pip3 install -q markdown pygments pyyaml >> "$logd"
 else
-  sudo apt-get install -q -y python3-markdown pipx >> $logd
+  sudo apt-get install -q -y python3-markdown pipx >> "$logd"
 fi
 check_status
 #sudo git clone -q https://github.com/axiros/terminal_markdown_viewer $bin/terminal_markdown_viewer && \
@@ -297,14 +314,14 @@ printf_p1 "ssh settings:\n"
 # without prompt
 ssh-keygen -q -t rsa -N '' -f ~/.ssh/id_rsa <<<y >/dev/null 2>&1
 printf_p1 "\t ssh-server setting... "
-sudo sh -c "echo 'PermitRootLogin no' >> /etc/ssh/sshd_config"
+sudo sed -i '/^PermitRootLogin/d' /etc/ssh/sshd_config && sudo sh -c "echo 'PermitRootLogin no' >> /etc/ssh/sshd_config"
 check_status
 printf_p1 "\t turn off GSS for fast connection... "
-sudo sh -c 'echo "GSSAPIAuthentication no" >> /etc/ssh/ssh_config'
+sudo sed -i '/^GSSAPIAuthentication/d' /etc/ssh/ssh_config && sudo sh -c 'echo "GSSAPIAuthentication no" >> /etc/ssh/ssh_config'
 check_status
 printf_p1 "\t setting for multiplexing connection... "
 mkdir -p ~/.ssh
-cat <<-EOF >> ~/.ssh/config
+grep -q 'ControlMaster auto' ~/.ssh/config 2>/dev/null || cat <<-EOF >> ~/.ssh/config
 Host *
 ControlMaster auto
 ControlPath ~/.ssh/cm_%r@%h:%p
@@ -312,7 +329,7 @@ EOF
 check_status
 printf_p1 "\t setting for keeping alive connection... "
 mkdir -p ~/.ssh
-cat <<-EOF >> ~/.ssh/config
+grep -q 'ServerAliveInterval' ~/.ssh/config 2>/dev/null || cat <<-EOF >> ~/.ssh/config
 ServerAliveInterval 60
 ServerAliveCountMax 3
 EOF
@@ -320,7 +337,7 @@ check_status
 if [[ "$mode" = "server" ]]; then
   #############################################
   printf_p1 "\t fail2ban (bruteforce protection)... "
-  sudo apt-get install -q -y fail2ban >> $logd && \
+  sudo apt-get install -q -y fail2ban >> "$logd" && \
   sudo cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
 :<<-EOF
   Edit in [DEFAULT] section:
@@ -335,8 +352,8 @@ if [[ "$mode" = "desktop" ]]; then
   #############################################
   printf_p1 "for systems... "
   echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | sudo debconf-set-selections && \
-    sudo apt-get install -q -y terminator mtp-tools go-mtpfs pavucontrol >> $logd
-    # Can't find in 20.04: sudo apt-get install -q -y xubuntu-restricted-extras >> $logd
+    sudo apt-get install -q -y terminator mtp-tools go-mtpfs pavucontrol >> "$logd"
+    # Can't find in 20.04: sudo apt-get install -q -y xubuntu-restricted-extras >> "$logd"
   check_status
   echo
   printf_p1 "Removing packages... "
@@ -347,13 +364,13 @@ if [[ "$mode" = "desktop" ]]; then
   # for 14.04
   # printf_p1 "\tPepper Flash Player... "
   #sudo add-apt-repository -y ppa:skunk/pepper-flash > /dev/null && \
-  #sudo apt-get update > /dev/null && sudo apt-get install -q -y pepflashplugin-installer >> $logd && \
+  #sudo apt-get update > /dev/null && sudo apt-get install -q -y pepflashplugin-installer >> "$logd" && \
   #sudo sh -c 'echo ". /usr/lib/pepflashplugin-installer/pepflashplayer.sh" >> /etc/chromium-browser/default' > /dev/null
   ## to check if it has been success:
   ### open chromium and input "chrome://plugins" in the address line
   # printf_p1 "\tFlash Player... "
   #sudo add-apt-repository "deb http://archive.canonical.com/ $(lsb_release -sc) partner" > /dev/null && \
-  #sudo apt-get update > /dev/null && sudo apt-get install -q -y adobe-flashplugin browser-plugin-freshplayer-pepperflash >> $logd
+  #sudo apt-get update > /dev/null && sudo apt-get install -q -y adobe-flashplugin browser-plugin-freshplayer-pepperflash >> "$logd"
   #check_status
   #############################################
   printf_p1 "\tchrome-browser... "
@@ -361,14 +378,14 @@ if [[ "$mode" = "desktop" ]]; then
   sudo wget -q -O /etc/apt/keyrings/google-chrome.asc https://dl-ssl.google.com/linux/linux_signing_key.pub && \
   echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/google-chrome.asc] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list > /dev/null && \
   sudo apt-get update > /dev/null && \
-  sudo apt-get install -q -y google-chrome-stable >> $logd
+  sudo apt-get install -q -y google-chrome-stable >> "$logd"
   check_status
   printf_p1 "\tset google-chrome by default... "
   sudo sed -i "s/firefox.desktop/google-chrome.desktop/g" /usr/share/applications/defaults.list
   check_status
   #############################################
   #printf_p1 "\tfirefox-browser... "
-  #sudo apt-get install -q -y firefox >> $logd
+  #sudo apt-get install -q -y firefox >> "$logd"
   #check_status
   #printf_p1 "\tset firefox by default... "
   #sudo sed -i "s/google-chrome.desktop/firefox.desktop/g" /usr/share/applications/defaults.list
@@ -376,16 +393,16 @@ if [[ "$mode" = "desktop" ]]; then
   #############################################
   #printf_p1 "\tJava... "
   #sudo add-apt-repository -y ppa:webupd8team/java > /dev/null && \
-  #sudo apt-get update > /dev/null && sudo apt-get install -q -y oracle-java8-installer >> $logd
+  #sudo apt-get update > /dev/null && sudo apt-get install -q -y oracle-java8-installer >> "$logd"
   #check_status
   #############################################
   printf_p1 "for libreoffice... "
-  sudo apt-get install -q -y libreoffice >> $logd
+  sudo apt-get install -q -y libreoffice >> "$logd"
   check_status
   #############################################
   #printf_p1 "for wireshark... "
   #sudo add-apt-repository -y ppa:wireshark-dev/stable > /dev/null && sudo apt-get update > /dev/null && \
-  #sudo apt-get install -q -y wireshark >> $logd
+  #sudo apt-get install -q -y wireshark >> "$logd"
   #check_status
   printf_p1 "for wine likes programs... "
   printf_p1 "\tset up PPA repository... "
@@ -404,9 +421,9 @@ if [[ "$mode" = "desktop" ]]; then
   sudo apt-get update > /dev/null
   check_status
   printf_p1 "\tinstall... "
-  apt-cache search winehq-stable | grep winehq-stable > /dev/null && wine_ver="winehq-stable" || wine_ver="wine"
+  if apt-cache search winehq-stable | grep -q winehq-stable; then wine_ver="winehq-stable"; else wine_ver="wine"; fi
   # if Ubuntu 20.04 Error: Could not configure 'libc6:i386' then sudo apt upgrade
-  sudo apt-get install -q -y $wine_ver playonlinux >> $logd
+  sudo apt-get install -q -y $wine_ver playonlinux >> "$logd"
   check_status
 :<<-EOF
   # playonlinux
@@ -414,27 +431,27 @@ if [[ "$mode" = "desktop" ]]; then
   wget -q -O - "http://deb.playonlinux.com/public.gpg" | sudo apt-key add - && \
   sudo wget -q http://deb.playonlinux.com/playonlinux_`lsb_release -sc`.list -O /etc/apt/sources.list.d/playonlinux.list && \
   sudo apt-get update > /dev/null && \
-  sudo apt-get install -q -y playonlinux winetricks >> $logd 
+  sudo apt-get install -q -y playonlinux winetricks >> "$logd" 
   check_status
 EOF
   #############################################
   printf_p1 "for images... "
-  sudo apt-get install -q -y gimp gthumb >> $logd && \
+  sudo apt-get install -q -y gimp gthumb >> "$logd" && \
   sudo snap install pinta && \
   # https://github.com/cas--/PasteImg
   sudo cp -f $dir_data/pasteimg $bin && sudo chmod +x $bin/pasteimg
   check_status
   #############################################
   printf_p1 "for media... "
-  sudo apt-get install -q -y vlc smplayer audacity >> $logd
+  sudo apt-get install -q -y vlc smplayer audacity >> "$logd"
   # for 14.04
-  #sudo apt-get install -q -y gnome-mplayer >> $logd
+  #sudo apt-get install -q -y gnome-mplayer >> "$logd"
   check_status
   #############################################
   printf_p1 "for BasKet... "
   #for 14.04
-  #sudo apt-get install -q -y unetbootin k3b >> $logd
-  sudo apt-get install -q -y basket >> $logd
+  #sudo apt-get install -q -y unetbootin k3b >> "$logd"
+  sudo apt-get install -q -y basket >> "$logd"
   check_status
   printf_p1 "  BasKet fixing... "
 sudo bash -c 'cat <<-EOFBASKET > /usr/bin/basket_fixed.sh
@@ -449,18 +466,18 @@ EOFBASKET
   #############################################
   printf_p1 "for others... "
   #for 14.04
-  #sudo apt-get install -q -y unetbootin k3b >> $logd
-  sudo apt-get install -q -y baobab >> $logd
+  #sudo apt-get install -q -y unetbootin k3b >> "$logd"
+  sudo apt-get install -q -y baobab >> "$logd"
   check_status
   #############################################
   printf_p1 "for smb(Samba)... "
-  sudo apt-get install -q -y smbclient cifs-utils >> $logd
+  sudo apt-get install -q -y smbclient cifs-utils >> "$logd"
   check_status
-  sudo sed -i "/\[global\]/a \ \ \ client min protocol = NT1" /etc/samba/smb.conf
+  sudo grep -q 'client min protocol' /etc/samba/smb.conf || sudo sed -i "/\[global\]/a \   client min protocol = NT1" /etc/samba/smb.conf
 
   #############################################
   printf_p1 "xfreerdp / freerdp2-x11..."
-  sudo apt-get install -q -y freerdp2-x11 >> $logd
+  sudo apt-get install -q -y freerdp2-x11 >> "$logd"
   check_status
   
   # libreoffice doesn't support muilti-spellcheching
@@ -490,7 +507,7 @@ EOFBASKET
   if (( $os_release_major < 24 )); then
     sudo snap install shotcut --classic
   else
-    sudo apt-get install -q -y shotcut >> $logd
+    sudo apt-get install -q -y shotcut >> "$logd"
   fi
   check_status
 
@@ -498,19 +515,19 @@ EOFBASKET
   echo
   printf_p1 "Installing Bash Language Server... "
   # https://github.com/bash-lsp/bash-language-server
-  sudo apt-get install -q -y shellcheck >> $logd && \
+  sudo apt-get install -q -y shellcheck >> "$logd" && \
   sudo snap install bash-language-server --classic && \
   sudo cp -f $dir_data/bash-language-server.service /etc/systemd/system/ && \
-  sudo systemctl daemon-reload >> $logd && \
-  sudo systemctl enable bash-language-server >> $logd && \
-  sudo systemctl start bash-language-server >> $logd
+  sudo systemctl daemon-reload >> "$logd" && \
+  sudo systemctl enable bash-language-server >> "$logd" && \
+  sudo systemctl start bash-language-server >> "$logd"
   check_status
 
   #############################################
   echo
   printf_p1 "Installing KATE-editor... "
   # + open in a new window
-  sudo apt-get install -q -y kate >> $logd && \
+  sudo apt-get install -q -y kate >> "$logd" && \
   sudo mv /usr/bin/kate /usr/bin/kate.orig
   sudo bash -c 'cat > /usr/bin/kate' <<-EOF
 #!/bin/bash
@@ -520,7 +537,9 @@ EOF
   sudo chmod +x /usr/bin/kate
   check_status
   printf_p1 "KATE-editor: turn off ProjectPlugin... "
-  sed -i 's/kateprojectplugin=true/kateprojectplugin=false/' ~/.local/share/kate/anonymous.katesession
+  if [ -f ~/.local/share/kate/anonymous.katesession ]; then
+    sed -i 's/kateprojectplugin=true/kateprojectplugin=false/' ~/.local/share/kate/anonymous.katesession
+  fi
   check_status
 
 
@@ -528,13 +547,13 @@ EOF
   echo
   printf_p1 "Installing Docker "
   # Use docker-ce (official Docker repo) instead of docker.io (Ubuntu repo) as there is the latest features and bugfixes
-  sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc >> $logd && \
-echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | sudo tee /etc/apt/sources.list.d/docker.list >> $logd && \
+  sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc >> "$logd" && \
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | sudo tee /etc/apt/sources.list.d/docker.list >> "$logd" && \
   sudo apt-get update > /dev/null && \
-  sudo apt-get install -q -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin >> $logd && \
+  sudo apt-get install -q -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin >> "$logd" && \
   ( sudo groupadd docker 2> /dev/null || true ) && \
   sudo usermod -aG docker $USER && \
-  sudo systemctl enable --now docker >> $logd
+  sudo systemctl enable --now docker >> "$logd"
   check_status
   printf_p1 "Docker group updated. Re-login or run: newgrp docker"
 
@@ -552,7 +571,7 @@ echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.
   #############################################
   echo
   printf_p1 "Installing utils for programming... "
-  sudo apt-get install -q -y meld subversion git-svn >> $logd
+  sudo apt-get install -q -y meld subversion git-svn >> "$logd"
   check_status
   # atom-editor: download & install deb: https://atom.io/
 fi
@@ -560,7 +579,7 @@ fi
 #############################################
 if [[ "$mode" = "server" ]]; then
   printf_p1 "nginx... "
-  sudo apt-get install -q -y nginx >> $logd && \
+  sudo apt-get install -q -y nginx >> "$logd" && \
     nginx -v
   check_status
   
@@ -569,7 +588,7 @@ if [[ "$mode" = "server" ]]; then
   sudo sh -c 'echo "deb https://nginx.org/packages/ubuntu/ `lsb_release -sc` main" > /etc/apt/sources.list.d/nginx.list' && \
     sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys C300EE8C && \
     sudo apt-get update && \
-    sudo apt-get install -q -y nginx >> $logd && \
+    sudo apt-get install -q -y nginx >> "$logd" && \
     nginx -v
   check_status
 EOF
@@ -584,32 +603,32 @@ printf_p1 "for tlp (power saving utils)..."
 if (( $os_release_major < 24 )); then
   sudo add-apt-repository -y ppa:linrunner/tlp > /dev/null && sudo apt-get update > /dev/null
 fi
-sudo apt-get install -q -y tlp tlp-rdw smartmontools ethtool linux-tools-`uname -r` >> $logd
+sudo apt-get install -q -y tlp tlp-rdw smartmontools ethtool linux-tools-`uname -r` >> "$logd"
 check_status
 #############################################
 :<<-EOF
 printf_p1 "VNC (Remote Desktop)..."
 # if you need VNC server (x11vnc) see manual in the Basket
 sudo add-apt-repository -y ppa:remmina-ppa-team/remmina-next > /dev/null && sudo apt-get update > /dev/null && \
-sudo apt-get install -q -y remmina remmina-plugin-rdp remmina-plugin-secret >> $logd
+sudo apt-get install -q -y remmina remmina-plugin-rdp remmina-plugin-secret >> "$logd"
 check_status
 EOF
 
 # light-locker switch from DISPLAY=:0 to :1, what case problem with VNC logging
 printf_p1 "  Replacing light-locker for gnome-screensaver..."
-sudo apt-get purge -q -y xfce4-screensaver >> $logd && \
-sudo apt-get install -q -y light-locker >> $logd && \
+sudo apt-get purge -q -y xfce4-screensaver >> "$logd" && \
+sudo apt-get install -q -y light-locker >> "$logd" && \
 check_status
 #sudo killall light-locker 2> /dev/null
 
 #############################################
 printf_p1 "OpenVPN..."
-sudo apt-get install -q -y openvpn network-manager-openvpn network-manager-openvpn-gnome >> $logd
+sudo apt-get install -q -y openvpn network-manager-openvpn network-manager-openvpn-gnome >> "$logd"
 check_status
 #############################################
 echo
 printf_p1 "Forward copy/paste-buffer via ssh... "
-sudo apt-get install -q -y xclip >> $logd && \
+sudo apt-get install -q -y xclip >> "$logd" && \
   echo "ForwardX11 yes" >> ~/.ssh/config
 check_status
 
@@ -618,11 +637,11 @@ if [[ "$mode" = "desktop" ]]; then
     # for 14.04
     #sudo add-apt-repository -y ppa:george-edison55/cmake-3.x > /dev/null && \
     # sudo apt-get update > /dev/null && \
-    sudo apt-get install -q -y g++ clang ninja-build cmake gdb valgrind doxygen >> $logd
+    sudo apt-get install -q -y g++ clang ninja-build cmake gdb valgrind doxygen >> "$logd"
     check_status
 
     printf_p1 "\tInstalling ccache ( compilator cache )... "
-    sudo apt-get install -q -y ccache >> $logd && \
+    sudo apt-get install -q -y ccache >> "$logd" && \
     sudo mkdir -p /opt/ccache/bin && \
     sudo ln -s /usr/bin/ccache /opt/ccache/bin/gcc && \
     sudo ln -s /usr/bin/ccache /opt/ccache/bin/g++ && \
@@ -633,30 +652,30 @@ if [[ "$mode" = "desktop" ]]; then
     touch ~/.ccache/ccache.conf && \
     echo 'max_size = 25.0G' >> ~/.ccache/ccache.conf
     check_status
-fi
+
 :<<-EOF
-printf_p1 "\tInstalling utils for RDBMS programming... "
-wget -q -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add - && \
-sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -sc`-pgdg main" >> /etc/apt/sources.list.d/pgdg.list'
-check_status
-sudo apt-get update > /dev/null && \
-sudo apt-get install -q -y postgresql-9.6 postgresql-server-dev-9.6 >> $logd && \
-  sudo -u postgres psql -c "create role $USER with superuser createdb createrole inherit login replication bypassrls"
-check_status
+    printf_p1 "\tInstalling utils for RDBMS programming... "
+    wget -q -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add - && \
+    sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -sc`-pgdg main" >> /etc/apt/sources.list.d/pgdg.list'
+    check_status
+    sudo apt-get update > /dev/null && \
+    sudo apt-get install -q -y postgresql-9.6 postgresql-server-dev-9.6 >> "$logd" && \
+      sudo -u postgres psql -c "create role $USER with superuser createdb createrole inherit login replication bypassrls"
+    check_status
 EOF
 :<<-EOF
-# Ubuntu 20.04: Query Tool crashed with error:
-# gdk_drawing_context_get_cairo_context: assertion 'GDK_IS_DRAWING_CONTEXT (context)' failed. Segmentation fault
-printf_p1 "\t\tInstalling & setting pgadmin3... "
-sudo apt-get install -q -y pgadmin3 >> $logd && \
-  cp $dir_data/.pgadmin3 ~/ && sed -i "s/snaiffer/$USER/g" ~/.pgadmin3
-check_status
+    # Ubuntu 20.04: Query Tool crashed with error:
+    # gdk_drawing_context_get_cairo_context: assertion 'GDK_IS_DRAWING_CONTEXT (context)' failed. Segmentation fault
+    printf_p1 "\t\tInstalling & setting pgadmin3... "
+    sudo apt-get install -q -y pgadmin3 >> "$logd" && \
+      cp $dir_data/.pgadmin3 ~/ && sed -i "s/snaiffer/$USER/g" ~/.pgadmin3
+    check_status
 EOF
-printf_p1 "\t\tInstalling sqldump_search... "
-git clone -q https://github.com/snaiffer/sqldump_search.git ~/git/sqldump_search && \
-cd ~/git/sqldump_search && git remote set-url origin git@github.com:snaiffer/sqldump_search.git && cd $OLDPWD && \
-sudo ln -s ~/git/sqldump_search/sqldump_search.py /usr/bin/sqldump_search
-check_status
+    printf_p1 "\t\tInstalling sqldump_search... "
+    git clone -q https://github.com/snaiffer/sqldump_search.git ~/git/sqldump_search && \
+    git -C ~/git/sqldump_search remote set-url origin git@github.com:snaiffer/sqldump_search.git && \
+    sudo ln -s ~/git/sqldump_search/sqldump_search.py /usr/bin/sqldump_search
+    check_status
 
 # Valentina-DB (VStudio)
 # http://valentina-db.com/download/
@@ -674,34 +693,35 @@ sudo cp /opt/sqldeveloper/sqldeveloper.desktop /usr/share/applications
 EOF
 
 printf_p1 "\tInstalling Person Action Simulator... "
-sudo apt-get install -q -y xdotool  >> $logd
+sudo apt-get install -q -y xdotool  >> "$logd"
 sudo cp $dir_data/action_simulator/action_simulator.sh /opt/
 cp $dir_data/action_simulator/action_simulator.desktop ~/Desktop
 check_status
 
 <<-EOF
-printf_p1 "\tInstalling utils for Python programming... "
-PyCharm
-sudo snap install [pycharm-professional|pycharm-community] --classic
-EOF
+    printf_p1 "\tInstalling utils for Python programming... "
+    PyCharm
+    sudo snap install [pycharm-professional|pycharm-community] --classic
+    EOF
 <<-EOF
-printf_p1 "\t\tselenium... "
-sudo apt install python3-pip && \
-pip3 install selenium && \
-pip3 install pyvirtualdisplay && \
-sudo apt-get install xvfb
+    printf_p1 "\t\tselenium... "
+    sudo apt install python3-pip && \
+    pip3 install selenium && \
+    pip3 install pyvirtualdisplay && \
+    sudo apt-get install xvfb
 
-Download ChromeDriver:
-https://sites.google.com/a/chromium.org/chromedriver/home
+    Download ChromeDriver:
+    https://sites.google.com/a/chromium.org/chromedriver/home
 
-sudo mv chromedriver /usr/bin/chromedriver && \
-sudo chown root:root /usr/bin/chromedriver && \
-sudo chmod +x /usr/bin/chromedriver
+    sudo mv chromedriver /usr/bin/chromedriver && \
+    sudo chown root:root /usr/bin/chromedriver && \
+    sudo chmod +x /usr/bin/chromedriver
 EOF
+fi
 
 echo
 printf_p1 "Set keyboardlayout switcher by Caps key... "
-sudo sed -i "s/XKBOPTIONS=\"/XKBOPTIONS=\"grp:caps_toggle\,/" /etc/default/keyboard
+sudo grep -q 'grp:caps_toggle' /etc/default/keyboard || sudo sed -i "s/XKBOPTIONS=\"/XKBOPTIONS=\"grp:caps_toggle\,/" /etc/default/keyboard
 ## work on HP Pavilion laptop with Lubuntu
 #sudo cp -f $dir_data/keyboardlayout_switcher.desktop /etc/xdg/autostart/
 check_status
@@ -724,13 +744,13 @@ check_status
 
 if [[ "$mode" != "server" ]]; then
   echo
-  printf_p1 "Setting Desktop Enviroment\n"
+  printf_p1 "Setting Desktop Environment\n"
   printf_p1 "Installing compiz (windows manager)... "
   # Change the number of Workspaces:
   #   compiz: General/General Options/Desktop Size
-  sudo apt-get install -q -y compiz compiz-plugins compizconfig-settings-manager metacity >> $logd
+  sudo apt-get install -q -y compiz compiz-plugins compizconfig-settings-manager metacity >> "$logd"
   # There isn't dconf-tools for Ubuntu 20.04 anymore
-  #sudo apt-get install -q -y dconf-tools >> $logd
+  #sudo apt-get install -q -y dconf-tools >> "$logd"
   check_status
 
   printf_p1 "Switch xfwm4 to compiz. Autostart compiz... "
@@ -739,7 +759,7 @@ if [[ "$mode" != "server" ]]; then
    sed -i "s/xfwm4/compiz/" ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-session.xml
   check_status
 
-  printf_p1 "Setting the windows manager enviroment... "
+  printf_p1 "Setting the windows manager environment... "
   # Close/minimize/maximize button not appearing
    DISPLAY=:0.0 gsettings set org.gnome.desktop.wm.preferences button-layout ':minimize,maximize,close,' && \
    DISPLAY=:0.0 gsettings set org.gnome.desktop.wm.preferences titlebar-font 'Droid Sans Bold 10' && \
@@ -747,8 +767,8 @@ if [[ "$mode" != "server" ]]; then
    DISPLAY=:0.0 gsettings set org.gnome.desktop.wm.preferences theme 'Greybird'
   check_status
 
-  printf_p1 "Installing plugins for Desktop Enviroment... "
-  sudo apt-get install -q -y xfce4-clipman-plugin xfce4-datetime-plugin xfce4-time-out-plugin xfce4-timer-plugin >> $logd
+  printf_p1 "Installing plugins for Desktop Environment... "
+  sudo apt-get install -q -y xfce4-clipman-plugin xfce4-datetime-plugin xfce4-time-out-plugin xfce4-timer-plugin >> "$logd"
   check_status
 
   # there isn't version for 18.04
@@ -757,7 +777,7 @@ if [[ "$mode" != "server" ]]; then
   ## if you want preview: install compiz and add KDE compability
   #sudo add-apt-repository -y ppa:dockbar-main/ppa > /dev/null && \
   # sudo apt-get update > /dev/null && \
-  # sudo apt-get install -q -y --no-install-recommends xfce4-dockbarx-plugin >> $logd
+  # sudo apt-get install -q -y --no-install-recommends xfce4-dockbarx-plugin >> "$logd"
   #check_status
   #
   #printf_p1 "Adding to autostart DockbarX ... "
@@ -771,21 +791,21 @@ if [[ "$mode" != "server" ]]; then
   #EOF'
   #check_status
   #
-  #printf_p1 "Installing System Load Indicator for Desktop Enviroment... "
+  #printf_p1 "Installing System Load Indicator for Desktop Environment... "
   #sudo add-apt-repository -y ppa:indicator-multiload/stable-daily > /dev/null && \
   # sudo apt-get update > /dev/null && \
-  # sudo apt-get install -q -y indicator-multiload >> $logd
+  # sudo apt-get install -q -y indicator-multiload >> "$logd"
   #check_status
   #
   #printf_p1 "Installing Windowck Plugin for moving titlebar to panel... "
   #sudo add-apt-repository -y ppa:eugenesan/ppa > /dev/null && \
   # sudo apt-get update > /dev/null && \
-  # sudo apt-get install -q -y xfce4-windowck-plugin maximus >> $logd && \
+  # sudo apt-get install -q -y xfce4-windowck-plugin maximus >> "$logd" && \
   # gconftool-2 --set /apps/maximus/no_maximize --type=bool true
   #check_status
 
   #printf_p1 "Installing local dictionary for xfce plugin... "
-  #sudo apt-get install -q -y dictd xfce4-dict mueller7accent-dict >> $logd
+  #sudo apt-get install -q -y dictd xfce4-dict mueller7accent-dict >> "$logd"
   #check_status
 
   #printf_p1 "Allow hibirnate... "
@@ -801,7 +821,7 @@ if [[ "$mode" != "server" ]]; then
   #exportlist="xfce4 compiz-1 autostart dconf Mousepad Thunar terminator xfce4-dict"
   #exportlist="xfce4 compiz-1 autostart Mousepad Thunar terminator xfce4-dict"
   exportlist="xfce4 compiz-1 Mousepad Thunar terminator katerc"
-  # xfce4     --general settings of Desktop Enviroment. Thunar settings.
+  # xfce4     --general settings of Desktop Environment. Thunar settings.
   # compiz-1  --settings of compiz
   # autostart --autostart of System Load Indicator
 
@@ -815,7 +835,7 @@ if [[ "$mode" != "server" ]]; then
   for cur in $exportlist; do
     printf_p1 "\t of $cur... "
     rm -Rf ~/.config/$cur && cp -Rf $dir_data/config/$cur ~/.config/ && \
-      find ~/.config/$cur -type f -print0 | xargs -0 sed "s/snaiffer/$USER/g"
+      find ~/.config/$cur -type f -print0 | xargs -0 sed -i "s/snaiffer/$USER/g"
     check_status
   done
   #printf_p1 "\t of DockbarX... "
@@ -897,7 +917,7 @@ EOF
 
 # https://bugs.launchpad.net/ubuntu/+source/xserver-xorg-video-intel/+bug/1876219
 # Can't start any video without it
-if glxinfo | grep -q 'HD Graphics [56]30'; then
+if command -v glxinfo &>/dev/null && glxinfo | grep -q 'HD Graphics [56]30'; then
   echo '# bug fix for HD Graphics 530/630' >> ~/.profile
   echo 'export MESA_LOADER_DRIVER_OVERRIDE=i965' >> ~/.profile
 fi;
@@ -913,11 +933,11 @@ EOF2
 
 echo
 printf_p1 "Installing sysbench... "
-sudo apt-get install -q -y sysbench >> $logd
+sudo apt-get install -q -y sysbench >> "$logd"
 check_status
-printf_p1 "Start 'sysbench --test=cpu run':\n"
+printf_p1 "Start 'sysbench cpu run':\n"
 printf_p1 "================================================\n"
-sysbench --test=cpu --threads=`nproc` run
+sysbench cpu --threads=$(nproc) run
 printf_p1 "================================================\n"
 
 :<<-EOF
@@ -928,7 +948,7 @@ echo "https://www.foxitsoftware.com/downloads/"
 echo "<Enter>" && read
 
 echo
-#sudo apt-get install -q -y winbind >> $logd 
+#sudo apt-get install -q -y winbind >> "$logd" 
 echo -e "MS Office
 - Mount the disk with MS_Office
     $ sudo mount -o loop ./<MS_Office>.iso /mnt/
@@ -967,21 +987,19 @@ if [[ "$mode" = "server" ]]; then
   check_status
 
   echo -e "Ubuntu desktop to Ubuntu server"
-  sudo apt-get install -q -y tasksel >> $logd
-  sudo tasksel remove ubuntu-desktop >> $logd
-  sudo tasksel install server >> $logd
-  sudo apt-get purge -q -y lightdm >> $logd
+  sudo apt-get install -q -y tasksel >> "$logd"
+  sudo tasksel remove ubuntu-desktop >> "$logd"
+  sudo tasksel install server >> "$logd"
+  sudo apt-get purge -q -y lightdm >> "$logd"
 
-  Edit /etc/default/grub:
-  GRUB_CMDLINE_LINUX_DEFAULT="text"
-
-  sudo update-grub
+  sudo sed -i 's/^GRUB_CMDLINE_LINUX_DEFAULT=.*/GRUB_CMDLINE_LINUX_DEFAULT="text"/' /etc/default/grub && \
+  sudo update-grub && \
   sudo systemctl set-default multi-user.target
 fi
 
 echo
 printf_p1 "Removing no longer required packages... "
-sudo apt-get autoremove -q -y >> $logd
+sudo apt-get autoremove -q -y >> "$logd"
 check_status
 
 echo
