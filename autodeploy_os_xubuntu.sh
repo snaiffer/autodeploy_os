@@ -243,7 +243,7 @@ sudo apt-get install -q -y vim >> "$logd" && \
 sudo apt-get install -q -y openssh-server openssh-client tree nmap btop iotop htop nvtop foremost sshfs powertop ghex curl ca-certificates >> "$logd" && \
 sudo apt-get install -q -y apt-file >> "$logd" && \
   sudo apt-file update > /dev/null && \
-sudo apt-get install -q -y unrar >> "$logd" && \
+sudo apt-get install -q -y unrar zip unzip >> "$logd" && \
 sudo apt-get install -q -y pwgen >> "$logd" && \
 sudo apt-get install -q -y byobu >> "$logd"
 check_status
