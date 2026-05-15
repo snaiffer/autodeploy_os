@@ -972,7 +972,9 @@ if [[ "$mode" = "server" ]]; then
   sudo sed -i '/^KbdInteractiveAuthentication/d' /etc/ssh/sshd_config    && sudo sh -c "echo 'KbdInteractiveAuthentication no' >> /etc/ssh/sshd_config" && \
   sudo sed -i '/^ChallengeResponseAuthentication/d' /etc/ssh/sshd_config && sudo sh -c "echo 'ChallengeResponseAuthentication no' >> /etc/ssh/sshd_config" && \
   sudo sed -i '/^UsePAM/d' /etc/ssh/sshd_config                          && sudo sh -c "echo 'UsePAM yes' >> /etc/ssh/sshd_config" && \
-  sudo sed -i '/^PubkeyAuthentication/d' /etc/ssh/sshd_config            && sudo sh -c "echo 'PubkeyAuthentication yes' >> /etc/ssh/sshd_config"
+  sudo sed -i '/^PubkeyAuthentication/d' /etc/ssh/sshd_config            && sudo sh -c "echo 'PubkeyAuthentication yes' >> /etc/ssh/sshd_config" && \
+  echo "ssh_pwauth: false" | sudo tee -a /etc/cloud/cloud.cfg.d/99-disable-password-auth.cfg > /dev/null && \
+  sudo rm -f /etc/ssh/sshd_config.d/50-cloud-init.conf
   check_status
 
   #############################################
