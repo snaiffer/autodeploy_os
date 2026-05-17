@@ -300,6 +300,13 @@ ServerAliveCountMax 3
 EOF
 check_status
 
+printf_p1 "\t setting for automatically trust new hosts... "
+mkdir -p ~/.ssh
+grep -q 'StrictHostKeyChecking' ~/.ssh/config 2>/dev/null || cat <<-EOF >> ~/.ssh/config
+StrictHostKeyChecking accept-new
+EOF
+check_status
+
 #############################################
 printf_p1 "Setting vim... "
 sudo apt-get install -q -y vim clang libclang-dev \
