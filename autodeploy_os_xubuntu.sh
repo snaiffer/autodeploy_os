@@ -642,7 +642,18 @@ echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.
   # atom-editor: download & install deb: https://atom.io/
 
   #############################################
-  printf_p1 "for tlp (power saving utils)..."
+  echo
+  printf_p1 "Installing Claude Code... "
+  curl -fsSL https://claude.ai/install.sh | bash
+  check_status
+
+  printf_p1 "\tSetup Claude Code... "
+  cp -f $dir_data/.claude/settings.json ~/.claude/settings.json
+  check_status
+
+  #############################################
+  echo
+  printf_p1 "Installing tlp (power saving utils)..."
   if [ "$os_release_major" -lt 24 ]; then
     sudo add-apt-repository -y ppa:linrunner/tlp > /dev/null && sudo apt-get update > /dev/null
   fi
@@ -659,7 +670,7 @@ echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.
 EOF
 
   # light-locker switch from DISPLAY=:0 to :1, what case problem with VNC logging
-  printf_p1 "  Replacing light-locker for gnome-screensaver..."
+  printf_p1 "Replacing light-locker for gnome-screensaver..."
   sudo apt-get purge -q -y xfce4-screensaver >> "$logd" && \
   sudo apt-get install -q -y light-locker >> "$logd" && \
   check_status

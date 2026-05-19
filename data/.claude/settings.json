@@ -1,0 +1,38 @@
+{
+  "effortLevel": "xhigh",
+  "env": {
+    "ANTHROPIC_MODEL": "opus[1m]"
+  },
+  "permissions": {
+    "allow": [
+      "Read",
+      "Grep",
+      "Glob",
+
+      "Bash(ls:*)",
+      "Bash(cat:*)",
+      "Bash(grep:*)",
+      "Bash(find:*)",
+      "Bash(pwd)",
+
+      "Bash(tree:*)",
+      "Bash(head:*)",
+      "Bash(tail:*)",
+      "Bash(wc:*)",
+      "Bash(file:*)",
+      "Bash(stat:*)",
+
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git show:*)",
+
+      "Bash(ripgrep:*)",
+      "Bash(rg:*)",
+
+      "Bash(fd:*)",
+
+      "Bash(jq:*)"
+    ]
+  }
+}
