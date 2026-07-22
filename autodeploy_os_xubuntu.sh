@@ -203,6 +203,26 @@ if command -v glxinfo &>/dev/null && glxinfo | grep -q 'HD Graphics [56]30'; the
   echo 'export MESA_LOADER_DRIVER_OVERRIDE=i965' >> ~/.profile
 fi;
 
+# Multi-monitor display fixes for HP ProBook 450 G10 (Intel Iris Xe / i915) via GRUB kernel cmdline.
+# Symptoms after several suspend/resume cycles: laptop panel blinks; external monitors freeze until a
+# window is resized; HDMI monitor drops out. Root cause: i915 display power-saving over s2idle resume.
+#   * i915.enable_psr=0 -- disable Panel Self Refresh (fixes eDP/laptop panel blinking)
+#   * i915.enable_fbc=0 -- disable Framebuffer Compression (fixes external monitor freezing till resize)
+# A reboot is required to take effect (this script requests one at the end).
+# NOTE: do NOT add mem_sleep_default=deep (S3) on this model -- S3 resume wedges the embedded
+#       controller (ACPI EC GPE 0x6e storm / "Timeout from EC hardware", slow wake). Keep s2idle.
+# The 2560x1440 HDMI monitor is also best set to 60Hz (Settings > Display) -- that is not a GRUB setting.
+echo
+printf_p1 "Intel i915 multi-monitor display fix (HP ProBook 450 G10 only)... "
+if grep -qE 'ProBook 450.*G10' /sys/class/dmi/id/product_name 2>/dev/null; then
+  ( grep -qF 'i915.enable_psr=0' /etc/default/grub || sudo sed -i 's/\(GRUB_CMDLINE_LINUX_DEFAULT="[^"]*\)"/\1 i915.enable_psr=0"/' /etc/default/grub ) && \
+  ( grep -qF 'i915.enable_fbc=0' /etc/default/grub || sudo sed -i 's/\(GRUB_CMDLINE_LINUX_DEFAULT="[^"]*\)"/\1 i915.enable_fbc=0"/' /etc/default/grub ) && \
+  sudo update-grub >> "$logd" 2>&1
+  check_status
+else
+  echo "skipped (not this laptop model)"
+fi
+
 :<<-EOF2
 # Set up mouse scroll speed
 # https://dev.to/bbavouzet/ubuntu-20-04-mouse-scroll-wheel-speed-536o
