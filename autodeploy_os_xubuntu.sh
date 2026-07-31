@@ -737,6 +737,12 @@ EOF
   echo 'max_size = 25.0G' >> ~/.ccache/ccache.conf
   check_status
 
+  printf_p1 "\tInstalling Clion IDE... "
+  sudo snap set system proxy.http="http://proxy.cma.se:8080" && \
+  sudo snap set system proxy.https="http://proxy.cma.se:8080" && \
+  sudo snap install clion --classic
+  check_status
+
 :<<-EOF
   printf_p1 "\tInstalling utils for RDBMS programming... "
   wget -q -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add - && \
