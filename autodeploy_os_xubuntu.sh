@@ -622,10 +622,36 @@ EOF
   check_status
   sudo chmod +x /usr/bin/kate
   check_status
-  printf_p1 "KATE-editor: turn off ProjectPlugin... "
-  if [ -f ~/.local/share/kate/anonymous.katesession ]; then
-    sed -i 's/kateprojectplugin=true/kateprojectplugin=false/' ~/.local/share/kate/anonymous.katesession
-  fi
+  printf_p1 "KATE-editor: menu bar on, Projects tool view off... "
+  # Kate keeps both settings in the session file (~/.local/share/kate/anonymous.katesession)
+  # and rewrites that file whenever a window closes. Because of -n above many instances run at
+  # once, so the last one to exit wins -- and an instance that was already running when the file
+  # was edited overwrites it with its own stale copy. KConfig's immutable "[$i]" flag does not
+  # help there: it is enforced only against what the writing process itself parsed at startup.
+  # Hence normalise the keys at every launch instead. ~/.local/bin comes first in PATH (see
+  # ~/.profile) and org.kde.kate.desktop calls "kate" by name, so terminal and desktop launches
+  # both go through this wrapper. ProjectPlugin itself stays enabled -- only its tool view is
+  # kept closed, so the "Projects" menu, git branch in the status bar and project search work.
+  mkdir -p ~/.local/bin && \
+  cat > ~/.local/bin/kate <<-'EOF'
+#!/bin/bash
+# Normalise Kate's saved state before every launch, then hand over to the real wrapper:
+# menu bar visible (Ctrl+M still toggles it per window), Projects tool view closed.
+# Absence of the MenuBar key means "Enabled", so only the explicit Disabled needs fixing.
+# To undo this, just delete this file -- /usr/bin/kate keeps working on its own.
+session="$HOME/.local/share/kate/anonymous.katesession"
+katerc="$HOME/.config/katerc"
+
+[ -w "$session" ] && sed -i \
+    -e 's/^MenuBar=Disabled$/MenuBar=Enabled/' \
+    -e 's/^Kate-MDI-ToolView-kateproject-Visible=true$/Kate-MDI-ToolView-kateproject-Visible=false/' \
+    "$session"
+
+[ -w "$katerc" ] && sed -i 's/^Show Menu Bar=false$/Show Menu Bar=true/' "$katerc"
+
+exec /usr/bin/kate "$@"
+EOF
+  chmod +x ~/.local/bin/kate
   check_status
 
 
